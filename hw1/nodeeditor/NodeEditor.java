@@ -3,18 +3,15 @@ package nodeeditor;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.event.MouseEvent;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
+import java.awt.event.*;
 import java.util.*;
 
 import javax.swing.JButton;
+import javax.swing.JColorChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import javax.swing.event.MouseInputAdapter;
+import javax.swing.event.*;
 
 /* 
  * Starter code references: Java Swing Tutorial written by Oracle
@@ -55,6 +52,10 @@ class MyPanel extends JPanel {
     private LineStyle[] lineStyles = LineStyle.defaultLineStyles;
     private LineStyle selectedLineStyle;
 
+    /*/Colors */
+    private Color selectedLineColor = Color.BLACK;
+    private Color selectedFaceColor = Color.WHITE;
+
     /* User actions */
     private int action;
     private final int DRAW = 0, MOVE = 1;
@@ -86,7 +87,9 @@ class MyPanel extends JPanel {
         });
 
         /* JButton usage reference:
-         * https://www.tutorialspoint.com/swing/swing_jbutton.htm */
+         * https://www.tutorialspoint.com/swing/swing_jbutton.htm
+         * JColorChooser usage reference:
+         * http://www.java2s.com/Code/Java/Swing-JFC/ColorChooserSample1.htm */
 
         // add delete button
         JButton deleteButton = new JButton("Delete");
@@ -98,13 +101,42 @@ class MyPanel extends JPanel {
             }
         });
 
+        // add button to choose line color
+        JButton lineColorChooserButton = new JButton("LineColor");
+        lineColorChooserButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Color newLineColor = JColorChooser.showDialog(null,
+                    "Choose a line color", selectedLineColor);
+                if (newLineColor != null)
+                    selectedLineColor = newLineColor;
+                repaint();
+            }
+        });
+        
+        // add button to choose face color
+        JButton faceColorChooserButton = new JButton("FaceColor");
+        faceColorChooserButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Color newFaceColor = JColorChooser.showDialog(null,
+                    "Choose a face color", selectedFaceColor);
+                if (newFaceColor != null)
+                    selectedFaceColor = newFaceColor;
+                repaint();
+            }
+        });
+
         // set button size and position
-        int buttonWidth = 80, buttonHeight = 25;
+        int buttonWidth = 120, buttonHeight = 25;
         int buttonX = (separateLine - buttonWidth) / 2;
-        int buttonY = 200;
+
         setLayout(null);
-        deleteButton.setBounds(buttonX, buttonY, buttonWidth, buttonHeight);
+        deleteButton.setBounds(buttonX, 180, buttonWidth, buttonHeight);
+        lineColorChooserButton.setBounds(buttonX, 210, buttonWidth, buttonHeight);
+        faceColorChooserButton.setBounds(buttonX, 240, buttonWidth, buttonHeight);
+
         add(deleteButton);
+        add(lineColorChooserButton);
+        add(faceColorChooserButton);
     }
 
     private class MyMouseInputListener extends MouseInputAdapter {
@@ -158,8 +190,8 @@ class MyPanel extends JPanel {
                 // add the new drawn box to the box list
                 String boxName = "Box " + (boxes.size() + 1);
                 if (drawWidth > 0 && drawHeight > 0)
-                    boxes.add(new Box(drawX, drawY, drawWidth, drawHeight,
-                            boxName, selectedLineStyle));
+                    boxes.add(new Box(drawX, drawY, drawWidth, drawHeight, boxName,
+                            selectedLineStyle, selectedLineColor, selectedFaceColor));
             }
             repaint();
         }
@@ -248,10 +280,20 @@ class MyPanel extends JPanel {
 
     public void paintComponent(Graphics g) {
         /* Paint all the components on the panel */
-        super.paintComponent(g);       
+        super.paintComponent(g);
 
         // draw a separate line 
         g.drawLine(separateLine, 0, separateLine, totalHeight);
+
+        // show current colors
+        int COLOR_WIDTH = 20;
+        g.setColor(selectedLineColor);
+        g.fillRect(130, 210, COLOR_WIDTH, COLOR_WIDTH);
+        g.setColor(selectedFaceColor);
+        g.fillRect(130, 240, COLOR_WIDTH, COLOR_WIDTH);
+        g.setColor(Color.BLACK);
+        g.drawRect(130, 210, COLOR_WIDTH, COLOR_WIDTH);
+        g.drawRect(130, 240, COLOR_WIDTH, COLOR_WIDTH);
 
         // show all line styles
         for (LineStyle ls: lineStyles)
@@ -263,8 +305,8 @@ class MyPanel extends JPanel {
 
         // show the box being drawn if any
         if (!doneDrawing && drawWidth > 0 && drawHeight > 0) {
-            Box drawnBox = new Box(drawX, drawY, drawWidth, drawHeight,
-                    null, selectedLineStyle);
+            Box drawnBox = new Box(drawX, drawY, drawWidth, drawHeight, null,
+                    selectedLineStyle, selectedLineColor, selectedFaceColor);
             drawnBox.display(g);
         }
     }  

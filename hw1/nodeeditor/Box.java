@@ -11,17 +11,21 @@ class Box {
     private int startX, startY, width, height;
     private String name;
     private LineStyle lineStyle;
+    private Color lineColor;
+    private Color faceColor;
     private boolean visible;
     private boolean selected;
 
     public Box(int startX, int startY, int width, int height,
-            String name, LineStyle lineStyle) {
+            String name, LineStyle lineStyle, Color lineColor, Color faceColor) {
         this.startX = startX;
         this.startY = startY;
         this.width = width;
         this.height = height;
         this.name = name;
         this.lineStyle = lineStyle;
+        this.lineColor = lineColor;
+        this.faceColor = faceColor;
         this.visible = true;
         this.selected = false;
     }
@@ -69,15 +73,12 @@ class Box {
             return;
 
         // draw white interior
-        g.setColor(Color.WHITE);
+        g.setColor(faceColor);
         g.fillRect(startX, startY, width, height);
 
         // draw the outline
         this.lineStyle.use(g);
-        if (!selected)
-            g.setColor(Color.BLACK);
-        else // draw in red if selected
-            g.setColor(Color.RED);
+        g.setColor(lineColor);
         g.drawRect(startX, startY, width, height);
 
         // draw the selection handle if selected
@@ -101,7 +102,7 @@ class Box {
             
             Graphics2D g2 = (Graphics2D) g;
             g2.setStroke(new BasicStroke(2));
-            g.setColor(Color.RED);
+            g.setColor(lineColor);
             for (int[] position: handlePosition)
                 g.drawRect(position[0] - offset, position[1] - offset, handleWidth, handleWidth);
         }
