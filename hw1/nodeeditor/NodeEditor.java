@@ -19,7 +19,7 @@ import javax.swing.event.MouseInputAdapter;
 /* 
  * Starter code references: Java Swing Tutorial written by Oracle
  * SwingPaintDemo3: https://docs.oracle.com/javase/tutorial/displayCode.html?code=https://docs.oracle.com/javase/tutorial/uiswing/examples/painting/SwingPaintDemo3Project/src/painting/SwingPaintDemo3.java
- * SelectionDemo:   https://docs.oracle.com/javase/tutorial/displayCode.html?code=https://docs.oracle.com/javase/tutorial/uiswing/examples/painting/SelectionDemoProject/src/painting/SelectionDemo.java
+ * SelectionDemo: https://docs.oracle.com/javase/tutorial/displayCode.html?code=https://docs.oracle.com/javase/tutorial/uiswing/examples/painting/SelectionDemoProject/src/painting/SelectionDemo.java
  */
 
 public class NodeEditor {
@@ -33,11 +33,11 @@ public class NodeEditor {
     }
 
     private static void showInterface() {
-        JFrame f = new JFrame("Node Editor");
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        f.add(new MyPanel());
-        f.pack();
-        f.setVisible(true);
+        JFrame frame = new JFrame("Node Editor");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.add(new MyPanel());
+        frame.pack();
+        frame.setVisible(true);
     }
 }
 
@@ -66,7 +66,7 @@ class MyPanel extends JPanel {
     private boolean doneDrawing;
 
     public MyPanel() {
-        // set default style
+        // set default line style
         setBackground(Color.WHITE);
         selectedLineStyle = lineStyles[0];
         selectedLineStyle.setSelected(true);
@@ -98,12 +98,17 @@ class MyPanel extends JPanel {
             }
         });
 
+        // set button size and position
+        int buttonWidth = 80, buttonHeight = 25;
+        int buttonX = (separateLine - buttonWidth) / 2;
+        int buttonY = 200;
         setLayout(null);
-        deleteButton.setBounds(30, 120, 100, 20);
+        deleteButton.setBounds(buttonX, buttonY, buttonWidth, buttonHeight);
         add(deleteButton);
     }
 
     private class MyMouseInputListener extends MouseInputAdapter {
+        /* Callbacks for mouse events */
         public void mousePressed(MouseEvent e) {
             /* Mouse pressed event */
             System.out.println("Mouse pressed");
@@ -114,15 +119,17 @@ class MyPanel extends JPanel {
             action = DRAW;
             for (int idx = boxes.size() - 1; idx >= 0; --idx) {
                 Box box = boxes.get(idx);
-                if (box.isClickedBy(e) && box.isSelected()) {
-                    action = MOVE;
-                    baseX = box.getStartX();
-                    baseY = box.getStartY();
+                if (box.isClickedBy(e)) {
+                    if (box.isSelected()) {
+                        action = MOVE;
+                        baseX = box.getStartX();
+                        baseY = box.getStartY();
+                    }
                     break;
                 }
             }
 
-            // start drawing and deselect any box
+            // if draw, start drawing and deselect any box
             if (action == DRAW) {
                 doneDrawing = false;
                 updateSelectedBox(null);
@@ -182,6 +189,7 @@ class MyPanel extends JPanel {
         }
 
         private void updateSelectedBox(Box box) {
+            // deselect the old box and select the new box
             if (selectedBox != null)
                 selectedBox.setSelected(false);
             selectedBox = box;
@@ -190,16 +198,19 @@ class MyPanel extends JPanel {
         }
 
         private void updateSelectedLineStyle(LineStyle ls) {
+            // deselect the old linestyle and select the new linestyle
             selectedLineStyle.setSelected(false);
             selectedLineStyle = ls;
             ls.setSelected(true);
         }
 
         private int clipX(int x, int width) {
+            // keep the box within a proper X range
             return Math.min(Math.max(x, separateLine), totalWidth - width);
         }
 
         private int clipY(int y, int height) {
+            // keep the box within a proper Y range
             return Math.min(Math.max(y, 0), totalHeight - height);
         }
 
@@ -231,10 +242,12 @@ class MyPanel extends JPanel {
     }
 
     public Dimension getPreferredSize() {
+        // set preferred window size
         return new Dimension(totalWidth, totalHeight);
     }
 
     public void paintComponent(Graphics g) {
+        /* Paint all the components on the panel */
         super.paintComponent(g);       
 
         // draw a separate line 
@@ -248,7 +261,7 @@ class MyPanel extends JPanel {
         for (Box box: boxes)
             box.display(g);
 
-        // show the box being drawn
+        // show the box being drawn if any
         if (!doneDrawing && drawWidth > 0 && drawHeight > 0) {
             Box drawnBox = new Box(drawX, drawY, drawWidth, drawHeight,
                     null, selectedLineStyle);

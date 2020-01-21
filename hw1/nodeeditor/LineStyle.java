@@ -5,21 +5,28 @@ import java.awt.event.MouseEvent;
 
 class LineStyle {
     private Stroke lineStyle;
-    private int startX, startY, endX, endY;
+    private int startX, startY, endX, endY; // position displayed on the panel
     private boolean selected;
 
     /* Line style reference:
      * https://www.codejava.net/java-se/graphics/drawing-lines-examples-with-graphics2d */
+    private static int lineLength = 40, separateLine = 150;
+    private static int lineStartX = (separateLine - lineLength) / 2;
+    private static int lineEndX = (separateLine + lineLength) / 2;
+    private static int[] lineY = {60, 90, 120, 150};
     private static float[] dashedPattern = {2f, 2f};
     private static float[] dashedDottedPattern = {10f, 10f, 1f, 10f};
 
+    // set default line position and style
     public static LineStyle[] defaultLineStyles = {
-        new LineStyle(new BasicStroke(2f), 30, 20, 60, 20),
-        new LineStyle(new BasicStroke(4f), 30, 40, 60, 40),
+        new LineStyle(new BasicStroke(2f), lineStartX, lineY[0], lineEndX, lineY[0]),
+        new LineStyle(new BasicStroke(4f), lineStartX, lineY[1], lineEndX, lineY[1]),
         new LineStyle(new BasicStroke(2f, BasicStroke.CAP_BUTT,
-                BasicStroke.JOIN_MITER, 1.0f, dashedPattern, 2.0f), 30, 60, 60, 60),
+                BasicStroke.JOIN_MITER, 1.0f, dashedPattern, 2.0f),
+                lineStartX, lineY[2], lineEndX, lineY[2]),
         new LineStyle(new BasicStroke(3f, BasicStroke.CAP_SQUARE,
-                BasicStroke.JOIN_MITER, 1.0f, dashedDottedPattern, 0.0f), 30, 80, 60, 80)
+                BasicStroke.JOIN_MITER, 1.0f, dashedDottedPattern, 0.0f),
+                lineStartX, lineY[3], lineEndX, lineY[3])
     };
 
     public LineStyle(Stroke lineStyle, int startX, int startY, int endX, int endY) {
@@ -41,7 +48,7 @@ class LineStyle {
         g2.setStroke(lineStyle);
         g2.drawLine(startX, startY, endX, endY);
 
-        // draw a rectangle if selected
+        // draw a rectangle around the line style if it is selected
         if (selected) {
             int OFFSET = 5;
             int width = endX - startX + 2 * OFFSET;
@@ -58,7 +65,7 @@ class LineStyle {
     }
 
     public boolean isClickedBy(MouseEvent e) {
-        /* Check if the line style is clicked by mouse */		
+        /* Check if the line style is clicked by mouse (with tolerance) */		
         int clickedX = e.getX(), clickedY = e.getY();
         int TOLERANCE = 10;
         return (clickedX >= startX - TOLERANCE) && (clickedX <= endX + TOLERANCE)

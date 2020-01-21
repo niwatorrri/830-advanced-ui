@@ -1,3 +1,3 @@
 module requirements {
-	requires java.desktop;
+    requires java.desktop;
 }
