@@ -13,7 +13,7 @@ class LineStyle {
     private static int lineLength = 40, separateLine = 150;
     private static int lineStartX = (separateLine - lineLength) / 2;
     private static int lineEndX = (separateLine + lineLength) / 2;
-    private static int[] lineY = {50, 80, 110, 140};
+    private static int[] lineY = {60, 90, 120, 150};
     private static float[] dashedPattern = {2f, 2f};
     private static float[] dashedDottedPattern = {10f, 10f, 1f, 10f};
 

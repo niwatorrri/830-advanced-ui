@@ -40,7 +40,7 @@ public class NodeEditor {
 
 class MyPanel extends JPanel {
     /* Panel parameters */
-    private int totalWidth = 600, totalHeight = 300;
+    private int totalWidth = 800, totalHeight = 400;
     private int separateLine = 150;
 
     /* Boxes */
@@ -52,7 +52,7 @@ class MyPanel extends JPanel {
     private LineStyle[] lineStyles = LineStyle.defaultLineStyles;
     private LineStyle selectedLineStyle;
 
-    /*/Colors */
+    /* Colors */
     private Color selectedLineColor = Color.BLACK;
     private Color selectedFaceColor = Color.WHITE;
 
@@ -87,9 +87,7 @@ class MyPanel extends JPanel {
         });
 
         /* JButton usage reference:
-         * https://www.tutorialspoint.com/swing/swing_jbutton.htm
-         * JColorChooser usage reference:
-         * http://www.java2s.com/Code/Java/Swing-JFC/ColorChooserSample1.htm */
+         * https://www.tutorialspoint.com/swing/swing_jbutton.htm */
 
         // add delete button
         JButton deleteButton = new JButton("Delete");
@@ -100,6 +98,21 @@ class MyPanel extends JPanel {
                 repaint();
             }
         });
+
+        // support deletion with backspace key
+        // Reference: https://www.decodejava.com/java-keylistener.htm
+        setFocusable(true);
+        requestFocusInWindow();
+        addKeyListener(new KeyAdapter() {
+            public void keyReleased(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE && selectedBox != null)
+                    selectedBox.setVisible(false);
+                repaint();
+            }
+        });
+
+        /* JColorChooser usage reference:
+         * http://www.java2s.com/Code/Java/Swing-JFC/ColorChooserSample1.htm */
 
         // add button to choose line color
         JButton lineColorChooserButton = new JButton("LineColor");
@@ -125,18 +138,32 @@ class MyPanel extends JPanel {
             }
         });
 
+        // add button to bring box to top
+        JButton bringToTopButton = new JButton("BringToTop");
+        bringToTopButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (selectedBox != null) {
+                    boxes.remove(selectedBox);
+                    boxes.add(selectedBox);
+                }
+                repaint();
+            }
+        });
+
         // set button size and position
-        int buttonWidth = 120, buttonHeight = 25;
+        int buttonWidth = 100, buttonHeight = 25;
         int buttonX = (separateLine - buttonWidth) / 2;
 
         setLayout(null);
-        deleteButton.setBounds(buttonX, 180, buttonWidth, buttonHeight);
-        lineColorChooserButton.setBounds(buttonX, 210, buttonWidth, buttonHeight);
-        faceColorChooserButton.setBounds(buttonX, 240, buttonWidth, buttonHeight);
+        deleteButton.setBounds(buttonX, 210, buttonWidth, buttonHeight);
+        lineColorChooserButton.setBounds(buttonX, 240, buttonWidth, buttonHeight);
+        faceColorChooserButton.setBounds(buttonX, 270, buttonWidth, buttonHeight);
+        bringToTopButton.setBounds(buttonX, 300, buttonWidth, buttonHeight);
 
         add(deleteButton);
         add(lineColorChooserButton);
         add(faceColorChooserButton);
+        add(bringToTopButton);
     }
 
     private class MyMouseInputListener extends MouseInputAdapter {
@@ -278,6 +305,18 @@ class MyPanel extends JPanel {
         return new Dimension(totalWidth, totalHeight);
     }
 
+    private void showSelectedColors(Graphics g) {
+        // show the selected line color and face color
+        int COLOR_WIDTH = 15;
+        g.setColor(selectedLineColor);
+        g.fillRect(125, 245, COLOR_WIDTH, COLOR_WIDTH);
+        g.setColor(selectedFaceColor);
+        g.fillRect(125, 275, COLOR_WIDTH, COLOR_WIDTH);
+        g.setColor(Color.BLACK);
+        g.drawRect(125, 245, COLOR_WIDTH, COLOR_WIDTH);
+        g.drawRect(125, 275, COLOR_WIDTH, COLOR_WIDTH);
+    }
+
     public void paintComponent(Graphics g) {
         /* Paint all the components on the panel */
         super.paintComponent(g);
@@ -286,14 +325,7 @@ class MyPanel extends JPanel {
         g.drawLine(separateLine, 0, separateLine, totalHeight);
 
         // show current colors
-        int COLOR_WIDTH = 20;
-        g.setColor(selectedLineColor);
-        g.fillRect(130, 210, COLOR_WIDTH, COLOR_WIDTH);
-        g.setColor(selectedFaceColor);
-        g.fillRect(130, 240, COLOR_WIDTH, COLOR_WIDTH);
-        g.setColor(Color.BLACK);
-        g.drawRect(130, 210, COLOR_WIDTH, COLOR_WIDTH);
-        g.drawRect(130, 240, COLOR_WIDTH, COLOR_WIDTH);
+        showSelectedColors(g);
 
         // show all line styles
         for (LineStyle ls: lineStyles)
