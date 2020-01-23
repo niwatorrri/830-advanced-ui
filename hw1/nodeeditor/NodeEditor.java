@@ -20,7 +20,7 @@ import javax.swing.event.*;
  */
 
 public class NodeEditor {
-    /* Node Editor class */
+    /* NodeEditor class */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -39,6 +39,8 @@ public class NodeEditor {
 }
 
 class MyPanel extends JPanel {
+    /* MyPanel class */
+
     /* Panel parameters */
     private int totalWidth = 800, totalHeight = 400;
     private int separateLine = 150;
@@ -67,6 +69,7 @@ class MyPanel extends JPanel {
     private boolean doneDrawing;
 
     public MyPanel() {
+        /* MyPanel constructor */
         // set default line style
         setBackground(Color.WHITE);
         selectedLineStyle = lineStyles[0];
@@ -102,7 +105,6 @@ class MyPanel extends JPanel {
         // support deletion with backspace key
         // Reference: https://www.decodejava.com/java-keylistener.htm
         setFocusable(true);
-        requestFocusInWindow();
         addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE && selectedBox != null)
@@ -145,8 +147,8 @@ class MyPanel extends JPanel {
                 if (selectedBox != null) {
                     boxes.remove(selectedBox);
                     boxes.add(selectedBox);
+                    repaint();
                 }
-                repaint();
             }
         });
 
@@ -170,7 +172,6 @@ class MyPanel extends JPanel {
         /* Callbacks for mouse events */
         public void mousePressed(MouseEvent e) {
             /* Mouse pressed event */
-            System.out.println("Mouse pressed");
             startX = e.getX();
             startY = e.getY();
 
@@ -197,8 +198,6 @@ class MyPanel extends JPanel {
 
         public void mouseDragged(MouseEvent e) {
             /* Mouse dragged event */
-            System.out.println("Mouse dragged");
-
             if (action == DRAW)
                 updateNewRectangle(e);
             if (action == MOVE)
@@ -208,8 +207,6 @@ class MyPanel extends JPanel {
 
         public void mouseReleased(MouseEvent e) {
             /* Mouse released event */
-            System.out.println("Mouse released");
-
             if (action == DRAW) {
                 updateNewRectangle(e);
                 doneDrawing = true;
@@ -225,8 +222,6 @@ class MyPanel extends JPanel {
 
         public void mouseClicked(MouseEvent e) {
             /* Mouse clicked event */
-            System.out.println("Mouse clicked");
-
             // check if any line style is clicked
             for (LineStyle ls: lineStyles) {
                 if (ls.isClickedBy(e)) {
@@ -320,6 +315,7 @@ class MyPanel extends JPanel {
     public void paintComponent(Graphics g) {
         /* Paint all the components on the panel */
         super.paintComponent(g);
+        requestFocusInWindow(); // listen to keyboard input
 
         // draw a separate line 
         g.drawLine(separateLine, 0, separateLine, totalHeight);
