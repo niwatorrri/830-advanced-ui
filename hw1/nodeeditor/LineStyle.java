@@ -65,11 +65,11 @@ class LineStyle {
         g2.setStroke(lineStyle);
     }
 
-    public boolean isClickedBy(MouseEvent e) {
-        /* Check if the line style is clicked by mouse (with tolerance) */		
-        int clickedX = e.getX(), clickedY = e.getY();
+    public boolean isInvolvedIn(MouseEvent e) {
+        /* Check if the line style is involved in a mouse event (with tolerance) */		
+        int mouseX = e.getX(), mouseY = e.getY();
         int TOLERANCE = 10;
-        return (clickedX >= startX - TOLERANCE) && (clickedX <= endX + TOLERANCE)
-                && (clickedY >= startY - TOLERANCE) && (clickedY <= endY + TOLERANCE);
+        return (mouseX >= startX - TOLERANCE) && (mouseX <= endX + TOLERANCE)
+                && (mouseY >= startY - TOLERANCE) && (mouseY <= endY + TOLERANCE);
     }
 }

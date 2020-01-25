@@ -1,6 +1,7 @@
 package nodeeditor;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.*;
@@ -57,6 +58,10 @@ class MyPanel extends JPanel {
     /* Colors */
     private Color selectedLineColor = Color.BLACK;
     private Color selectedFaceColor = Color.WHITE;
+
+    /* Cursor shapes */
+    private Cursor DEFAULT_CURSOR = Cursor.getDefaultCursor();
+    private Cursor MOVE_CURSOR = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 
     /* User actions */
     private int action;
@@ -179,7 +184,7 @@ class MyPanel extends JPanel {
             action = DRAW;
             for (int idx = boxes.size() - 1; idx >= 0; --idx) {
                 Box box = boxes.get(idx);
-                if (box.isClickedBy(e)) {
+                if (box.isInvolvedIn(e)) {
                     if (box.isSelected()) {
                         action = MOVE;
                         baseX = box.getStartX();
@@ -199,32 +204,33 @@ class MyPanel extends JPanel {
         public void mouseDragged(MouseEvent e) {
             /* Mouse dragged event */
             if (action == DRAW)
-                updateNewRectangle(e);
+                updateRectangleForDraw(e);
             if (action == MOVE)
-                updateOldRectangle(e);
+                updateRectangleForMove(e);
             repaint();
         }
 
         public void mouseReleased(MouseEvent e) {
             /* Mouse released event */
             if (action == DRAW) {
-                updateNewRectangle(e);
+                updateRectangleForDraw(e);
                 doneDrawing = true;
 
                 // add the new drawn box to the box list
                 String boxName = "Box " + (boxes.size() + 1);
-                if (drawWidth > 0 && drawHeight > 0)
+                if (drawWidth > 0 && drawHeight > 0) {
                     boxes.add(new Box(drawX, drawY, drawWidth, drawHeight, boxName,
                             selectedLineStyle, selectedLineColor, selectedFaceColor));
+                }
+                repaint();
             }
-            repaint();
         }
 
         public void mouseClicked(MouseEvent e) {
             /* Mouse clicked event */
             // check if any line style is clicked
             for (LineStyle ls: lineStyles) {
-                if (ls.isClickedBy(e)) {
+                if (ls.isInvolvedIn(e)) {
                     updateSelectedBox(null);
                     updateSelectedLineStyle(ls);
                 }
@@ -233,13 +239,30 @@ class MyPanel extends JPanel {
             // check if any box is clicked
             for (int idx = boxes.size() - 1; idx >= 0; --idx) {
                 Box box = boxes.get(idx);
-                if (box.isClickedBy(e)) {
+                if (box.isInvolvedIn(e)) {
                     updateSelectedBox(box);
                     updateSelectedLineStyle(box.getLineStyle());
+                    setCursor(MOVE_CURSOR);
                     break;
                 }
             }
-            // repaint is done in MouseReleased
+
+            // repaint the selected item if any
+            repaint();
+        }
+
+        public void mouseMoved(MouseEvent e) {
+            /* Mouse moved event */
+            // determine cursor shape: default or move
+            for (int idx = boxes.size() - 1; idx >= 0; --idx) {
+                Box box = boxes.get(idx);
+                if (box.isInvolvedIn(e)) {
+                    if (box.isSelected())
+                        setCursor(MOVE_CURSOR);
+                    return;
+                }
+            }
+            setCursor(DEFAULT_CURSOR);
         }
 
         private void updateSelectedBox(Box box) {
@@ -268,7 +291,7 @@ class MyPanel extends JPanel {
             return Math.min(Math.max(y, 0), totalHeight - height);
         }
 
-        private void updateNewRectangle(MouseEvent e) {
+        private void updateRectangleForDraw(MouseEvent e) {
             // find new box coordinates
             int oneX = Math.min(startX, e.getX());
             int oneY = Math.min(startY, e.getY());
@@ -282,7 +305,7 @@ class MyPanel extends JPanel {
             drawHeight = clipY(anotherY, 0) - drawY;
         }
 
-        private void updateOldRectangle(MouseEvent e) {
+        private void updateRectangleForMove(MouseEvent e) {
             // find new coordinates
             int newX = baseX + (e.getX() - startX);
             int newY = baseY + (e.getY() - startY);

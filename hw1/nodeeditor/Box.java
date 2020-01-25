@@ -129,15 +129,15 @@ class Box {
         }
     }
 
-    public boolean isClickedBy(MouseEvent e) {
-        /* Check if the box is clicked by mouse (with tolerance) */
+    public boolean isInvolvedIn(MouseEvent e) {
+        /* Check if the box is involved in a mouse event (with tolerance) */
         if (!visible)
             return false;
 
-        int clickedX = e.getX(), clickedY = e.getY();
+        int mouseX = e.getX(), mouseY = e.getY();
         int endX = startX + width, endY = startY + height;
         int TOLERANCE = 5;
-        return (clickedX >= startX - TOLERANCE) && (clickedX <= endX + TOLERANCE)
-                && (clickedY >= startY - TOLERANCE) && (clickedY <= endY + TOLERANCE);
+        return (mouseX >= startX - TOLERANCE) && (mouseX <= endX + TOLERANCE)
+                && (mouseY >= startY - TOLERANCE) && (mouseY <= endY + TOLERANCE);
     }
 }
