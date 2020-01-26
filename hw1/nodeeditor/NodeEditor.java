@@ -47,8 +47,7 @@ class MyPanel extends JPanel {
     private int separateLine = 150;
 
     /* Boxes */
-    private int INIT_CAPACITY = 10;
-    private ArrayList<Box> boxes = new ArrayList<Box>(INIT_CAPACITY);
+    private ArrayList<Box> boxes;
     private Box selectedBox = null;
 
     /* Line styles */
@@ -64,8 +63,8 @@ class MyPanel extends JPanel {
     private Cursor MOVE_CURSOR = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 
     /* User actions */
-    private int action;
-    private final int DRAW = 0, MOVE = 1;
+    private static enum Action { DRAW, MOVE, RESIZE };
+    private Action action;
 
     /* Action parameters */
     private int startX, startY; // mouse press position
@@ -79,6 +78,10 @@ class MyPanel extends JPanel {
         setBackground(Color.WHITE);
         selectedLineStyle = lineStyles[0];
         selectedLineStyle.setSelected(true);
+
+        // initialize box list
+        int initCapacity = 10;
+        boxes = new ArrayList<Box>(initCapacity);
 
         // add mouse listener
         MyMouseInputListener myListener = new MyMouseInputListener();
@@ -160,12 +163,13 @@ class MyPanel extends JPanel {
         // set button size and position
         int buttonWidth = 100, buttonHeight = 25;
         int buttonX = (separateLine - buttonWidth) / 2;
+        int[] buttonY = {210, 240, 270, 300};
 
         setLayout(null);
-        deleteButton.setBounds(buttonX, 210, buttonWidth, buttonHeight);
-        lineColorChooserButton.setBounds(buttonX, 240, buttonWidth, buttonHeight);
-        faceColorChooserButton.setBounds(buttonX, 270, buttonWidth, buttonHeight);
-        bringToTopButton.setBounds(buttonX, 300, buttonWidth, buttonHeight);
+        deleteButton.setBounds(buttonX, buttonY[0], buttonWidth, buttonHeight);
+        lineColorChooserButton.setBounds(buttonX, buttonY[1], buttonWidth, buttonHeight);
+        faceColorChooserButton.setBounds(buttonX, buttonY[2], buttonWidth, buttonHeight);
+        bringToTopButton.setBounds(buttonX, buttonY[3], buttonWidth, buttonHeight);
 
         add(deleteButton);
         add(lineColorChooserButton);
@@ -181,12 +185,12 @@ class MyPanel extends JPanel {
             startY = e.getY();
 
             // determine user action: draw or move
-            action = DRAW;
+            action = Action.DRAW;
             for (int idx = boxes.size() - 1; idx >= 0; --idx) {
                 Box box = boxes.get(idx);
                 if (box.isInvolvedIn(e)) {
                     if (box.isSelected()) {
-                        action = MOVE;
+                        action = Action.MOVE;
                         baseX = box.getStartX();
                         baseY = box.getStartY();
                     }
@@ -195,7 +199,7 @@ class MyPanel extends JPanel {
             }
 
             // if draw, start drawing and deselect any box
-            if (action == DRAW) {
+            if (action == Action.DRAW) {
                 doneDrawing = false;
                 updateSelectedBox(null);
             }
@@ -203,16 +207,16 @@ class MyPanel extends JPanel {
 
         public void mouseDragged(MouseEvent e) {
             /* Mouse dragged event */
-            if (action == DRAW)
+            if (action == Action.DRAW)
                 updateRectangleForDraw(e);
-            if (action == MOVE)
+            if (action == Action.MOVE)
                 updateRectangleForMove(e);
             repaint();
         }
 
         public void mouseReleased(MouseEvent e) {
             /* Mouse released event */
-            if (action == DRAW) {
+            if (action == Action.DRAW) {
                 updateRectangleForDraw(e);
                 doneDrawing = true;
 
@@ -254,15 +258,15 @@ class MyPanel extends JPanel {
         public void mouseMoved(MouseEvent e) {
             /* Mouse moved event */
             // determine cursor shape: default or move
+            setCursor(DEFAULT_CURSOR);
             for (int idx = boxes.size() - 1; idx >= 0; --idx) {
                 Box box = boxes.get(idx);
                 if (box.isInvolvedIn(e)) {
                     if (box.isSelected())
                         setCursor(MOVE_CURSOR);
-                    return;
+                    break;
                 }
             }
-            setCursor(DEFAULT_CURSOR);
         }
 
         private void updateSelectedBox(Box box) {
@@ -325,14 +329,17 @@ class MyPanel extends JPanel {
 
     private void showSelectedColors(Graphics g) {
         // show the selected line color and face color
-        int COLOR_WIDTH = 15;
+        int colorWidth = 15;
+        int colorX = 125;
+        int[] colorY = {245, 275};
+
         g.setColor(selectedLineColor);
-        g.fillRect(125, 245, COLOR_WIDTH, COLOR_WIDTH);
+        g.fillRect(colorX, colorY[0], colorWidth, colorWidth);
         g.setColor(selectedFaceColor);
-        g.fillRect(125, 275, COLOR_WIDTH, COLOR_WIDTH);
+        g.fillRect(colorX, colorY[1], colorWidth, colorWidth);
         g.setColor(Color.BLACK);
-        g.drawRect(125, 245, COLOR_WIDTH, COLOR_WIDTH);
-        g.drawRect(125, 275, COLOR_WIDTH, COLOR_WIDTH);
+        g.drawRect(colorX, colorY[0], colorWidth, colorWidth);
+        g.drawRect(colorX, colorY[1], colorWidth, colorWidth);
     }
 
     public void paintComponent(Graphics g) {

@@ -6,19 +6,19 @@ import java.awt.event.MouseEvent;
 class LineStyle {
     private Stroke lineStyle;
     private int startX, startY, endX, endY; // position displayed on the panel
-    private boolean selected;
+    private boolean selected = false;
 
     /* Line style reference:
      * https://www.codejava.net/java-se/graphics/drawing-lines-examples-with-graphics2d */
-    private static int lineLength = 40, separateLine = 150;
-    private static int lineStartX = (separateLine - lineLength) / 2;
-    private static int lineEndX = (separateLine + lineLength) / 2;
-    private static int[] lineY = {60, 90, 120, 150};
-    private static float[] dashedPattern = {2f, 2f};
-    private static float[] dashedDottedPattern = {10f, 10f, 1f, 10f};
+    private static final int lineLength = 40, separateLine = 150;
+    private static final int lineStartX = (separateLine - lineLength) / 2;
+    private static final int lineEndX = (separateLine + lineLength) / 2;
+    private static final int[] lineY = {60, 90, 120, 150};
+    private static final float[] dashedPattern = {2f, 2f};
+    private static final float[] dashedDottedPattern = {10f, 10f, 1f, 10f};
 
     // set default line position and style
-    public static LineStyle[] defaultLineStyles = {
+    public static final LineStyle[] defaultLineStyles = {
         new LineStyle(new BasicStroke(2f), lineStartX, lineY[0], lineEndX, lineY[0]),
         new LineStyle(new BasicStroke(4f), lineStartX, lineY[1], lineEndX, lineY[1]),
         new LineStyle(new BasicStroke(2f, BasicStroke.CAP_BUTT,
@@ -35,7 +35,6 @@ class LineStyle {
         this.startY = startY;
         this.endX = endX;
         this.endY = endY;
-        this.selected = false;
     }
 
     public void setSelected(boolean bool) {
@@ -68,8 +67,8 @@ class LineStyle {
     public boolean isInvolvedIn(MouseEvent e) {
         /* Check if the line style is involved in a mouse event (with tolerance) */		
         int mouseX = e.getX(), mouseY = e.getY();
-        int TOLERANCE = 10;
-        return (mouseX >= startX - TOLERANCE) && (mouseX <= endX + TOLERANCE)
-                && (mouseY >= startY - TOLERANCE) && (mouseY <= endY + TOLERANCE);
+        int tolerance = 10;
+        return (mouseX >= startX - tolerance) && (mouseX <= endX + tolerance)
+                && (mouseY >= startY - tolerance) && (mouseY <= endY + tolerance);
     }
 }
