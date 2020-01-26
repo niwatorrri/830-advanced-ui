@@ -258,15 +258,16 @@ class MyPanel extends JPanel {
         public void mouseMoved(MouseEvent e) {
             /* Mouse moved event */
             // determine cursor shape: default or move
-            setCursor(DEFAULT_CURSOR);
+            Cursor currentCursor = DEFAULT_CURSOR;
             for (int idx = boxes.size() - 1; idx >= 0; --idx) {
                 Box box = boxes.get(idx);
                 if (box.isInvolvedIn(e)) {
                     if (box.isSelected())
-                        setCursor(MOVE_CURSOR);
+                        currentCursor = MOVE_CURSOR;
                     break;
                 }
             }
+            setCursor(currentCursor);
         }
 
         private void updateSelectedBox(Box box) {
@@ -360,6 +361,10 @@ class MyPanel extends JPanel {
         // show all boxes
         for (Box box: boxes)
             box.display(g);
+        
+        // show selection handles if any
+        if (selectedBox != null)
+            selectedBox.displayHandles(g);
 
         // show the box being drawn if any
         if (!doneDrawing && drawWidth > 0 && drawHeight > 0) {

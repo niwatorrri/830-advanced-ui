@@ -18,8 +18,8 @@ class Box {
     private boolean selected = false;
     private String selectedHandle = null;
 
-    private static final int handleWidth = 7;
-    private static final int offset = handleWidth / 2 + 1;
+    private static final int HANDLE_WIDTH = 7;
+    private static final int HANDLE_OFFSET = HANDLE_WIDTH / 2 + 1;
 
     public Box(int startX, int startY, int width, int height,
             String name, LineStyle lineStyle, Color lineColor, Color faceColor) {
@@ -89,30 +89,6 @@ class Box {
         g.setColor(lineColor);
         g.drawRect(startX, startY, width, height);
 
-        // draw the selection handle if selected
-        if (selected) {
-            int[][] handlePosition = {
-                {startX, startY},
-                {startX, startY + height / 2},
-                {startX, startY + height},
-                {startX + width / 2, startY},
-                {startX + width / 2, startY + height},
-                {startX + width, startY},
-                {startX + width, startY + height / 2},
-                {startX + width, startY + height},
-            };
-
-            g.setColor(Color.WHITE);
-            for (int[] position: handlePosition)
-                g.fillRect(position[0] - offset, position[1] - offset, handleWidth, handleWidth);
-            
-            Graphics2D g2 = (Graphics2D) g;
-            g2.setStroke(new BasicStroke(2));
-            g.setColor(lineColor);
-            for (int[] position: handlePosition)
-                g.drawRect(position[0] - offset, position[1] - offset, handleWidth, handleWidth);
-        }
-
         /* Text format reference:
          * https://stackoverflow.com/questions/27706197/how-can-i-center-graphics-drawstring-in-java */
 
@@ -133,6 +109,35 @@ class Box {
                 textY = startY + downwardOffset;
             g.drawString(name, textX, textY);
         }
+    }
+
+    public void displayHandles(Graphics g) {
+        /* Display the selection handles */
+        if (!visible)
+            return;
+
+        int[][] handlePosition = {
+            {startX, startY},
+            {startX, startY + height / 2},
+            {startX, startY + height},
+            {startX + width / 2, startY},
+            {startX + width / 2, startY + height},
+            {startX + width, startY},
+            {startX + width, startY + height / 2},
+            {startX + width, startY + height},
+        };
+
+        g.setColor(Color.WHITE);
+        for (int[] position: handlePosition)
+            g.fillRect(position[0] - HANDLE_OFFSET, position[1] - HANDLE_OFFSET,
+                    HANDLE_WIDTH, HANDLE_WIDTH);
+        
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setStroke(new BasicStroke(2));
+        g.setColor(lineColor);
+        for (int[] position: handlePosition)
+            g.drawRect(position[0] - HANDLE_OFFSET, position[1] - HANDLE_OFFSET,
+                    HANDLE_WIDTH, HANDLE_WIDTH);
     }
 
     private boolean checkIfInvolved(MouseEvent e,
