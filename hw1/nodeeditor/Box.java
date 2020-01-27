@@ -20,6 +20,9 @@ class Box {
 
     private static final int HANDLE_WIDTH = 7;
     private static final int HANDLE_OFFSET = HANDLE_WIDTH / 2 + 1;
+    private static final double[][] handleParameters = {
+        {0, 0}, {0, 0.5}, {0, 1}, {0.5, 0}, {0.5, 1}, {1, 0}, {1, 0.5}, {1, 1}
+    };
 
     public Box(int startX, int startY, int width, int height,
             String name, LineStyle lineStyle, Color lineColor, Color faceColor) {
@@ -53,17 +56,27 @@ class Box {
         return lineStyle;
     }
 
+    public String getSelectedHandle() {
+        return selectedHandle;
+    }
+
     public boolean isSelected() {
         return selected;
     }
 
-    public void setStart(int startX, int startY) {
+    public void setStartX(int startX) {
         this.startX = startX;
+    }
+
+    public void setStartY(int startY) {
         this.startY = startY;
     }
 
-    public void setSize(int width, int height) {
+    public void setWidth(int width) {
         this.width = width;
+    }
+
+    public void setHeight(int height) {
         this.height = height;
     }
 
@@ -95,7 +108,7 @@ class Box {
         // show box name if any
         if (name != null) {
             int textX, textY;
-            int upwardOffset = 2, downwardOffset = 12;
+            int upwardOffset = 6, downwardOffset = 14;
 
             FontMetrics metrics = g.getFontMetrics();
             int textWidth = metrics.stringWidth(name);
@@ -111,33 +124,29 @@ class Box {
         }
     }
 
+    private int[] computeHandlePosition(double[] params) {
+        int handleX = startX + (int)(params[0] * width);
+        int handleY = startY + (int)(params[1] * height);
+        return new int[]{handleX, handleY};
+    }
+
     public void displayHandles(Graphics g) {
         /* Display the selection handles */
         if (!visible)
             return;
 
-        int[][] handlePosition = {
-            {startX, startY},
-            {startX, startY + height / 2},
-            {startX, startY + height},
-            {startX + width / 2, startY},
-            {startX + width / 2, startY + height},
-            {startX + width, startY},
-            {startX + width, startY + height / 2},
-            {startX + width, startY + height},
-        };
-
-        g.setColor(Color.WHITE);
-        for (int[] position: handlePosition)
-            g.fillRect(position[0] - HANDLE_OFFSET, position[1] - HANDLE_OFFSET,
-                    HANDLE_WIDTH, HANDLE_WIDTH);
-        
         Graphics2D g2 = (Graphics2D) g;
         g2.setStroke(new BasicStroke(2));
-        g.setColor(lineColor);
-        for (int[] position: handlePosition)
-            g.drawRect(position[0] - HANDLE_OFFSET, position[1] - HANDLE_OFFSET,
-                    HANDLE_WIDTH, HANDLE_WIDTH);
+
+        for (double[] params: handleParameters) {
+            int[] handlePosition = computeHandlePosition(params);
+            g.setColor(Color.WHITE);
+            g.fillRect(handlePosition[0] - HANDLE_OFFSET,
+                    handlePosition[1] - HANDLE_OFFSET, HANDLE_WIDTH, HANDLE_WIDTH);
+            g.setColor(lineColor);
+            g.drawRect(handlePosition[0] - HANDLE_OFFSET,
+                    handlePosition[1] - HANDLE_OFFSET, HANDLE_WIDTH, HANDLE_WIDTH);
+        }
     }
 
     private boolean checkIfInvolved(MouseEvent e,
@@ -158,7 +167,22 @@ class Box {
         return checkIfInvolved(e, startX, startY, width, height, tolerance);
     }
 
-    public boolean handleIsInvoledIn(MouseEvent e) {
-        return true;
+    public boolean handleIsInvolvedIn(MouseEvent e) {
+        double[][] edgeHandleParameters = {
+            {0, 0.5}, {0.5, 0}, {0.5, 1}, {1, 0.5}
+        };
+        String[] handleName = {"W", "N", "S", "E"};
+
+        for (int idx = 0; idx < edgeHandleParameters.length; ++idx) {
+            double[] params = edgeHandleParameters[idx];
+            int[] handlePosition = computeHandlePosition(params);
+            int tolerance = 3;
+            if (checkIfInvolved(e, handlePosition[0], handlePosition[1],
+                    HANDLE_WIDTH, HANDLE_WIDTH, tolerance) == true) {
+                selectedHandle = handleName[idx];
+                return true;
+            }
+        }
+        return false;
     }
 }

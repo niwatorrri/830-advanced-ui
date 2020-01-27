@@ -61,15 +61,18 @@ class MyPanel extends JPanel {
     /* Cursor shapes */
     private Cursor DEFAULT_CURSOR = Cursor.getDefaultCursor();
     private Cursor MOVE_CURSOR = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
+    private Cursor X_RESIZE_CURSOR = Cursor.getPredefinedCursor(Cursor.W_RESIZE_CURSOR);
+    private Cursor Y_RESIZE_CURSOR = Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR);
 
     /* User actions */
     private static enum Action { DRAW, MOVE, RESIZE };
     private Action action;
 
     /* Action parameters */
-    private int startX, startY; // mouse press position
+    private int mouseStartX, mouseStartY; // mouse press position
     private int drawX, drawY, drawWidth, drawHeight; // box to draw
-    private int baseX, baseY; 	// base position when moving box
+    private int baseStartX, baseStartY;   // box initial upper-left corner
+    private int baseEndX, baseEndY;       // box initial lower-right corner
     private boolean doneDrawing;
 
     public MyPanel() {
@@ -181,8 +184,18 @@ class MyPanel extends JPanel {
         /* Callbacks for mouse events */
         public void mousePressed(MouseEvent e) {
             /* Mouse pressed event */
-            startX = e.getX();
-            startY = e.getY();
+            mouseStartX = e.getX();
+            mouseStartY = e.getY();
+
+            // determine user action: resize
+            if (selectedBox != null && selectedBox.handleIsInvolvedIn(e)) {
+                action = Action.RESIZE;
+                baseStartX = selectedBox.getStartX();
+                baseStartY = selectedBox.getStartY();
+                baseEndX = baseStartX + selectedBox.getWidth();
+                baseEndY = baseStartY + selectedBox.getHeight();
+                return;
+            }
 
             // determine user action: draw or move
             action = Action.DRAW;
@@ -191,8 +204,8 @@ class MyPanel extends JPanel {
                 if (box.isInvolvedIn(e)) {
                     if (box.isSelected()) {
                         action = Action.MOVE;
-                        baseX = box.getStartX();
-                        baseY = box.getStartY();
+                        baseStartX = box.getStartX();
+                        baseStartY = box.getStartY();
                     }
                     break;
                 }
@@ -211,6 +224,8 @@ class MyPanel extends JPanel {
                 updateRectangleForDraw(e);
             if (action == Action.MOVE)
                 updateRectangleForMove(e);
+            if (action == Action.RESIZE)
+                updateRectangleForResize(e);
             repaint();
         }
 
@@ -228,6 +243,7 @@ class MyPanel extends JPanel {
                 }
                 repaint();
             }
+            checkCursor(e);
         }
 
         public void mouseClicked(MouseEvent e) {
@@ -246,7 +262,7 @@ class MyPanel extends JPanel {
                 if (box.isInvolvedIn(e)) {
                     updateSelectedBox(box);
                     updateSelectedLineStyle(box.getLineStyle());
-                    setCursor(MOVE_CURSOR);
+                    checkCursor(e);
                     break;
                 }
             }
@@ -257,6 +273,24 @@ class MyPanel extends JPanel {
 
         public void mouseMoved(MouseEvent e) {
             /* Mouse moved event */
+            checkCursor(e);
+        }
+
+        private void checkCursor(MouseEvent e) {
+            // determine cursor shape: resize
+            if (selectedBox != null && selectedBox.handleIsInvolvedIn(e)) {
+                switch (selectedBox.getSelectedHandle()) {
+                    case "N":
+                    case "S":
+                        setCursor(Y_RESIZE_CURSOR);
+                        return;
+                    case "W":
+                    case "E":
+                        setCursor(X_RESIZE_CURSOR);
+                        return;
+                }
+            }
+
             // determine cursor shape: default or move
             Cursor currentCursor = DEFAULT_CURSOR;
             for (int idx = boxes.size() - 1; idx >= 0; --idx) {
@@ -298,10 +332,10 @@ class MyPanel extends JPanel {
 
         private void updateRectangleForDraw(MouseEvent e) {
             // find new box coordinates
-            int oneX = Math.min(startX, e.getX());
-            int oneY = Math.min(startY, e.getY());
-            int anotherX = Math.max(startX, e.getX());
-            int anotherY = Math.max(startY, e.getY());
+            int oneX = Math.min(mouseStartX, e.getX());
+            int oneY = Math.min(mouseStartY, e.getY());
+            int anotherX = Math.max(mouseStartX, e.getX());
+            int anotherY = Math.max(mouseStartY, e.getY());
 
             // clip the box within the region
             drawX = clipX(oneX, 0);
@@ -312,14 +346,45 @@ class MyPanel extends JPanel {
 
         private void updateRectangleForMove(MouseEvent e) {
             // find new coordinates
-            int newX = baseX + (e.getX() - startX);
-            int newY = baseY + (e.getY() - startY);
+            int newX = baseStartX + (e.getX() - mouseStartX);
+            int newY = baseStartY + (e.getY() - mouseStartY);
 
             // restrict the box within the region
-            selectedBox.setStart(
-                clipX(newX, selectedBox.getWidth()),
-                clipY(newY, selectedBox.getHeight())
-            );
+            assert selectedBox != null;
+            selectedBox.setStartX( clipX(newX, selectedBox.getWidth()) );
+            selectedBox.setStartY( clipY(newY, selectedBox.getHeight()) );
+        }
+
+        private void updateRectangleForResize(MouseEvent e) {
+            // resize the selected rectangle
+            assert selectedBox != null;
+            int mouseX = e.getX(), mouseY = e.getY();
+            int newX, newY, newWidth, newHeight, base;
+            String handle = selectedBox.getSelectedHandle();
+
+            // resize in the Y direction
+            if (handle == "N" || handle == "S") {
+                if (handle == "N")
+                    base = baseEndY;
+                else
+                    base = baseStartY;
+                newY = clipY( Math.min(base, mouseY), 0 );
+                newHeight = Math.abs( clipY(mouseY, 0) - base );
+                selectedBox.setStartY(newY);
+                selectedBox.setHeight(newHeight);
+            }
+
+            // resize in the X direction
+            if (handle == "W" || handle == "E") {
+                if (handle == "W")
+                    base = baseEndX;
+                else
+                    base = baseStartX;
+                newX = clipX( Math.min(base, mouseX), 0 );
+                newWidth = Math.abs( clipX(mouseX, 0) - base );
+                selectedBox.setStartX(newX);
+                selectedBox.setWidth(newWidth);
+            }
         }
     }
 
