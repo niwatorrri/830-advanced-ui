@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 
 class LineStyle {
+    /* LineStyle class */
     private Stroke lineStyle;
     private int startX, startY, endX, endY; // position displayed on the panel
     private boolean selected = false;

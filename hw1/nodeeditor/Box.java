@@ -8,6 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 
 class Box {
+    /* Box class */
     private int startX, startY, width, height;
     private String name;
     private LineStyle lineStyle;
@@ -21,7 +22,9 @@ class Box {
     private static final int HANDLE_WIDTH = 7;
     private static final int HANDLE_OFFSET = HANDLE_WIDTH / 2 + 1;
     private static final double[][] handleParameters = {
-        {0, 0}, {0, 0.5}, {0, 1}, {0.5, 0}, {0.5, 1}, {1, 0}, {1, 0.5}, {1, 1}
+        {0, 0}, {0, 0.5}, {0, 1}, {0.5, 0}, {0.5, 1}, {1, 0}, {1, 0.5}, {1, 1} };
+    private static final String[] handleName = {
+        "NW", "W", "SW", "N", "S", "NE", "E", "SE"
     };
 
     public Box(int startX, int startY, int width, int height,
@@ -125,6 +128,7 @@ class Box {
     }
 
     private int[] computeHandlePosition(double[] params) {
+        // compute handle position given parameters
         int handleX = startX + (int)(params[0] * width);
         int handleY = startY + (int)(params[1] * height);
         return new int[]{handleX, handleY};
@@ -168,16 +172,14 @@ class Box {
     }
 
     public boolean handleIsInvolvedIn(MouseEvent e) {
-        double[][] edgeHandleParameters = {
-            {0, 0.5}, {0.5, 0}, {0.5, 1}, {1, 0.5}
-        };
-        String[] handleName = {"W", "N", "S", "E"};
-
-        for (int idx = 0; idx < edgeHandleParameters.length; ++idx) {
-            double[] params = edgeHandleParameters[idx];
+        /* Check if one of the handles is involved in a mouse event */
+        for (int idx = 0; idx < handleParameters.length; ++idx) {
+            double[] params = handleParameters[idx];
             int[] handlePosition = computeHandlePosition(params);
             int tolerance = 3;
-            if (checkIfInvolved(e, handlePosition[0], handlePosition[1],
+
+            if (checkIfInvolved(e, handlePosition[0] - HANDLE_OFFSET,
+                    handlePosition[1] - HANDLE_OFFSET,
                     HANDLE_WIDTH, HANDLE_WIDTH, tolerance) == true) {
                 selectedHandle = handleName[idx];
                 return true;

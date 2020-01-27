@@ -59,10 +59,8 @@ class MyPanel extends JPanel {
     private Color selectedFaceColor = Color.WHITE;
 
     /* Cursor shapes */
-    private Cursor DEFAULT_CURSOR = Cursor.getDefaultCursor();
-    private Cursor MOVE_CURSOR = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
-    private Cursor X_RESIZE_CURSOR = Cursor.getPredefinedCursor(Cursor.W_RESIZE_CURSOR);
-    private Cursor Y_RESIZE_CURSOR = Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR);
+    private static Cursor DEFAULT_CURSOR = Cursor.getDefaultCursor();
+    private static Cursor MOVE_CURSOR = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 
     /* User actions */
     private static enum Action { DRAW, MOVE, RESIZE };
@@ -221,18 +219,18 @@ class MyPanel extends JPanel {
         public void mouseDragged(MouseEvent e) {
             /* Mouse dragged event */
             if (action == Action.DRAW)
-                updateRectangleForDraw(e);
+                updateBoxForDraw(e);
             if (action == Action.MOVE)
-                updateRectangleForMove(e);
+                updateBoxForMove(e);
             if (action == Action.RESIZE)
-                updateRectangleForResize(e);
+                updateBoxForResize(e);
             repaint();
         }
 
         public void mouseReleased(MouseEvent e) {
             /* Mouse released event */
             if (action == Action.DRAW) {
-                updateRectangleForDraw(e);
+                updateBoxForDraw(e);
                 doneDrawing = true;
 
                 // add the new drawn box to the box list
@@ -279,16 +277,8 @@ class MyPanel extends JPanel {
         private void checkCursor(MouseEvent e) {
             // determine cursor shape: resize
             if (selectedBox != null && selectedBox.handleIsInvolvedIn(e)) {
-                switch (selectedBox.getSelectedHandle()) {
-                    case "N":
-                    case "S":
-                        setCursor(Y_RESIZE_CURSOR);
-                        return;
-                    case "W":
-                    case "E":
-                        setCursor(X_RESIZE_CURSOR);
-                        return;
-                }
+                checkResizeCursor(selectedBox.getSelectedHandle());
+                return;
             }
 
             // determine cursor shape: default or move
@@ -302,6 +292,22 @@ class MyPanel extends JPanel {
                 }
             }
             setCursor(currentCursor);
+        }
+
+        private void checkResizeCursor(String handle) {
+            // set appropriate cursor shape according to the handle
+            if (handle == "N" || handle == "S")
+                setCursor(Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
+            else if (handle == "W" || handle == "E")
+                setCursor(Cursor.getPredefinedCursor(Cursor.W_RESIZE_CURSOR));
+            else if (handle == "NW")
+                setCursor(Cursor.getPredefinedCursor(Cursor.NW_RESIZE_CURSOR));
+            else if (handle == "NE")
+                setCursor(Cursor.getPredefinedCursor(Cursor.NE_RESIZE_CURSOR));
+            else if (handle == "SW")
+                setCursor(Cursor.getPredefinedCursor(Cursor.SW_RESIZE_CURSOR));
+            else if (handle == "SE")
+                setCursor(Cursor.getPredefinedCursor(Cursor.SE_RESIZE_CURSOR));
         }
 
         private void updateSelectedBox(Box box) {
@@ -330,8 +336,8 @@ class MyPanel extends JPanel {
             return Math.min(Math.max(y, 0), totalHeight - height);
         }
 
-        private void updateRectangleForDraw(MouseEvent e) {
-            // find new box coordinates
+        private void updateBoxForDraw(MouseEvent e) {
+            /* Update the box being drawn */
             int oneX = Math.min(mouseStartX, e.getX());
             int oneY = Math.min(mouseStartY, e.getY());
             int anotherX = Math.max(mouseStartX, e.getX());
@@ -344,8 +350,8 @@ class MyPanel extends JPanel {
             drawHeight = clipY(anotherY, 0) - drawY;
         }
 
-        private void updateRectangleForMove(MouseEvent e) {
-            // find new coordinates
+        private void updateBoxForMove(MouseEvent e) {
+            /* Move the selected box to the specified location */
             int newX = baseStartX + (e.getX() - mouseStartX);
             int newY = baseStartY + (e.getY() - mouseStartY);
 
@@ -355,16 +361,16 @@ class MyPanel extends JPanel {
             selectedBox.setStartY( clipY(newY, selectedBox.getHeight()) );
         }
 
-        private void updateRectangleForResize(MouseEvent e) {
-            // resize the selected rectangle
+        private void updateBoxForResize(MouseEvent e) {
+            /* Resize the selected box */
             assert selectedBox != null;
             int mouseX = e.getX(), mouseY = e.getY();
             int newX, newY, newWidth, newHeight, base;
             String handle = selectedBox.getSelectedHandle();
 
             // resize in the Y direction
-            if (handle == "N" || handle == "S") {
-                if (handle == "N")
+            if (handle.contains("N") || handle.contains("S")) {
+                if (handle.contains("N"))
                     base = baseEndY;
                 else
                     base = baseStartY;
@@ -375,8 +381,8 @@ class MyPanel extends JPanel {
             }
 
             // resize in the X direction
-            if (handle == "W" || handle == "E") {
-                if (handle == "W")
+            if (handle.contains("W") || handle.contains("E")) {
+                if (handle.contains("W"))
                     base = baseEndX;
                 else
                     base = baseStartX;
@@ -403,6 +409,7 @@ class MyPanel extends JPanel {
         g.fillRect(colorX, colorY[0], colorWidth, colorWidth);
         g.setColor(selectedFaceColor);
         g.fillRect(colorX, colorY[1], colorWidth, colorWidth);
+
         g.setColor(Color.BLACK);
         g.drawRect(colorX, colorY[0], colorWidth, colorWidth);
         g.drawRect(colorX, colorY[1], colorWidth, colorWidth);
