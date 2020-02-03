@@ -41,6 +41,7 @@ public class NodeEditor {
 
 class MyPanel extends JPanel {
     /* MyPanel class */
+    private static final long serialVersionUID = 1L;
 
     /* Panel parameters */
     private int totalWidth = 800, totalHeight = 400;
