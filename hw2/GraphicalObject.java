@@ -1,5 +1,4 @@
 import java.awt.*;
-import java.awt.geom.AffineTransform;
 
 public interface GraphicalObject {
 	public void draw(Graphics2D graphics, Shape clipShape);

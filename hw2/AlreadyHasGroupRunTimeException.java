@@ -1,13 +1,11 @@
-
 public class AlreadyHasGroupRunTimeException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 	
-	public AlreadyHasGroupRunTimeException (String message) 
-	{
+	public AlreadyHasGroupRunTimeException(String message) {
 		super(message);
 	}
-	public AlreadyHasGroupRunTimeException () 
-	{
+	
+	public AlreadyHasGroupRunTimeException() {
 		super();
 	}
 }
