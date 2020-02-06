@@ -6,7 +6,9 @@ public class SimpleGroup implements Group {
     private Group group = null;
     private ArrayList<GraphicalObject> children;
 
-    /* Constructors */
+    /**
+     * Constructors
+     */
     public SimpleGroup(int x, int y, int width, int height) {
         this.x = x;
         this.y = y;
@@ -16,11 +18,12 @@ public class SimpleGroup implements Group {
     }
 
     public SimpleGroup() {
-        // TODO: change params
-        this(0, 0, 10, 10);
+        this(0, 0, 200, 200);
     }
 
-    /* Getters and setters */
+    /**
+     * Getters and setters
+     */
     public int getX() {
         return this.x;
     }
@@ -53,21 +56,23 @@ public class SimpleGroup implements Group {
         this.height = height;
     }
 
-    /* Methods defined in the GraphicalObject interface */
+    /**
+     * Methods defined in the GraphicalObject interface
+     */
     public void draw(Graphics2D graphics, Shape clipShape) {
-        for (GraphicalObject object: children) {
-            object.draw(graphics, clipShape);
+        graphics.translate(x, y); // TODO: ?
+        for (GraphicalObject child: children) {
+            child.draw(graphics, getBoundingBox());
         }
     }
 
     public BoundaryRectangle getBoundingBox() {
-        // TODO: compute accurately
         return new BoundaryRectangle(x, y, width, height);
     }
 
     public void moveTo(int x, int y) {
-        this.setX(x);
-        this.setY(y);
+        this.x = x;
+        this.y = y;
     }
 
     public Group getGroup() {
@@ -75,21 +80,31 @@ public class SimpleGroup implements Group {
     }
 
     public void setGroup(Group group) {
+        Point pt = new Point(x, y);
+        if (group != null) { // TODO: ?
+            pt = group.parentToChild(pt);
+        } else {
+            pt = this.group.childToParent(pt);
+        }
+        this.x = pt.x;
+        this.y = pt.y;
         this.group = group;
     }
 
     public boolean contains(int x, int y) {
-        // TODO: need to check correctness
         return getBoundingBox().contains(x, y);
     }
 
-    /* Methods defined in the Group interface */
+    /**
+     * Methods defined in the Group interface
+     */
     public void addChild(GraphicalObject child) {
         // TODO: group already has object?
-        if (child.getGroup() == null) {
+        Group childGroup = child.getGroup();
+        if (childGroup == null) {
             children.add(child);
             child.setGroup(this);
-        } else {
+        } else if (childGroup != this) {
             throw new RuntimeException("Object is already in a group");
         }
     }
@@ -103,27 +118,37 @@ public class SimpleGroup implements Group {
         if (children.remove(child)) {
             children.add(child);
         } else {
-            throw new RuntimeException("Object is not in group");
+            throw new RuntimeException("Object is not in the group");
         }
     }
 
     public void resizeToChildren() {
-
+        // TODO: correctness?
+        int newWidth = width, newHeight = height;
+        for (GraphicalObject child: children) {
+            Rectangle box = child.getBoundingBox();
+            newWidth = Math.max(newWidth, (int)box.getMaxX());
+            newHeight = Math.max(newHeight, (int)box.getMaxY());
+        }
+        this.width = newWidth;
+        this.height = newHeight;
     }
 
     public ArrayList<GraphicalObject> getChildren() {
-        return null;
+        ArrayList<GraphicalObject> childrenCopy
+            = new ArrayList<GraphicalObject>(children);
+        return childrenCopy;
     }
 
     public Point parentToChild(Point pt) {
-        int childX = (int)pt.getX() - x;
-        int childY = (int)pt.getY() - y;
+        int childX = pt.x - x;
+        int childY = pt.y - y;
         return new Point(childX, childY);
     }
 
     public Point childToParent(Point pt) {
-        int parentX = (int)pt.getX() + x;
-        int parentY = (int)pt.getY() + y;
+        int parentX = pt.x + x;
+        int parentY = pt.y + y;
         return new Point(parentX, parentY);
     }
 }

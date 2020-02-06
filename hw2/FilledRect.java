@@ -1,26 +1,23 @@
 import java.awt.*;
 
-public class OutlineRect implements GraphicalObject {
+public class FilledRect implements GraphicalObject {
     private int x, y, width, height;
     private Color color;
-    private int lineThickness;
     private Group group = null;
 
     /**
      * Constructors
      */
-    public OutlineRect(int x, int y, int width, int height,
-            Color color, int lineThickness) {
+    public FilledRect(int x, int y, int width, int height, Color color) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
         this.color = color;
-        this.lineThickness = lineThickness;
     }
 
-    public OutlineRect() {
-        this(5, 5, 10, 10, Color.BLACK, 1);
+    public FilledRect() {
+        this(5, 5, 10, 10, Color.RED);
     }
 
     /**
@@ -66,30 +63,17 @@ public class OutlineRect implements GraphicalObject {
         this.color = color;
     }
 
-    public int getLineThickness() {
-        return this.lineThickness;
-    }
-
-    public void setLineThickness(int lineThickness) {
-        this.lineThickness = lineThickness;
-    }
-
     /**
      * Methods defined in the GraphicalObject interface
      */
     public void draw(Graphics2D graphics, Shape clipShape) {
         graphics.setColor(color);
-        graphics.setStroke(new BasicStroke(lineThickness));
         graphics.setClip(clipShape);
-        graphics.drawRect(x, y, width - 1, height - 1);
+        graphics.fillRect(x, y, width, height);
     }
 
     public BoundaryRectangle getBoundingBox() {
-        int boxX = x - lineThickness / 2;
-        int boxY = y - lineThickness / 2;
-        int boxWidth = width + lineThickness - 1;
-        int boxHeight = height + lineThickness - 1;
-        return new BoundaryRectangle(boxX, boxY, boxWidth, boxHeight);
+        return new BoundaryRectangle(x, y, width, height);
     }
 
     public void moveTo(int x, int y) {

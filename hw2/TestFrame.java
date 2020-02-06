@@ -62,7 +62,7 @@ public class TestFrame extends JFrame implements Group {
 
 	public void redraw(GraphicalObject gobj) {
 		Graphics2D g = (Graphics2D) buffer.getGraphics();
-		BoundaryRectangle r = new BoundaryRectangle(0,0, getWidth(), getHeight());
+		BoundaryRectangle r = new BoundaryRectangle(0, 0, getWidth(), getHeight());
 		g.setColor(canvas.getBackground());
 		g.fill(r);
 		gobj.draw(g, r);

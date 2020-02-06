@@ -21,7 +21,7 @@ public class TestSimpleGroup extends TestFrame {
 		}
 
 		println("creating topGroup");
-		Group topGroup = new SimpleGroup (0,0,200, 200);
+		Group topGroup = new SimpleGroup (0, 0, 200, 200);
 		addChild(topGroup);
 
 		println("creating black frame");
@@ -32,8 +32,8 @@ public class TestSimpleGroup extends TestFrame {
 		topGroup.addChild(group);
 		
 		println("creating 3 Rects in SimpleGroup");
-		group.addChild(new FilledRect(1,1, 40, 20, Color.red));
-		group.addChild(new FilledRect(1,10, 20, 40, Color.green));
+		group.addChild(new FilledRect(1, 1, 40, 20, Color.red));
+		group.addChild(new FilledRect(1, 10, 20, 40, Color.green));
 		group.addChild(new FilledRect(10, 30, 50, 50, Color.yellow));
 		redraw(topGroup);
 		pause();
