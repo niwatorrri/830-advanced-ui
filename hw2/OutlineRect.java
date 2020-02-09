@@ -20,7 +20,7 @@ public class OutlineRect implements GraphicalObject {
     }
 
     public OutlineRect() {
-        this(5, 5, 10, 10, Color.BLACK, 1);
+        this(10, 10, 10, 10, Color.BLACK, 1);
     }
 
     /**
@@ -102,14 +102,6 @@ public class OutlineRect implements GraphicalObject {
     }
 
     public void setGroup(Group group) {
-        Point pt = new Point(x, y);
-        if (group != null) {
-            pt = group.parentToChild(pt);
-        } else { // TODO: ?
-            pt = this.group.childToParent(pt);
-        }
-        this.x = pt.x;
-        this.y = pt.y;
         this.group = group;
     }
 
