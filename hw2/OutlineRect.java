@@ -78,10 +78,14 @@ public class OutlineRect implements GraphicalObject {
      * Methods defined in the GraphicalObject interface
      */
     public void draw(Graphics2D graphics, Shape clipShape) {
+        Shape oldClip = graphics.getClip();
+        graphics.setClip(clipShape);
+
         graphics.setColor(color);
         graphics.setStroke(new BasicStroke(lineThickness));
-        graphics.setClip(clipShape);
         graphics.drawRect(x, y, width - 1, height - 1);
+        
+        graphics.setClip(oldClip);
     }
 
     public BoundaryRectangle getBoundingBox() {

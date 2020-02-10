@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 
 public class SimpleGroup implements Group {
@@ -60,10 +61,16 @@ public class SimpleGroup implements Group {
      * Methods defined in the GraphicalObject interface
      */
     public void draw(Graphics2D graphics, Shape clipShape) {
-        graphics.translate(x, y); // TODO: ?
+        AffineTransform transform = new AffineTransform();
+        transform.translate(-x, -y);
+        Shape commonClipArea = getBoundingBox().intersection(clipShape.getBounds());
+        Shape childClipShape = transform.createTransformedShape(commonClipArea);
+
+        graphics.translate(x, y);
         for (GraphicalObject child: children) {
-            child.draw(graphics, getBoundingBox());
+            child.draw(graphics, childClipShape);
         }
+        graphics.translate(-x, -y);
     }
 
     public BoundaryRectangle getBoundingBox() {
@@ -80,14 +87,6 @@ public class SimpleGroup implements Group {
     }
 
     public void setGroup(Group group) {
-        Point pt = new Point(x, y);
-        if (group != null) { // TODO: ?
-            pt = group.parentToChild(pt);
-        } else {
-            pt = this.group.childToParent(pt);
-        }
-        this.x = pt.x;
-        this.y = pt.y;
         this.group = group;
     }
 
@@ -99,13 +98,12 @@ public class SimpleGroup implements Group {
      * Methods defined in the Group interface
      */
     public void addChild(GraphicalObject child) {
-        // TODO: group already has object?
         Group childGroup = child.getGroup();
-        if (childGroup == null) {
+        if (childGroup != null) {
+            throw new RuntimeException("Object is already in a group");
+        } else {
             children.add(child);
             child.setGroup(this);
-        } else if (childGroup != this) {
-            throw new RuntimeException("Object is already in a group");
         }
     }
 
@@ -123,8 +121,7 @@ public class SimpleGroup implements Group {
     }
 
     public void resizeToChildren() {
-        // TODO: correctness?
-        int newWidth = width, newHeight = height;
+        int newWidth = 0, newHeight = 0;
         for (GraphicalObject child: children) {
             Rectangle box = child.getBoundingBox();
             newWidth = Math.max(newWidth, (int)box.getMaxX());

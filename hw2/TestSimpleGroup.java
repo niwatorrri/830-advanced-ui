@@ -21,7 +21,7 @@ public class TestSimpleGroup extends TestFrame {
 		}
 
 		println("creating topGroup");
-		Group topGroup = new SimpleGroup (0, 0, 200, 200);
+		Group topGroup = new SimpleGroup(0, 0, 200, 200);
 		addChild(topGroup);
 
 		println("creating black frame");
@@ -48,15 +48,14 @@ public class TestSimpleGroup extends TestFrame {
 		redraw(topGroup);
 		pause();
 		
-		println("creating subgroup at 100,20 with rectangles in it");
+		println("creating subgroup at (100, 20) with rectangles in it");
 		Group subgroup = new SimpleGroup(100, 20, 50, 50);
 		group.addChild(subgroup);
 		subgroup.addChild(new FilledRect(0, 0, 10, 20, Color.blue));
-		subgroup.addChild(new FilledRect(5,10, 20, 20, Color.cyan));
+		subgroup.addChild(new FilledRect(5, 10, 20, 20, Color.cyan));
 		subgroup.addChild(new FilledRect(15, 20, 50, 50, Color.orange));
 		redraw(topGroup);
 		pause();
-
 
 		println("creating Rects at random places");
 		GraphicalObject[] objects = new GraphicalObject[nObjects];
@@ -70,7 +69,6 @@ public class TestSimpleGroup extends TestFrame {
 				e.printStackTrace();
 			}
 		}
-
 		redraw(topGroup);
 		pause();
 
@@ -84,5 +82,4 @@ public class TestSimpleGroup extends TestFrame {
 			sleep(500);
 		}
 	}
-
 }

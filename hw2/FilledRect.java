@@ -17,7 +17,7 @@ public class FilledRect implements GraphicalObject {
     }
 
     public FilledRect() {
-        this(5, 5, 10, 10, Color.RED);
+        this(10, 10, 10, 10, Color.RED);
     }
 
     /**
@@ -67,9 +67,13 @@ public class FilledRect implements GraphicalObject {
      * Methods defined in the GraphicalObject interface
      */
     public void draw(Graphics2D graphics, Shape clipShape) {
-        graphics.setColor(color);
+        Shape oldClip = graphics.getClip();
         graphics.setClip(clipShape);
+
+        graphics.setColor(color);
         graphics.fillRect(x, y, width, height);
+
+        graphics.setClip(oldClip);
     }
 
     public BoundaryRectangle getBoundingBox() {
@@ -86,14 +90,6 @@ public class FilledRect implements GraphicalObject {
     }
 
     public void setGroup(Group group) {
-        Point pt = new Point(x, y);
-        if (group != null) {
-            pt = group.parentToChild(pt);
-        } else { // TODO: ?
-            pt = this.group.childToParent(pt);
-        }
-        this.x = pt.x;
-        this.y = pt.y;
         this.group = group;
     }
 
