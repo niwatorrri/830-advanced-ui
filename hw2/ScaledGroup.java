@@ -103,9 +103,10 @@ public class ScaledGroup implements Group {
     }
 
     public BoundaryRectangle getBoundingBox() {
-        return new BoundaryRectangle(x, y,
-            (int) (width * scaleX),
-            (int) (height * scaleY)
+        return new BoundaryRectangle(
+            x, y,
+            width * scaleX,
+            height * scaleY
         );
     }
 
@@ -153,7 +154,6 @@ public class ScaledGroup implements Group {
     }
 
     public void resizeToChildren() {
-        // TODO
         int newWidth = 0, newHeight = 0;
         for (GraphicalObject child: children) {
             Rectangle box = child.getBoundingBox();
@@ -171,17 +171,14 @@ public class ScaledGroup implements Group {
     }
 
     public Point parentToChild(Point pt) {
-        // TODO
-
-        int childX = pt.x - x;
-        int childY = pt.y - y;
+        int childX = (int) ((pt.x - x) / scaleX);
+        int childY = (int) ((pt.y - y) / scaleY);
         return new Point(childX, childY);
     }
 
     public Point childToParent(Point pt) {
-        // TODO
-        int parentX = pt.x + x;
-        int parentY = pt.y + y;
+        int parentX = (int) (pt.x * scaleX + x);
+        int parentY = (int) (pt.y * scaleY + y);
         return new Point(parentX, parentY);
     }
 }

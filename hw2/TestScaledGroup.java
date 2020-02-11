@@ -15,7 +15,7 @@ public class TestScaledGroup extends TestFrame {
 		Group topGroup = new SimpleGroup(0, 0, 500, 200);
 		addChild(topGroup);
 		
-		int nObjects = 5;
+		int nObjects = 4;
 		try {
 			nObjects = Integer.parseInt(args[0]);
 			println("nObjects = " + nObjects);
@@ -32,16 +32,13 @@ public class TestScaledGroup extends TestFrame {
 		topGroup.addChild(group);
 
 		println("creating random OutlineRects");
-		GraphicalObject[] objects = new GraphicalObject[nObjects];
+		OutlineRect[] objects = new OutlineRect[nObjects];
 		Color[] colors = { Color.black, Color.red, Color.blue };
 		for (int i = 0; i < nObjects; ++i) {
 			objects[i] = new OutlineRect(random(180), random(180), 30 + random(20),
 					30 + random(20), (Color) random(colors), 3);
 			group.addChild(objects[i]);
-        }
-		Graphics2D g = (Graphics2D) buffer.getGraphics();
-		group.addChild(new Text(g, "going", 100, 100, new Font("Monospaced", Font.PLAIN,
-                10), Color.black));
+		}
         redraw(topGroup);
 		pause();
 
@@ -67,13 +64,22 @@ public class TestScaledGroup extends TestFrame {
         pause();
 
         println("nesting ScaledGroup: should be back to normal");
-        ScaledGroup highGroup = new ScaledGroup(10, 10, 1000, 200, 0.5, 1.0);
+        ScaledGroup highGroup = new ScaledGroup(10, 10, 480, 180, 0.5, 1.0);
         topGroup.addChild(highGroup);
 		topGroup.removeChild(group);
 		highGroup.addChild(group);
 		group.moveTo(0, 0);
 		redraw(topGroup);
-        pause();
+		pause();
+		
+		println("test childToParent: should have no change on top-left corners");
+		for (OutlineRect obj: objects) {
+			group.removeChild(obj);
+			Point loc = group.childToParent(new Point(obj.getX(), obj.getY()));
+			obj.moveTo(loc.x, loc.y);
+			highGroup.addChild(obj);
+		}
+		redraw(topGroup);
 		println("close the window to exit");
 	}
 }
