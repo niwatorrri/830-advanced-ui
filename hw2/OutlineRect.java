@@ -83,17 +83,17 @@ public class OutlineRect implements GraphicalObject {
 
         graphics.setColor(color);
         graphics.setStroke(new BasicStroke(lineThickness));
-        graphics.drawRect(x, y, width - 1, height - 1);
-        
+        graphics.drawRect(
+            x + lineThickness / 2,
+            y + lineThickness / 2,
+            width - lineThickness,
+            height - lineThickness
+        );
         graphics.setClip(oldClip);
     }
 
     public BoundaryRectangle getBoundingBox() {
-        int boxX = x - lineThickness / 2;
-        int boxY = y - lineThickness / 2;
-        int boxWidth = width + lineThickness - 1;
-        int boxHeight = height + lineThickness - 1;
-        return new BoundaryRectangle(boxX, boxY, boxWidth, boxHeight);
+        return new BoundaryRectangle(x, y, width, height);
     }
 
     public void moveTo(int x, int y) {

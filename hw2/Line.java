@@ -82,8 +82,12 @@ public class Line implements GraphicalObject {
         graphics.setClip(clipShape);
 
         graphics.setColor(color);
-        graphics.setStroke(new BasicStroke(lineThickness));
-        graphics.drawLine(x1, y1, x2, y2);
+        graphics.setStroke(new BasicStroke(
+            (float)lineThickness,
+            BasicStroke.CAP_BUTT,   // line cap style
+            BasicStroke.JOIN_ROUND  // end cap style
+        ));
+        graphics.drawLine(x1, y1, x2, y2); // endpoint exclusive
         
         graphics.setClip(oldClip);
     }

@@ -9,7 +9,7 @@ public class TestOutlineRect extends TestFrame {
 
 	public TestOutlineRect(String[] args) {
 		super("TestOutlineRect", 200, 200);
-		int lineThickness = 1;
+		int lineThickness = 3;
 		try {
 			lineThickness = Integer.parseInt(args[0]);
 			println("line thickness = " + lineThickness);
@@ -19,7 +19,7 @@ public class TestOutlineRect extends TestFrame {
 			+ lineThickness + " by default");
 		}
 		println("creating topGroup");
-		Group topGroup = new SimpleGroup (0, 0, 200, 200);
+		Group topGroup = new SimpleGroup(0, 0, 200, 200);
 		addChild(topGroup);
 
 		println("creating OutlineRect");
