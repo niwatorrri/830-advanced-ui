@@ -20,7 +20,7 @@ public class OutlineRect implements GraphicalObject {
     }
 
     public OutlineRect() {
-        this(10, 10, 10, 10, Color.BLACK, 1);
+        this(0, 0, 10, 10, Color.BLACK, 1);
     }
 
     /**

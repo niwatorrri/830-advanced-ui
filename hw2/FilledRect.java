@@ -17,7 +17,7 @@ public class FilledRect implements GraphicalObject {
     }
 
     public FilledRect() {
-        this(10, 10, 10, 10, Color.RED);
+        this(0, 0, 10, 10, Color.RED);
     }
 
     /**

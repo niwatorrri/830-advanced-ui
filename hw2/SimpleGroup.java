@@ -61,11 +61,15 @@ public class SimpleGroup implements Group {
      * Methods defined in the GraphicalObject interface
      */
     public void draw(Graphics2D graphics, Shape clipShape) {
+        // Intersect the clip shape with the group bounding box
+        Shape commonClipArea = getBoundingBox().intersection(clipShape.getBounds());
+
+        // Translate the new clip shape to pass to children
         AffineTransform transform = new AffineTransform();
         transform.translate(-x, -y);
-        Shape commonClipArea = getBoundingBox().intersection(clipShape.getBounds());
         Shape childClipShape = transform.createTransformedShape(commonClipArea);
 
+        // Translate the origin to draw children
         graphics.translate(x, y);
         for (GraphicalObject child: children) {
             child.draw(graphics, childClipShape);

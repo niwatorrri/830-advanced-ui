@@ -13,7 +13,7 @@ public class TestAllObjects extends TestFrame {
 		super("TestAllObjects", 300, 400);
 		
 		println("topGroup");
-		Group topGroup = new SimpleGroup (0,0,300,400);
+		Group topGroup = new SimpleGroup(0, 0, 300, 400);
 		addChild(topGroup);
 
 		println("OutlineRect");
@@ -51,7 +51,7 @@ public class TestAllObjects extends TestFrame {
 				Color.black));
 		topGroup.addChild(new Line(10, 350, 250, 350, Color.black, 1));
 
+		redraw(topGroup);
 		println("close the window to exit");
 	}
-
 }
