@@ -203,7 +203,7 @@ public class TestFrame extends JFrame implements Group {
 	//private int nextID = 0;
 
 	public Image loadImageFully(String filename) throws IOException {
-      /*  from  http://www.exampledepot.com/egs/javax.imageio/BasicImageRead.html */
+	  /* from  http://www.exampledepot.com/egs/javax.imageio/BasicImageRead.html */
         File file = new File(filename);
         Image image = ImageIO.read(file);
         return image;

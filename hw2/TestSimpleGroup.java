@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.util.List;
 
 public class TestSimpleGroup extends TestFrame {
 
@@ -32,11 +33,35 @@ public class TestSimpleGroup extends TestFrame {
 		topGroup.addChild(group);
 		
 		println("creating 3 Rects in SimpleGroup");
-		group.addChild(new FilledRect(1, 1, 40, 20, Color.red));
-		group.addChild(new FilledRect(1, 10, 20, 40, Color.green));
-		group.addChild(new FilledRect(10, 30, 50, 50, Color.yellow));
+		FilledRect r1 = new FilledRect(1, 1, 40, 20, Color.red);
+		FilledRect r2 = new FilledRect(1, 10, 20, 40, Color.green);
+		FilledRect r3 = new FilledRect(10, 30, 50, 50, Color.yellow);
+		group.addChild(r1);
+		group.addChild(r2);
+		group.addChild(r3);
 		redraw(topGroup);
 		pause();
+
+		println("remove one child in SimpleGroup");
+		group.removeChild(r1);
+		redraw(topGroup);
+		pause();
+
+		println("bring a child to front in SimpleGroup");
+		group.bringChildToFront(r2);
+		redraw(topGroup);
+		pause();
+
+		println("move one child from a copy of SimpleGroup");
+		List<GraphicalObject> children = group.getChildren();
+		children.get(0).moveTo(50, 50);
+		redraw(topGroup);
+		pause();
+
+		println("test resizeToChildren of SimpleGroup");
+		System.out.println(group.contains(100, 100)); // true
+		group.resizeToChildren();
+		System.out.println(group.contains(120, 120)); // false
 		
 		println("moving group - rects should move too");
 		group.moveTo(20, 30);
