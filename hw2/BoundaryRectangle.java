@@ -21,6 +21,7 @@ public class BoundaryRectangle extends Rectangle {
 		super();
 	}
 
+	// For easier print
 	public String toString() {
 		return String.format("x=%d, y=%d, width=%d, height=%d",
 			x, y, width, height);
