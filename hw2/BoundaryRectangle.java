@@ -14,6 +14,9 @@ public class BoundaryRectangle extends Rectangle {
 	public BoundaryRectangle(int x, int y, int w, int h) {
 		super(x, y, w, h);
 	}
+	public BoundaryRectangle(double x, double y, double w, double h) {
+		super((int) x, (int) y, (int) Math.ceil(w), (int) Math.ceil(h));
+	}
 	public BoundaryRectangle() {
 		super();
 	}
