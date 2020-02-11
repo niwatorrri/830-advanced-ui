@@ -12,7 +12,7 @@ public class TestLayoutGroup extends TestFrame {
 		super("TestLayoutGroup", 500, 200);
 
 		println("topGroup");
-		Group topGroup = new SimpleGroup (0,0,500, 200);
+		Group topGroup = new SimpleGroup(0, 0, 500, 200);
 		addChild(topGroup);
 		
 		int nObjects = 4;
@@ -28,7 +28,7 @@ public class TestLayoutGroup extends TestFrame {
 		topGroup.addChild(new OutlineRect(9, 9, 481, 181, Color.black, 1));
 
 		println("creating LayoutGroup inside black frame");
-		Group group = new LayoutGroup(10, 10, 480, 180, Group.HORIZONTAL, 0);
+		Group group = new LayoutGroup(10, 10, 480, 180, Group.HORIZONTAL, 5);
 		topGroup.addChild(group);
 
 		println("creating random OutlineRects");
@@ -39,7 +39,6 @@ public class TestLayoutGroup extends TestFrame {
 					30 + random(20), (Color) random(colors), 1 + random(5));
 			group.addChild(objects[i]);
 		}
-
 		redraw(topGroup);
 		pause();
 
@@ -54,7 +53,6 @@ public class TestLayoutGroup extends TestFrame {
 			redraw(topGroup);
 			sleep(1000);
 		}
-
 		pause();
 
 		println("doubling rectangle widths");
@@ -66,5 +64,4 @@ public class TestLayoutGroup extends TestFrame {
 		}
 		println("close the window to exit");
 	}
-
 }

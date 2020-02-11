@@ -107,10 +107,13 @@ public class Line implements GraphicalObject {
     }
 
     public void moveTo(int x, int y) {
-        this.x2 = x2 + x - x1;
-        this.y2 = y2 + y - y1;
-        this.x1 = x;
-        this.y1 = y;
+        BoundaryRectangle boundingBox = getBoundingBox();
+        int topLeftX = boundingBox.x;
+        int topLeftY = boundingBox.y;
+        this.x1 += x - topLeftX;
+        this.x2 += x - topLeftX;
+        this.y1 += y - topLeftY;
+        this.y2 += y - topLeftY;
     }
 
     public Group getGroup() {
