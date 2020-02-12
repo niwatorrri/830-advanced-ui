@@ -11,5 +11,5 @@ public interface Group extends GraphicalObject {
 
 	public static final int HORIZONTAL = 1;
 	public static final int VERTICAL = 2;
-	// maybe use enum but then couldn't have sub-classes with additional values
+	public static final int GRID = 3;
 }

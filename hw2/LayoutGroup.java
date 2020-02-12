@@ -6,11 +6,14 @@ import java.util.ArrayList;
 public class LayoutGroup implements Group {
     private int x, y, width, height;
     private int layout, offset;
+    private int nRows, nColumns;
     private Group group = null;
-    private List<GraphicalObject> children;
+    private List<GraphicalObject> children
+         = new ArrayList<GraphicalObject>();
 
     /**
      * Constructors
+     * Caveat: user calls setLayout but did not provide required attributes
      */
     public LayoutGroup(int x, int y, int width, int height,
             int layout, int offset) {
@@ -20,8 +23,27 @@ public class LayoutGroup implements Group {
         this.height = height;
         this.layout = layout;
         this.offset = offset;
-        children = new ArrayList<GraphicalObject>();
+
         checkIfSupportedLayout(layout);
+        if ((layout != HORIZONTAL) && (layout != VERTICAL)) {
+            throw new RuntimeException("Incorrect constructor");
+        }
+    }
+
+    public LayoutGroup(int x, int y, int width, int height,
+            int layout, int nRows, int nColumns) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.layout = layout;
+        this.nRows = nRows;
+        this.nColumns = nColumns;
+
+        checkIfSupportedLayout(layout);
+        if (layout != GRID) {
+            throw new RuntimeException("Incorrect constructor");
+        }
     }
 
     public LayoutGroup() {
@@ -29,7 +51,7 @@ public class LayoutGroup implements Group {
     }
 
     private void checkIfSupportedLayout(int layout) {
-        if ((layout != HORIZONTAL) && (layout != VERTICAL)) {
+        if ((layout != HORIZONTAL) && (layout != VERTICAL) && (layout != GRID)) {
             throw new RuntimeException("Not supported layout type");
         }
     }
@@ -86,6 +108,22 @@ public class LayoutGroup implements Group {
         this.offset = offset;
     }
 
+    public int getNRows() {
+        return this.nRows;
+    }
+
+    public void setNRows(int nRows) {
+        this.nRows = nRows;
+    }
+
+    public int getNColumns() {
+        return this.nColumns;
+    }
+
+    public void setNColumns(int nColumns) {
+        this.nColumns = nColumns;
+    }
+
     /**
      * Methods defined in the GraphicalObject interface
      */
@@ -101,14 +139,36 @@ public class LayoutGroup implements Group {
         // Translate the origin to draw children
         graphics.translate(x, y);
         int currentPosition = 0;
-        for (GraphicalObject child: children) {
+        int gridWidth = 0, gridHeight = 0;
+        if (layout == GRID) {
+            gridWidth = width / nColumns;
+            gridHeight = height / nRows;
+        }
+
+        for (int idx = 0; idx < children.size(); ++idx) {
+            GraphicalObject child = children.get(idx);
             BoundaryRectangle oldBoundingBox = child.getBoundingBox();
-            if (layout == HORIZONTAL) {
-                child.moveTo(currentPosition, 0);
-                currentPosition += oldBoundingBox.width + offset;
-            } else if (layout == VERTICAL) {
-                child.moveTo(0, currentPosition);
-                currentPosition += oldBoundingBox.height + offset;
+            if ((layout == GRID) && (idx >= nRows * nColumns)) {
+                break;
+            }
+
+            switch (layout) {
+                case HORIZONTAL:
+                    child.moveTo(currentPosition, 0);
+                    currentPosition += oldBoundingBox.width + offset;
+                    break;
+                case VERTICAL:
+                    child.moveTo(0, currentPosition);
+                    currentPosition += oldBoundingBox.height + offset;
+                    break;
+                case GRID:
+                    child.moveTo(
+                        (idx % nColumns) * gridWidth,
+                        (idx / nColumns) * gridHeight
+                    );
+                    break;
+                default:
+                    throw new RuntimeException("Not supported layout type");
             }
             child.draw(graphics, childClipShape);
             child.moveTo(oldBoundingBox.x, oldBoundingBox.y);
@@ -174,6 +234,9 @@ public class LayoutGroup implements Group {
             } else if (layout == VERTICAL) {
                 newHeight += boundingBox.height + offset;
                 newWidth = Math.max(newWidth, boundingBox.width);
+            } else if (layout == GRID) {
+                newWidth = Math.max(newWidth, boundingBox.width * nColumns);
+                newHeight = Math.max(newHeight, boundingBox.height * nRows);
             }
         }
 
