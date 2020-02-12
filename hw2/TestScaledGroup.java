@@ -63,7 +63,7 @@ public class TestScaledGroup extends TestFrame {
         redraw(topGroup);
         pause();
 
-        println("nesting ScaledGroup: should be back to normal");
+        println("nesting ScaledGroup: should return to normal");
         ScaledGroup highGroup = new ScaledGroup(10, 10, 480, 180, 0.5, 1.0);
         topGroup.addChild(highGroup);
 		topGroup.removeChild(group);
@@ -72,11 +72,12 @@ public class TestScaledGroup extends TestFrame {
 		redraw(topGroup);
 		pause();
 		
-		println("test childToParent: should have no change on top-left corners");
+		println("testing childToParent: should have no change in location");
 		for (OutlineRect obj: objects) {
 			group.removeChild(obj);
 			Point loc = group.childToParent(new Point(obj.getX(), obj.getY()));
 			obj.moveTo(loc.x, loc.y);
+			obj.setWidth(obj.getWidth() * 2);
 			highGroup.addChild(obj);
 		}
 		redraw(topGroup);

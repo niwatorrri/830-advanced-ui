@@ -16,7 +16,6 @@ public class TestTestFrame extends TestFrame {
 		println("First Pause");
 		pause();
 		println("drawing a rectangle");
-		pause();
 		drawsomething();
 		println("20 x's with sleep(250) in between");
 		for (int x = 0; x < 20; x ++) {
@@ -28,13 +27,12 @@ public class TestTestFrame extends TestFrame {
 		pause();
 		println("close the window to exit");
 	}
+
 	private class pretendrect implements GraphicalObject {
 		public void draw(Graphics2D graphics, Shape clipRect) {
 			graphics.setStroke(new BasicStroke(3));
 			graphics.setColor(Color.red);
-			graphics.drawRect(1, 1, 7, 7);
-			//graphics.setColor(Color.blue);
-			//graphics.fillRect(0,0,4,4);
+			graphics.drawRect(3, 3, 10, 10);
 		};
 		public BoundaryRectangle getBoundingBox() {return null;};
 		public void moveTo(int x, int y) {};
@@ -43,6 +41,7 @@ public class TestTestFrame extends TestFrame {
 		public boolean contains(int x, int y) {return false;};
 		public pretendrect(){}
 	}
+
 	private void drawsomething() {
 		redraw(new pretendrect());
 	}

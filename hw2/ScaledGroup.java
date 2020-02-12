@@ -82,6 +82,13 @@ public class ScaledGroup implements Group {
      * Methods defined in the GraphicalObject interface
      */
     public void draw(Graphics2D graphics, Shape clipShape) {
+        // Turn on anti-aliasing for aesthetics
+        RenderingHints oldRenderingHints = graphics.getRenderingHints();
+        graphics.setRenderingHint(
+            RenderingHints.KEY_ANTIALIASING,
+            RenderingHints.VALUE_ANTIALIAS_ON
+        );
+
         // Intersect the clip shape with the group bounding box
         Shape commonClipArea = getBoundingBox().intersection(clipShape.getBounds());
 
@@ -99,10 +106,14 @@ public class ScaledGroup implements Group {
         for (GraphicalObject child: children) {
             child.draw(graphics, childClipShape);
         }
+
+        // Restore old graphical attributes
         graphics.setTransform(oldTransform);
+        graphics.setRenderingHints(oldRenderingHints);
     }
 
     public BoundaryRectangle getBoundingBox() {
+        // Relaxed a little bit to count for floating point error
         return new BoundaryRectangle(
             x, y,
             width * scaleX,
