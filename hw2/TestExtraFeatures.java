@@ -37,7 +37,7 @@ public class TestExtraFeatures extends TestFrame {
         LayoutGroup layoutGroup = new LayoutGroup(10, 10, 480, 180, Group.GRID, 3, 3);
         topGroup.addChild(simpleGroup);
 
-        // testing ellipses
+        println("TESTING ELLIPSES");
         println("creating random Ellipses");
         Ellipse[] objects = new Ellipse[nObjects];
         Color[] colors = { Color.black, Color.red, Color.blue };
@@ -67,7 +67,7 @@ public class TestExtraFeatures extends TestFrame {
         redraw(topGroup);
         pause();
 
-        // testing grid layout
+        println("TESTING GRID LAYOUT");
         println("putting children in a 3x3 grid layout group");
         for (Ellipse obj: objects) {
             simpleGroup.removeChild(obj);
