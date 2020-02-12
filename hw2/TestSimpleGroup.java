@@ -52,16 +52,11 @@ public class TestSimpleGroup extends TestFrame {
 		redraw(topGroup);
 		pause();
 
-		println("move one child from a copy of SimpleGroup");
+		println("move one child from a copy of children");
 		List<GraphicalObject> children = group.getChildren();
 		children.get(0).moveTo(50, 50);
 		redraw(topGroup);
 		pause();
-
-		println("test resizeToChildren of SimpleGroup");
-		System.out.println(group.contains(100, 100)); // true
-		group.resizeToChildren();
-		System.out.println(group.contains(120, 120)); // false
 		
 		println("moving group - rects should move too");
 		group.moveTo(20, 30);

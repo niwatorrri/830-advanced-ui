@@ -47,7 +47,7 @@ public class TestOutlineRect extends TestFrame {
 		redraw(topGroup);
 		pause();
 
-		println("moving rectangle with moveTo ()");
+		println("moving rectangle with moveTo()");
 		for (int x = 10; x < 150; x += 30) {
 			for (int y = 10; y < 150; y += 30) {
 				r.moveTo(x, y);
@@ -65,7 +65,7 @@ public class TestOutlineRect extends TestFrame {
 		redraw(topGroup);
 		pause();
 
-		println("moving rectangle with moveTo ()");
+		println("moving rectangle with moveTo()");
 		for (int x = 10; x < 150; x += 30) {
 			for (int y = 10; y < 150; y += 30) {
 				r.moveTo(x, y);

@@ -7,7 +7,8 @@ public class ScaledGroup implements Group {
     private int x, y, width, height;
     private double scaleX, scaleY;
     private Group group = null;
-    private List<GraphicalObject> children;
+    private List<GraphicalObject> children
+        = new ArrayList<GraphicalObject>();
 
     /**
      * Constructors
@@ -20,7 +21,6 @@ public class ScaledGroup implements Group {
         this.height = height;
         this.scaleX = scaleX;
         this.scaleY = scaleY;
-        children = new ArrayList<GraphicalObject>();
     }
 
     public ScaledGroup() {
