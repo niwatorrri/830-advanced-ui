@@ -121,7 +121,7 @@ public class Line implements GraphicalObject {
     }
 
     public void setGroup(Group group) {
-        if (this.group != null) {
+        if (this.group != null && group != null) {
             throw new AlreadyHasGroupRunTimeException();
         }
         this.group = group;

@@ -131,7 +131,7 @@ public class ScaledGroup implements Group {
     }
 
     public void setGroup(Group group) {
-        if (this.group != null) {
+        if (this.group != null && group != null) {
             throw new AlreadyHasGroupRunTimeException();
         }
         this.group = group;
