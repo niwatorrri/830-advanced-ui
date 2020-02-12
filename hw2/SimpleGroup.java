@@ -92,6 +92,9 @@ public class SimpleGroup implements Group {
     }
 
     public void setGroup(Group group) {
+        if (this.group != null) {
+            throw new AlreadyHasGroupRunTimeException();
+        }
         this.group = group;
     }
 
@@ -105,7 +108,7 @@ public class SimpleGroup implements Group {
     public void addChild(GraphicalObject child) {
         Group childGroup = child.getGroup();
         if (childGroup != null) {
-            throw new RuntimeException("Object is already in a group");
+            throw new AlreadyHasGroupRunTimeException();
         } else {
             children.add(child);
             child.setGroup(this);

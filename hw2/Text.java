@@ -126,6 +126,9 @@ public class Text implements GraphicalObject {
     }
 
     public void setGroup(Group group) {
+        if (this.group != null) {
+            throw new AlreadyHasGroupRunTimeException();
+        }
         this.group = group;
     }
 
