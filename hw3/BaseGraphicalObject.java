@@ -34,14 +34,14 @@ public abstract class BaseGraphicalObject implements GraphicalObject {
 
     public int getX() {
         if (xc != null) { // then there is a constraint on x
-            return xc.valueGet();
+            return xc.getValue();
         } else
             return x;
     }
 
     public void setX(int newx) {
         if (xc != null) { // then there is a constraint on x
-            xc.valueSet(newx);
+            xc.setValue(newx);
             x = newx;
         } else
             x = newx;
@@ -62,14 +62,14 @@ public abstract class BaseGraphicalObject implements GraphicalObject {
 
     public int getY() {
         if (yc != null) { // then there is a constraint on y
-            return yc.valueGet();
+            return yc.getValue();
         } else
             return y;
     }
 
     public void setY(int newy) {
         if (yc != null) { // then there is a constraint on y
-            yc.valueSet(newy);
+            yc.setValue(newy);
         } else
             y = newy;
     }

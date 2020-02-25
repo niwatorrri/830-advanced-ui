@@ -6,8 +6,7 @@ import java.util.ArrayList;
 public class SimpleGroup implements Group {
     private int x, y, width, height;
     private Group group = null;
-    private List<GraphicalObject> children
-        = new ArrayList<GraphicalObject>();
+    private List<GraphicalObject> children = new ArrayList<>();
 
     /**
      * Constructors

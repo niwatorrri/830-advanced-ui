@@ -8,8 +8,7 @@ public class LayoutGroup implements Group {
     private int layout, offset;
     private int nRows, nColumns;
     private Group group = null;
-    private List<GraphicalObject> children
-         = new ArrayList<GraphicalObject>();
+    private List<GraphicalObject> children = new ArrayList<>();
 
     /**
      * Constructors

@@ -7,8 +7,7 @@ public class ScaledGroup implements Group {
     private int x, y, width, height;
     private double scaleX, scaleY;
     private Group group = null;
-    private List<GraphicalObject> children
-        = new ArrayList<GraphicalObject>();
+    private List<GraphicalObject> children = new ArrayList<>();
 
     /**
      * Constructors

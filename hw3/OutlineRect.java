@@ -1,10 +1,34 @@
 import java.awt.*;
+import java.util.List;
+import java.util.ArrayList;
+
+import java.lang.reflect.Field;
 
 public class OutlineRect implements GraphicalObject {
     private int x, y, width, height;
     private Color color;
     private int lineThickness;
     private Group group = null;
+
+    // TODO: allow multiple constraints on a member
+    private Constraint<Integer> xConstraint = null;
+    // private Constraint<Integer> yConstraint = null;
+
+    // now keep track of which constraints use my values. This might alternatively
+    // go in an object for the attribute itself.
+    private List<Constraint<?>> xOutConstraints= new ArrayList<>();
+    // private List<Constraint<?>> yOutConstraints= new ArrayList<>();
+
+    // @SuppressWarnings("unchecked")
+    // public <T> T get(String fieldName) {
+    //     try {
+    //         Field field = this.getClass().getDeclaredField(fieldName);
+    //         field.setAccessible(true);
+    //         return (T) field.get(this);
+    //     } catch (NoSuchFieldException | IllegalAccessException e) {
+    //         return null;
+    //     }
+    // }
 
     /**
      * Constructors
@@ -27,11 +51,40 @@ public class OutlineRect implements GraphicalObject {
      * Getters and setters
      */
     public int getX() {
+        if (xConstraint != null) {
+            this.x = xConstraint.getValue();
+        }
         return this.x;
     }
 
+    private <T> void notifyValueChange(List<Constraint<?>> constraints, T value) {
+        for (Constraint<?> constraint: constraints) {
+            if (constraint.getDependencies().contains(this)) {
+                // TODO: do something
+            }
+        }
+    }
+
     public void setX(int x) {
-        this.x = x;
+        if (this.x != x) {
+            this.x = x;
+            if (xConstraint != null) {
+                xConstraint.setValue(x);
+            }
+            notifyValueChange(xOutConstraints, x);
+        }
+    }
+
+    public void setX(Constraint<Integer> constraint) {
+        /*
+         * first probably need to check if there was already a constraint there and
+         * clean up
+         */
+        xConstraint = constraint;
+        /* might need to do something so the constraint is set up properly */
+        /* need to get the value of x somehow */
+        // now tell others my value has changed
+        notifyValueChange(xOutConstraints, x);
     }
 
     public int getY() {
@@ -80,6 +133,9 @@ public class OutlineRect implements GraphicalObject {
     public void draw(Graphics2D graphics, Shape clipShape) {
         Shape oldClip = graphics.getClip();
         graphics.setClip(clipShape);
+
+        int x = getX(), y = getY();
+        // more coming
 
         graphics.setColor(color);
         graphics.setStroke(new BasicStroke(lineThickness));

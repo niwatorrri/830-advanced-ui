@@ -3,6 +3,8 @@ import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 
+import java.lang.reflect.Field;
+
 import javax.swing.*;
 import javax.imageio.*;
 
@@ -132,6 +134,14 @@ public class TestFrame extends JFrame implements Group {
     public Point childToParent(Point pt) {
         return pt;
     }
+
+    // @SuppressWarnings("unchecked")
+    // public <T> T get(String fieldName) 
+    //     throws NoSuchFieldException, IllegalAccessException {
+    //     Field field = this.getClass().getDeclaredField(fieldName);
+    //     field.setAccessible(true);
+    //     return (T) field.get(this);
+    // }
 
     // 
     // Message output
