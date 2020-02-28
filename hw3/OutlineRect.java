@@ -11,7 +11,7 @@ public class OutlineRect implements GraphicalObject {
     private Group group = null;
 
     // TODO: allow multiple constraints on a member
-    public Dependency<Integer> xConstraint = new Dependency<>();
+    private Dependency<Integer> xConstraint = new Dependency<>();
 
     // now keep track of which constraints use my values. This might alternatively
     // go in an object for the attribute itself.
@@ -28,8 +28,6 @@ public class OutlineRect implements GraphicalObject {
         this.height = height;
         this.color = color;
         this.lineThickness = lineThickness;
-
-        // this.xConstraint = new Dependency<>(x);
     }
 
     public OutlineRect() {
@@ -40,24 +38,20 @@ public class OutlineRect implements GraphicalObject {
      * Getters and setters
      */
     public int getX() {
-        System.out.println(this);
-        System.out.println(this.xConstraint.value);
         if (xConstraint.isConstrained()) {
-            System.out.println("before evaluate");
             this.x = xConstraint.evaluate();
         }
         return this.x;
     }
 
     private void notifyValueChange(Dependency<?> constraint) {
-        for (Edge outEdge: constraint.outEdges) {
+        for (Edge outEdge: constraint.getOutEdges()) {
             // Dependency foundDependency = outConstraint.findDependency(this, attribute);
             // if (foundDependency != null) {
             //     foundDependency.markOutOfDate();
             // }
-            System.out.println("one notified");
             outEdge.setPending(true);
-            outEdge.object.markOutOfDate();
+            outEdge.markOutOfDate();
         }
     }
 
@@ -77,14 +71,14 @@ public class OutlineRect implements GraphicalObject {
          * clean up
          */
         xConstraint = constraint;
-        System.out.println("before notify");
         /* might need to do something so the constraint is set up properly */
         /* need to get the value of x somehow */
         // now tell others my value has changed
-        // notifyValueChange(xConstraint);
         xConstraint.markOutOfDate();
-        // notifyValueChange(xConstraint);
-        System.out.println("After notify");
+    }
+
+    public Dependency<Integer> getXConstraint() {
+        return this.xConstraint;
     }
 
     public int getY() {

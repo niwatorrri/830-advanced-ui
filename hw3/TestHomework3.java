@@ -15,20 +15,22 @@ public class TestHomework3 extends TestFrame {
             println("1. creating blue and red rects");
             OutlineRect blueRect = new OutlineRect(0, 0, 50, 80, Color.blue, 5);
             OutlineRect redRect = new OutlineRect(100, 0, 50, 80, Color.red, 1);
-            Group windowgroup = new SimpleGroup(0, 0, 300, 400);
+            OutlineRect blackRect = new OutlineRect(200, 0, 50, 80, Color.black, 1);
+            Group windowGroup = new SimpleGroup(0, 0, 300, 400);
             Group group = new SimpleGroup(0, 0, 300, 400);
-            addChild(windowgroup);
+            addChild(windowGroup);
 
-            windowgroup.addChild(group);
+            windowGroup.addChild(group);
             group.addChild(blueRect);
             group.addChild(redRect);
-            redraw(windowgroup);
+            group.addChild(blackRect);
+            redraw(windowGroup);
 
             println("2. moving blue to 30,30, red shouldn't move");
             pause();
             // blueRect.moveTo(30, 90);
             blueRect.moveTo(150, 0);
-            redraw(windowgroup);
+            redraw(windowGroup);
 
             println("3. adding constraint to red rect to be at right of blue");
             println("     red should move to be at 80,30");
@@ -49,19 +51,26 @@ public class TestHomework3 extends TestFrame {
             //         return dBlueRect.getX() + 50;
             //     }
             // });
-            redRect.setX(new Dependency<Integer>(blueRect.xConstraint) {
+            redRect.setX(new Dependency<Integer>(blueRect.getXConstraint()) {
                 OutlineRect dBlueRect = blueRect;
                 public Integer getValue() {
                     return dBlueRect.getX() + 50;
                 }
             });
+
+            blackRect.setX(new Dependency<Integer>(redRect.getXConstraint()) {
+                OutlineRect dRedRect = redRect;
+                public Integer getValue() {
+                    return dRedRect.getX() + 50;
+                }
+            });
             System.out.println("Redrawing...");
-            redraw(windowgroup);
+            redraw(windowGroup);
 
             println("4. Move Blue, red should move automatically");
             pause();
             blueRect.moveTo(0, 0);
-            redraw(windowgroup);
+            redraw(windowGroup);
 
             // *** Add in some more constraints and tests here to show the range of
             // *** what you can express and the appropriate syntax
