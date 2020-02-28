@@ -1,7 +1,12 @@
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Iterator;
+
 
 public class Constraint<T> extends Dependency<T> {
+    public Constraint() {
+        super();
+    }
     public Constraint(Dependency<?>... dependencies) {
         super(dependencies);
     }
@@ -13,7 +18,10 @@ class Dependency<T> {
     private List<Edge> outEdges = new ArrayList<>();
     private List<Edge> inEdges = new ArrayList<>();
 
+    public Dependency() {}
+
     public Dependency(Dependency<?>... dependencies) {
+        // set up incoming and outgoing edges in the dependency graph
         for (Dependency<?> dependency: dependencies) {
             this.inEdges.add(new Edge(dependency));
             dependency.outEdges.add(new Edge(this));
@@ -32,12 +40,48 @@ class Dependency<T> {
         return this.inEdges;
     }
 
+    public void setOutOfDate(boolean outOfDate) {
+        this.outOfDate = outOfDate;
+    }
+
     public boolean isConstrained() {
         return (inEdges.size() != 0);
     }
 
-    public void setOutOfDate(boolean outOfDate) {
-        this.outOfDate = outOfDate;
+    public void addInEdge(Dependency<?> constraint) {
+        this.inEdges.add(new Edge(constraint));
+    }
+
+    public void addOutEdge(Dependency<?> constraint) {
+        this.outEdges.add(new Edge(constraint));
+    }
+
+    public void updateConstraint(Dependency<T> newConstraint) {
+        for (Edge outEdge: this.outEdges) {
+            Dependency<?> target = outEdge.getObject();
+            Iterator<Edge> iter = target.getInEdges().iterator();
+            while (iter.hasNext()) {
+                if (iter.next().getObject() == this) {
+                    iter.remove();
+                }
+            }
+            target.addInEdge(newConstraint);
+            newConstraint.addOutEdge(target);
+        }
+
+        for (Edge inEdge: this.inEdges) {
+            Dependency<?> dependency = inEdge.getObject();
+            Iterator<Edge> iter = dependency.getOutEdges().iterator();
+            while (iter.hasNext()) {
+                boolean a = iter.next().getObject() == this;
+                if (a) {
+                    iter.remove();
+                }
+                // if (iter.next().getObject() == this) {
+                //     iter.remove();
+                // }
+            }
+        }
     }
 
     public void markOutOfDate() {
@@ -51,23 +95,31 @@ class Dependency<T> {
     }
 
     public T evaluate() {
-        // TODO: detect cycles and support multiway constraints
-        if (this.outOfDate) {
-            this.outOfDate = false;
+        // TODO: detect cycles
+        // deal with constraint conflicts / support multiway constraints
 
-            boolean needReevaluate = false;
+        // consider re-evaluating if out of date
+        if (this.outOfDate) {
+            // check if there are any pending incoming edges
+            boolean anyPending = false;
             for (Edge inEdge: inEdges) {
-                needReevaluate = needReevaluate || inEdge.isPending();
+                anyPending = anyPending || inEdge.isPending();
             }
-            if (needReevaluate) {
+
+            // re-evaluate the constraint
+            if (anyPending) {
                 T newValue = this.getValue();
                 if (newValue != this.value) {
+                    // if value changes, set outgoing edges to be pending
                     this.value = newValue;
                     for (Edge outEdge: outEdges) {
                         outEdge.setPending(true);
                     }
                 }
             }
+            // update outOfDate as the final step
+            // in case user implemented getValue() crashes
+            this.outOfDate = false;
         }
         return this.value;
     }
@@ -80,6 +132,10 @@ class Edge {
     public Edge(Dependency<?> object) {
         this.object = object;
         this.isPending = true;
+    }
+
+    public Dependency<?> getObject() {
+        return this.object;
     }
 
     public boolean isPending() {

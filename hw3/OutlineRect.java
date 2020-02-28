@@ -37,7 +37,8 @@ public class OutlineRect implements GraphicalObject {
         return this.x;
     }
 
-    private void notifyValueChange(Constraint<?> constraint) {
+    private void notifyValueChange(Constraint<?> constraint, boolean selfOutOfDate) {
+        constraint.setOutOfDate(selfOutOfDate);
         for (Edge outEdge: constraint.getOutEdges()) {
             outEdge.setPending(true);
             outEdge.markOutOfDate();
@@ -46,24 +47,24 @@ public class OutlineRect implements GraphicalObject {
 
     public void setX(int x) {
         // TODO: remove original constraint or no-op?
-        // if (xConstraint != null) { // TODO: ?
+        // set the local value and cause  invalidating in a multi-way constraint system
+        // if (xConstraint != null) {
         //     xConstraint.setValue(x);
         // }
         if (this.x != x) {
             this.x = x;
-            notifyValueChange(xConstraint);
+            notifyValueChange(xConstraint, false);
         }
     }
 
     public void setX(Constraint<Integer> constraint) {
-        // remove the constraint in a formula constraint system, or set the local value
-        // and cause dependency invalidating in a multi-way constraint system
+        // remove the constraint in a formula constraint system
         /*
          * first need to check if there was already a constraint
          */
+        xConstraint.updateConstraint(constraint);
         xConstraint = constraint;
-        xConstraint.setOutOfDate(true);
-        notifyValueChange(xConstraint);
+        notifyValueChange(xConstraint, true);
     }
 
     public Constraint<Integer> useX() {
