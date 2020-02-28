@@ -26,36 +26,36 @@ public class TestHomework3 extends TestFrame {
 
             println("2. moving blue to 30,30, red shouldn't move");
             pause();
-            blueRect.moveTo(30, 90);
+            // blueRect.moveTo(30, 90);
+            blueRect.moveTo(150, 0);
             redraw(windowgroup);
 
             println("3. adding constraint to red rect to be at right of blue");
             println("     red should move to be at 80,30");
-            pause();
 
-            // redRect.setX(new Constraint<Integer>(
-            //     redRect.getX(),
-            //     blueRect        // dependencies
-            // ) {
-            //     public Integer getValue() {
-            //         return ((OutlineRect) dependencies.get(0)).getX() + 50;
-            //     }
-            // });
-
-            redRect.setX(new Constraint<Integer>() {
-                private OutlineRect dependentBlueRect = blueRect;
-                public Integer getValue() {
-                    return dependentBlueRect.getX() + 50;
-                }
-            });
             /*
              * something like the following: Constraint<Integer> xc = new
              * Constraint<Integer> ( **New constraint = blueRect's right side ** );
-             * redRect.setX ( xc );
-             * Constraint<Integer> yc = new Constraint<Integer> ( **New
-             * constraint = blueRect's Y ** );
-             * redRect.setY ( yc );
+             * redRect.setX ( xc ); Constraint<Integer> yc = new Constraint<Integer> ( **New
+             * constraint = blueRect's Y ** ); redRect.setY ( yc );
              */
+            
+            // redRect.x <- blueRect.x + 50
+            // redRect.setX(new Constraint<Integer>(
+            //     redRect, "x", blueRect, "x"
+            // ) {
+            //     OutlineRect dBlueRect = blueRect;
+            //     public Integer getValue() {
+            //         return dBlueRect.getX() + 50;
+            //     }
+            // });
+            redRect.setX(new Dependency<Integer>(blueRect.xConstraint) {
+                OutlineRect dBlueRect = blueRect;
+                public Integer getValue() {
+                    return dBlueRect.getX() + 50;
+                }
+            });
+            System.out.println("Redrawing...");
             redraw(windowgroup);
 
             println("4. Move Blue, red should move automatically");

@@ -2,7 +2,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.ArrayList;
 
-import java.lang.reflect.Field;
+// import java.lang.reflect.Field;
 
 public class OutlineRect implements GraphicalObject {
     private int x, y, width, height;
@@ -11,24 +11,11 @@ public class OutlineRect implements GraphicalObject {
     private Group group = null;
 
     // TODO: allow multiple constraints on a member
-    private Constraint<Integer> xConstraint = null;
-    // private Constraint<Integer> yConstraint = null;
+    public Dependency<Integer> xConstraint = new Dependency<>();
 
     // now keep track of which constraints use my values. This might alternatively
     // go in an object for the attribute itself.
-    private List<Constraint<?>> xOutConstraints= new ArrayList<>();
-    // private List<Constraint<?>> yOutConstraints= new ArrayList<>();
-
-    // @SuppressWarnings("unchecked")
-    // public <T> T get(String fieldName) {
-    //     try {
-    //         Field field = this.getClass().getDeclaredField(fieldName);
-    //         field.setAccessible(true);
-    //         return (T) field.get(this);
-    //     } catch (NoSuchFieldException | IllegalAccessException e) {
-    //         return null;
-    //     }
-    // }
+    // private List<Dependency<?>> xOutConstraints= new ArrayList<>();
 
     /**
      * Constructors
@@ -41,6 +28,8 @@ public class OutlineRect implements GraphicalObject {
         this.height = height;
         this.color = color;
         this.lineThickness = lineThickness;
+
+        // this.xConstraint = new Dependency<>(x);
     }
 
     public OutlineRect() {
@@ -51,40 +40,51 @@ public class OutlineRect implements GraphicalObject {
      * Getters and setters
      */
     public int getX() {
-        if (xConstraint != null) {
-            this.x = xConstraint.getValue();
+        System.out.println(this);
+        System.out.println(this.xConstraint.value);
+        if (xConstraint.isConstrained()) {
+            System.out.println("before evaluate");
+            this.x = xConstraint.evaluate();
         }
         return this.x;
     }
 
-    private <T> void notifyValueChange(List<Constraint<?>> constraints, T value) {
-        for (Constraint<?> constraint: constraints) {
-            if (constraint.getDependencies().contains(this)) {
-                // TODO: do something
-            }
+    private void notifyValueChange(Dependency<?> constraint) {
+        for (Edge outEdge: constraint.outEdges) {
+            // Dependency foundDependency = outConstraint.findDependency(this, attribute);
+            // if (foundDependency != null) {
+            //     foundDependency.markOutOfDate();
+            // }
+            System.out.println("one notified");
+            outEdge.setPending(true);
+            outEdge.object.markOutOfDate();
         }
     }
 
     public void setX(int x) {
         if (this.x != x) {
             this.x = x;
-            if (xConstraint != null) {
-                xConstraint.setValue(x);
-            }
-            notifyValueChange(xOutConstraints, x);
+            // if (xConstraint != null) { // TODO: ?
+            //     xConstraint.setValue(x);
+            // }
+            notifyValueChange(xConstraint);
         }
     }
 
-    public void setX(Constraint<Integer> constraint) {
+    public void setX(Dependency<Integer> constraint) {
         /*
          * first probably need to check if there was already a constraint there and
          * clean up
          */
         xConstraint = constraint;
+        System.out.println("before notify");
         /* might need to do something so the constraint is set up properly */
         /* need to get the value of x somehow */
         // now tell others my value has changed
-        notifyValueChange(xOutConstraints, x);
+        // notifyValueChange(xConstraint);
+        xConstraint.markOutOfDate();
+        // notifyValueChange(xConstraint);
+        System.out.println("After notify");
     }
 
     public int getY() {
@@ -135,7 +135,7 @@ public class OutlineRect implements GraphicalObject {
         graphics.setClip(clipShape);
 
         int x = getX(), y = getY();
-        // more coming
+        // TODO: more to come
 
         graphics.setColor(color);
         graphics.setStroke(new BasicStroke(lineThickness));
@@ -153,8 +153,8 @@ public class OutlineRect implements GraphicalObject {
     }
 
     public void moveTo(int x, int y) {
-        this.x = x;
-        this.y = y;
+        this.setX(x);
+        this.setY(y);
     }
 
     public Group getGroup() {
