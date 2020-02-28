@@ -1,6 +1,4 @@
 import java.awt.*;
-import java.awt.geom.*;
-import java.util.ArrayList;
 
 public class TestHomework3 extends TestFrame {
 
@@ -15,7 +13,7 @@ public class TestHomework3 extends TestFrame {
             println("1. creating blue and red rects");
             OutlineRect blueRect = new OutlineRect(0, 0, 50, 80, Color.blue, 5);
             OutlineRect redRect = new OutlineRect(100, 0, 50, 80, Color.red, 1);
-            OutlineRect blackRect = new OutlineRect(200, 0, 50, 80, Color.black, 1);
+            OutlineRect blackRect = new OutlineRect(250, 0, 50, 80, Color.black, 1);
             Group windowGroup = new SimpleGroup(0, 0, 300, 400);
             Group group = new SimpleGroup(0, 0, 300, 400);
             addChild(windowGroup);
@@ -29,42 +27,26 @@ public class TestHomework3 extends TestFrame {
             println("2. moving blue to 30,30, red shouldn't move");
             pause();
             // blueRect.moveTo(30, 90);
-            blueRect.moveTo(150, 0);
+            blueRect.moveTo(100, 0);
             redraw(windowGroup);
 
             println("3. adding constraint to red rect to be at right of blue");
             println("     red should move to be at 80,30");
-
-            /*
-             * something like the following: Constraint<Integer> xc = new
-             * Constraint<Integer> ( **New constraint = blueRect's right side ** );
-             * redRect.setX ( xc ); Constraint<Integer> yc = new Constraint<Integer> ( **New
-             * constraint = blueRect's Y ** ); redRect.setY ( yc );
-             */
-            
-            // redRect.x <- blueRect.x + 50
-            // redRect.setX(new Constraint<Integer>(
-            //     redRect, "x", blueRect, "x"
-            // ) {
-            //     OutlineRect dBlueRect = blueRect;
-            //     public Integer getValue() {
-            //         return dBlueRect.getX() + 50;
-            //     }
-            // });
-            redRect.setX(new Dependency<Integer>(blueRect.getXConstraint()) {
-                OutlineRect dBlueRect = blueRect;
+            redRect.setX(new Constraint<Integer>(blueRect.useX()) {
                 public Integer getValue() {
-                    return dBlueRect.getX() + 50;
+                    return blueRect.getX() + 50;
                 }
             });
+            redraw(windowGroup);
+            pause();
 
-            blackRect.setX(new Dependency<Integer>(redRect.getXConstraint()) {
-                OutlineRect dRedRect = redRect;
+            blackRect.setX(new Constraint<Integer>(
+                blueRect.useX(), redRect.useX()
+            ) {
                 public Integer getValue() {
-                    return dRedRect.getX() + 50;
+                    return (blueRect.getX() + redRect.getX()) / 2;
                 }
             });
-            System.out.println("Redrawing...");
             redraw(windowGroup);
 
             println("4. Move Blue, red should move automatically");

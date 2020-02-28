@@ -1,8 +1,4 @@
 import java.awt.*;
-import java.util.List;
-import java.util.ArrayList;
-
-// import java.lang.reflect.Field;
 
 public class OutlineRect implements GraphicalObject {
     private int x, y, width, height;
@@ -11,11 +7,7 @@ public class OutlineRect implements GraphicalObject {
     private Group group = null;
 
     // TODO: allow multiple constraints on a member
-    private Dependency<Integer> xConstraint = new Dependency<>();
-
-    // now keep track of which constraints use my values. This might alternatively
-    // go in an object for the attribute itself.
-    // private List<Dependency<?>> xOutConstraints= new ArrayList<>();
+    private Constraint<Integer> xConstraint = new Constraint<>();
 
     /**
      * Constructors
@@ -35,7 +27,8 @@ public class OutlineRect implements GraphicalObject {
     }
 
     /**
-     * Getters and setters
+     * Getters, setters and "users"
+     * Note: user (useX) returns the constraint on the variable (X)
      */
     public int getX() {
         if (xConstraint.isConstrained()) {
@@ -44,40 +37,36 @@ public class OutlineRect implements GraphicalObject {
         return this.x;
     }
 
-    private void notifyValueChange(Dependency<?> constraint) {
+    private void notifyValueChange(Constraint<?> constraint) {
         for (Edge outEdge: constraint.getOutEdges()) {
-            // Dependency foundDependency = outConstraint.findDependency(this, attribute);
-            // if (foundDependency != null) {
-            //     foundDependency.markOutOfDate();
-            // }
             outEdge.setPending(true);
             outEdge.markOutOfDate();
         }
     }
 
     public void setX(int x) {
+        // TODO: remove original constraint or no-op?
+        // if (xConstraint != null) { // TODO: ?
+        //     xConstraint.setValue(x);
+        // }
         if (this.x != x) {
             this.x = x;
-            // if (xConstraint != null) { // TODO: ?
-            //     xConstraint.setValue(x);
-            // }
             notifyValueChange(xConstraint);
         }
     }
 
-    public void setX(Dependency<Integer> constraint) {
+    public void setX(Constraint<Integer> constraint) {
+        // remove the constraint in a formula constraint system, or set the local value
+        // and cause dependency invalidating in a multi-way constraint system
         /*
-         * first probably need to check if there was already a constraint there and
-         * clean up
+         * first need to check if there was already a constraint
          */
         xConstraint = constraint;
-        /* might need to do something so the constraint is set up properly */
-        /* need to get the value of x somehow */
-        // now tell others my value has changed
-        xConstraint.markOutOfDate();
+        xConstraint.setOutOfDate(true);
+        notifyValueChange(xConstraint);
     }
 
-    public Dependency<Integer> getXConstraint() {
+    public Constraint<Integer> useX() {
         return this.xConstraint;
     }
 

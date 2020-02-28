@@ -14,4 +14,28 @@ How you needed to change the design from HW2 to fit in your solver. For example,
 
 A programming guide that documents for a user of your API how to write a constraint. For example, if I want to write a custom constraint, what do I do?
 
+To write a custom constraint, you need to follow the following structure:
+
+```
+    targetObject.setVariable(new Constraint<VariableType>(
+        dependency1.useVariable(), dependency2.useVariable(), ...
+    ) {
+        public VariableType getValue() {
+            return dependency1.getVariable() + dependency2.getVariable();
+        }
+    });
+```
+
+For example:
+
+```
+    redRect.setX(new Constraint<Integer>(blueRect.useX()) {
+        public Integer getValue() {
+            return blueRect.getX() + 50;
+        }
+    });
+```
+
+Note that the dependencies have to be accurately specified. If you pass more or fewer dependencies, the system might not work as expected.
+
 I anticipate that this will only take a few pages, so it shouldn't be a big time sink.
