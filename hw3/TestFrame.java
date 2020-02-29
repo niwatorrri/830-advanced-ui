@@ -3,8 +3,6 @@ import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 
-import java.lang.reflect.Field;
-
 import javax.swing.*;
 import javax.imageio.*;
 
@@ -135,14 +133,6 @@ public class TestFrame extends JFrame implements Group {
         return pt;
     }
 
-    // @SuppressWarnings("unchecked")
-    // public <T> T get(String fieldName) 
-    //     throws NoSuchFieldException, IllegalAccessException {
-    //     Field field = this.getClass().getDeclaredField(fieldName);
-    //     field.setAccessible(true);
-    //     return (T) field.get(this);
-    // }
-
     // 
     // Message output
     //
@@ -164,6 +154,7 @@ public class TestFrame extends JFrame implements Group {
         try {
             Thread.sleep(msec);
         } catch (InterruptedException e) {
+            // pass
         }
     }
 
@@ -177,6 +168,7 @@ public class TestFrame extends JFrame implements Group {
             try {
                 wait();
             } catch (InterruptedException e) {
+                // pass
             }
         }
     }
@@ -208,15 +200,10 @@ public class TestFrame extends JFrame implements Group {
     // drawImage().
     // 
 
-    //These were used by the old way to do this:
-    //private MediaTracker tracker = new MediaTracker(new Label(""));
-    //private int nextID = 0;
-
     public Image loadImageFully(String filename) throws IOException {
       /*  from  http://www.exampledepot.com/egs/javax.imageio/BasicImageRead.html */
         File file = new File(filename);
         Image image = ImageIO.read(file);
         return image;
     }
-
 }

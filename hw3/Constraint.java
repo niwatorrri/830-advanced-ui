@@ -32,6 +32,10 @@ class Dependency<T> {
         return this.value;
     }
 
+    public void setValue(T value) {
+        this.value = value;
+    }
+
     public List<Edge> getOutEdges() {
         return this.outEdges;
     }
@@ -57,6 +61,7 @@ class Dependency<T> {
     }
 
     public void updateConstraint(Dependency<T> newConstraint) {
+        // remove previous outgoing changes
         for (Edge outEdge: this.outEdges) {
             Dependency<?> target = outEdge.getObject();
             Iterator<Edge> iter = target.getInEdges().iterator();
@@ -65,21 +70,19 @@ class Dependency<T> {
                     iter.remove();
                 }
             }
+            // add new outgoing edges
             target.addInEdge(newConstraint);
             newConstraint.addOutEdge(target);
         }
 
+        // remove previous incoming edges
         for (Edge inEdge: this.inEdges) {
             Dependency<?> dependency = inEdge.getObject();
             Iterator<Edge> iter = dependency.getOutEdges().iterator();
             while (iter.hasNext()) {
-                boolean a = iter.next().getObject() == this;
-                if (a) {
+                if (iter.next().getObject() == this) {
                     iter.remove();
                 }
-                // if (iter.next().getObject() == this) {
-                //     iter.remove();
-                // }
             }
         }
     }
@@ -88,7 +91,6 @@ class Dependency<T> {
         if (!this.outOfDate) {
             this.outOfDate = true;
             for (Edge outEdge : this.outEdges) {
-                // outEdge.setPending(true);
                 outEdge.markOutOfDate();
             }
         }
@@ -104,17 +106,23 @@ class Dependency<T> {
             boolean anyPending = false;
             for (Edge inEdge: inEdges) {
                 anyPending = anyPending || inEdge.isPending();
+                inEdge.setPending(false);
             }
 
             // re-evaluate the constraint
             if (anyPending) {
-                T newValue = this.getValue();
-                if (newValue != this.value) {
-                    // if value changes, set outgoing edges to be pending
-                    this.value = newValue;
-                    for (Edge outEdge: outEdges) {
-                        outEdge.setPending(true);
+                try {
+                    T newValue = this.getValue();
+                    if (newValue != this.value) {
+                        // if value changes, set outgoing edges to be pending
+                        this.value = newValue;
+                        for (Edge outEdge : outEdges) {
+                            outEdge.setPending(true);
+                        }
                     }
+                } catch (Exception e) {
+                    System.err.println(e);
+                    return this.value;
                 }
             }
             // update outOfDate as the final step
@@ -149,4 +157,8 @@ class Edge {
     public void markOutOfDate() {
         this.object.markOutOfDate();
     }
+
+    // public String toString() {
+    //     return "[" + object.toString() + ", isPending=" + (String)isPending + "]";
+    // }
 }

@@ -8,6 +8,7 @@ public class OutlineRect implements GraphicalObject {
 
     // TODO: allow multiple constraints on a member
     private Constraint<Integer> xConstraint = new Constraint<>();
+    private Constraint<Integer> yConstraint = new Constraint<>();
 
     /**
      * Constructors
@@ -46,11 +47,7 @@ public class OutlineRect implements GraphicalObject {
     }
 
     public void setX(int x) {
-        // TODO: remove original constraint or no-op?
-        // set the local value and cause  invalidating in a multi-way constraint system
-        // if (xConstraint != null) {
-        //     xConstraint.setValue(x);
-        // }
+        // TODO: no-op or (set local value and do multi-way constraint)
         if (this.x != x) {
             this.x = x;
             notifyValueChange(xConstraint, false);
@@ -58,12 +55,10 @@ public class OutlineRect implements GraphicalObject {
     }
 
     public void setX(Constraint<Integer> constraint) {
-        // remove the constraint in a formula constraint system
-        /*
-         * first need to check if there was already a constraint
-         */
+        // update dependency graph for the new constraint
         xConstraint.updateConstraint(constraint);
         xConstraint = constraint;
+        xConstraint.setValue(this.x);
         notifyValueChange(xConstraint, true);
     }
 
@@ -72,11 +67,30 @@ public class OutlineRect implements GraphicalObject {
     }
 
     public int getY() {
+        if (yConstraint.isConstrained()) {
+            this.y = yConstraint.evaluate();
+        }
         return this.y;
     }
 
     public void setY(int y) {
-        this.y = y;
+        // TODO: no-op or (set local value and do multi-way constraint)
+        if (this.y != y) {
+            this.y = y;
+            notifyValueChange(yConstraint, false);
+        }
+    }
+
+    public void setY(Constraint<Integer> constraint) {
+        // update dependency graph for the new constraint
+        yConstraint.updateConstraint(constraint);
+        yConstraint = constraint;
+        yConstraint.setValue(this.y);
+        notifyValueChange(yConstraint, true);
+    }
+
+    public Constraint<Integer> useY() {
+        return this.yConstraint;
     }
 
     public int getWidth() {
