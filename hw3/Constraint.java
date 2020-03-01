@@ -14,7 +14,7 @@ public class Constraint<T> extends Dependency<T> {
 
 class Dependency<T> {
     private T value;
-    private boolean outOfDate = false;
+    private boolean outOfDate = true;
     private List<Edge> outEdges = new ArrayList<>();
     private List<Edge> inEdges = new ArrayList<>();
 
@@ -23,8 +23,9 @@ class Dependency<T> {
     public Dependency(Dependency<?>... dependencies) {
         // set up incoming and outgoing edges in the dependency graph
         for (Dependency<?> dependency: dependencies) {
-            this.inEdges.add(new Edge(dependency));
-            dependency.outEdges.add(new Edge(this));
+            Edge edge = new Edge(dependency, this);
+            this.inEdges.add(edge);
+            dependency.outEdges.add(edge);
         }
     }
 
@@ -36,54 +37,57 @@ class Dependency<T> {
         this.value = value;
     }
 
-    public List<Edge> getOutEdges() {
-        return this.outEdges;
-    }
-
-    public List<Edge> getInEdges() {
-        return this.inEdges;
+    public boolean isOutOfDate() {
+        return this.outOfDate;
     }
 
     public void setOutOfDate(boolean outOfDate) {
         this.outOfDate = outOfDate;
     }
 
+    public List<Edge> getOutEdges() {
+        return this.outEdges;
+    }
+
+    public void addOutEdge(Edge edge) {
+        this.outEdges.add(edge);
+    }
+
+    public void removeOutEdge(Edge edge) {
+        this.outEdges.remove(edge);
+    }
+
+    public List<Edge> getInEdges() {
+        return this.inEdges;
+    }
+
+    public void addInEdge(Edge edge) {
+        this.inEdges.add(edge);
+    }
+
+    public void removeInEdge(Edge edge) {
+        this.inEdges.remove(edge);
+    }
+
     public boolean isConstrained() {
         return (inEdges.size() != 0);
     }
 
-    public void addInEdge(Dependency<?> constraint) {
-        this.inEdges.add(new Edge(constraint));
-    }
-
-    public void addOutEdge(Dependency<?> constraint) {
-        this.outEdges.add(new Edge(constraint));
-    }
-
     public void updateConstraint(Dependency<T> newConstraint) {
-        // remove previous outgoing changes
+        // remove previous outgoing edges
         for (Edge outEdge: this.outEdges) {
-            Dependency<?> target = outEdge.getObject();
-            Iterator<Edge> iter = target.getInEdges().iterator();
-            while (iter.hasNext()) {
-                if (iter.next().getObject() == this) {
-                    iter.remove();
-                }
-            }
+            Dependency<?> target = outEdge.getEnd();
+            target.removeInEdge(outEdge);
+
             // add new outgoing edges
-            target.addInEdge(newConstraint);
-            newConstraint.addOutEdge(target);
+            Edge edge = new Edge(newConstraint, target);
+            target.addInEdge(edge);
+            newConstraint.addOutEdge(edge);
         }
 
         // remove previous incoming edges
         for (Edge inEdge: this.inEdges) {
-            Dependency<?> dependency = inEdge.getObject();
-            Iterator<Edge> iter = dependency.getOutEdges().iterator();
-            while (iter.hasNext()) {
-                if (iter.next().getObject() == this) {
-                    iter.remove();
-                }
-            }
+            inEdge.getStart().removeOutEdge(inEdge);
         }
     }
 
@@ -91,7 +95,7 @@ class Dependency<T> {
         if (!this.outOfDate) {
             this.outOfDate = true;
             for (Edge outEdge : this.outEdges) {
-                outEdge.markOutOfDate();
+                outEdge.getEnd().markOutOfDate();
             }
         }
     }
@@ -134,16 +138,22 @@ class Dependency<T> {
 }
 
 class Edge {
-    private Dependency<?> object;
+    private Dependency<?> start;
+    private Dependency<?> end;
     private boolean isPending;
 
-    public Edge(Dependency<?> object) {
-        this.object = object;
+    public Edge(Dependency<?> start, Dependency<?> end) {
+        this.start = start;
+        this.end = end;
         this.isPending = true;
     }
 
-    public Dependency<?> getObject() {
-        return this.object;
+    public Dependency<?> getStart() {
+        return this.start;
+    }
+
+    public Dependency<?> getEnd() {
+        return this.end;
     }
 
     public boolean isPending() {
@@ -154,9 +164,9 @@ class Edge {
         this.isPending = isPending;
     }
 
-    public void markOutOfDate() {
-        this.object.markOutOfDate();
-    }
+    // public void markOutOfDate() {
+    //     this.object.markOutOfDate();
+    // }
 
     // public String toString() {
     //     return "[" + object.toString() + ", isPending=" + (String)isPending + "]";

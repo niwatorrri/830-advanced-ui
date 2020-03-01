@@ -39,6 +39,7 @@ public class TestHomework3 extends TestFrame {
                     return blueRect.getX() + 50;
                 }
             });
+
             redraw(windowGroup);
 
             println("4. Setting a new constraint on x of red rect to be next to black");
@@ -111,8 +112,6 @@ public class TestHomework3 extends TestFrame {
             });
             redraw(windowGroup);
 
-            System.out.println("================");
-
             println("10. Move blue rect to (50, 80)");
             println("    Red and black rects should follow");
             pause();
@@ -135,5 +134,13 @@ public class TestHomework3 extends TestFrame {
         } catch (Exception e) {
             println("Got an exception " + e);
         }
+    }
+
+    private void debug(OutlineRect dependency, OutlineRect target) {
+        System.out.println(target.useX().getInEdges().get(0).getStart());
+        System.out.println(target.useX().getInEdges().get(0).getEnd());
+        System.out.println(target.useX().getInEdges().get(0).isPending());
+        System.out.println(target.useX().isOutOfDate());
+        System.out.println(dependency.useX().isOutOfDate());
     }
 }

@@ -42,7 +42,7 @@ public class OutlineRect implements GraphicalObject {
         constraint.setOutOfDate(selfOutOfDate);
         for (Edge outEdge: constraint.getOutEdges()) {
             outEdge.setPending(true);
-            outEdge.markOutOfDate();
+            outEdge.getEnd().markOutOfDate();
         }
     }
 
