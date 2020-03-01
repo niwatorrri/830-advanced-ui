@@ -116,6 +116,7 @@ public class TestHomework3 extends TestFrame {
             println("    Red and black rects should follow");
             pause();
             blueRect.moveTo(50, 80);
+            System.out.println(blueRect.useX().getOutEdges().get(0));
             redraw(windowGroup);
 
             pause();

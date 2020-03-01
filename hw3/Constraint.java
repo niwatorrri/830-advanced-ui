@@ -1,6 +1,5 @@
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 
 public class Constraint<T> extends Dependency<T> {
@@ -10,6 +9,9 @@ public class Constraint<T> extends Dependency<T> {
     public Constraint(Dependency<?>... dependencies) {
         super(dependencies);
     }
+    public Constraint(String name, Dependency<?>... dependencies) {
+        super(name, dependencies);
+    }
 }
 
 class Dependency<T> {
@@ -17,6 +19,7 @@ class Dependency<T> {
     private boolean outOfDate = true;
     private List<Edge> outEdges = new ArrayList<>();
     private List<Edge> inEdges = new ArrayList<>();
+    private String name = null;
 
     public Dependency() {}
 
@@ -29,6 +32,12 @@ class Dependency<T> {
         }
     }
 
+    public Dependency(String name, Dependency<?>... dependencies) {
+        this(dependencies);
+        this.name = name;
+    }
+
+    // This should be overridden by custom constraints
     public T getValue() {
         return this.value;
     }
@@ -70,7 +79,11 @@ class Dependency<T> {
     }
 
     public boolean isConstrained() {
-        return (inEdges.size() != 0);
+        return (this.inEdges.size() != 0);
+    }
+
+    public String toString() {
+        return (this.name != null) ? this.name : super.toString();
     }
 
     public void updateConstraint(Dependency<T> newConstraint) {
@@ -108,7 +121,7 @@ class Dependency<T> {
         if (this.outOfDate) {
             // check if there are any pending incoming edges
             boolean anyPending = false;
-            for (Edge inEdge: inEdges) {
+            for (Edge inEdge: this.inEdges) {
                 anyPending = anyPending || inEdge.isPending();
                 inEdge.setPending(false);
             }
@@ -120,7 +133,7 @@ class Dependency<T> {
                     if (newValue != this.value) {
                         // if value changes, set outgoing edges to be pending
                         this.value = newValue;
-                        for (Edge outEdge : outEdges) {
+                        for (Edge outEdge : this.outEdges) {
                             outEdge.setPending(true);
                         }
                     }
@@ -164,11 +177,15 @@ class Edge {
         this.isPending = isPending;
     }
 
-    // public void markOutOfDate() {
-    //     this.object.markOutOfDate();
-    // }
+    private String outOfDateToString(boolean outOfDate) {
+        return outOfDate ? "out of date" : "up to date";
+    }
 
-    // public String toString() {
-    //     return "[" + object.toString() + ", isPending=" + (String)isPending + "]";
-    // }
+    public String toString() {
+        return String.format("%s (%s) -> %s (%s): %s", 
+            start.toString(), outOfDateToString(start.isOutOfDate()),
+            end.toString(), outOfDateToString(end.isOutOfDate()),
+            isPending ? "pending" : "up to date"
+        );
+    }
 }

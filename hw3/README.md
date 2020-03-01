@@ -18,6 +18,7 @@ To write a custom constraint on, e.g. `targetObject.constrainedVariable`, you ne
 
 ```java
     targetObject.setConstrainedVariable(new Constraint<ConstrainedVariableType>(
+        anOptionalName,
         dependency1.useSomeVariable(), dependency2.useSomeVariable(), ...
     ) {
         public ConstrainedVariableType getValue() {
@@ -29,7 +30,10 @@ To write a custom constraint on, e.g. `targetObject.constrainedVariable`, you ne
 For example:
 
 ```java
-    redRect.setX(new Constraint<Integer>(blueRect.useX()) {
+    redRect.setX(new Constraint<Integer>(
+        "redRect.x",
+        blueRect.useX()
+    ) {
         public Integer getValue() {
             return blueRect.getX() + 50;
         }
