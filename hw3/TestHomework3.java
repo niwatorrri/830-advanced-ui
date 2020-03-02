@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.util.Arrays;
 
 public class TestHomework3 extends TestFrame {
     private static final int FRAME_WIDTH = 400;
@@ -198,6 +199,7 @@ public class TestHomework3 extends TestFrame {
             redraw(windowGroup);
 
             println("16. Creating two green filled rects");
+            println("    (Test: filled rect objects)");
             pause();
             FilledRect filledRect1 = new FilledRect(200, 80,
                 DEFAULT_RECT_WIDTH, DEFAULT_RECT_HEIGHT, Color.green);
@@ -207,8 +209,8 @@ public class TestHomework3 extends TestFrame {
             group.addChild(filledRect2);
             redraw(windowGroup);
 
-            println("17. Constraint one new rect to have the same color as blue rect");
-            println("    and another to have a darker blue color");
+            println("17. Constraint on one new rect to have the same color as blue rect");
+            println("    and on another to have a darker blue color");
             println("    (Test: Constraint on colors rather than ints)");
             pause();
             filledRect1.setColor(new Constraint<Color>(blueRect.useColor()) {
@@ -229,13 +231,14 @@ public class TestHomework3 extends TestFrame {
             blueRect.setColor(Color.magenta);
             redraw(windowGroup);
 
-            println("19. Creating a line");
+            println("19. Creating a black line");
+            println("    (Test: line objects)");
             pause();
             Line line = new Line(250, 280, 300, 280, Color.black, 2);
             group.addChild(line);
             redraw(windowGroup);
 
-            println("20. Constraint the line to connect filled rects by their centers");
+            println("20. Constraint on the line to connect filled rects by their centers");
             pause();
             // should have provided easier API for this
             line.setX1(new Constraint<Integer>(filledRect1.useX(), filledRect1.useWidth()) {
@@ -265,7 +268,34 @@ public class TestHomework3 extends TestFrame {
             filledRect1.moveTo(200, 0);
             filledRect2.moveTo(300, 160);
             redraw(windowGroup);
+
+            println("22. Creating text that specifies an RGB '60,20,240'");
+            println("    (Test: text objects)");
             pause();
+            Graphics2D g = (Graphics2D) buffer.getGraphics();
+            Text text = new Text(g, "60,20,240", 250, 250,
+                new Font("Monospaced", Font.PLAIN, 14), Color.black);
+            group.addChild(text);
+            redraw(windowGroup);
+
+            println("23. Constraint on the top-left outline rect to have " +
+                        "the text-specified RGB color");
+            println("    (Test: example of arbitrary code in constraints)");
+            pause();
+            blueRect.setColor(new Constraint<Color>(text.useText()) {
+                public Color getValue() {
+                    int[] rgb = Arrays.stream(text.getText().split(","))
+                                      .mapToInt(Integer::parseInt).toArray();
+                    return new Color(rgb[0], rgb[1], rgb[2]);
+                }
+            });
+            redraw(windowGroup);
+
+            // try {
+            //     topGroup.addChild(new Icon(loadImageFully("dog.gif"), 80, 200));
+            // } catch (IOException e) {
+            //     println("dog.gif failed to load");
+            // }
 
             println("    (Test: Constraint on mixed types of variables)");
             pause();
