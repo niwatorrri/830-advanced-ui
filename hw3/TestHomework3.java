@@ -143,14 +143,18 @@ public class TestHomework3 extends TestFrame {
             println("12. Adding constraint on blue rect to be at top-left of red rect");
             println("    (Test: valid cycle in dependency graph)");
             pause();
-            blueRect.setX(new Constraint<Integer>("blueRect.x", redRect.useX()) {
+            blueRect.setX(new Constraint<Integer>("blueRect.x",
+                redRect.useX(), blueRect.useWidth()
+            ) {
                 public Integer getValue() {
-                    return redRect.getX() - DEFAULT_RECT_WIDTH;
+                    return redRect.getX() - blueRect.getWidth();
                 }
             });
-            blueRect.setY(new Constraint<Integer>("blueRect.y", redRect.useY()) {
+            blueRect.setY(new Constraint<Integer>("blueRect.y",
+                redRect.useY(), blueRect.useHeight()
+            ) {
                 public Integer getValue() {
-                    return redRect.getY() - DEFAULT_RECT_HEIGHT;
+                    return redRect.getY() - blueRect.getHeight();
                 }
             });
             redraw(windowGroup);
@@ -176,7 +180,7 @@ public class TestHomework3 extends TestFrame {
             });
             redraw(windowGroup);
 
-            println("   Removing invalid constraints on blue rect");
+            println("    Removing invalid constraints on blue rect");
             blueRect.setX(new Constraint<Integer>());
             blueRect.setY(new Constraint<Integer>());
 
