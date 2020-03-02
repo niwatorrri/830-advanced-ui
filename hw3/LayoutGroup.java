@@ -4,15 +4,29 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class LayoutGroup implements Group {
+    /**
+     * LayoutGroup class
+     * 
+     * Automatically places its children in a certain layout
+     * Options include horizontal, vertical and grid layouts
+     */
     private int x, y, width, height;
     private int layout, offset;
     private int nRows, nColumns;
     private Group group = null;
     private List<GraphicalObject> children = new ArrayList<>();
 
+    private Constraint<Integer> xConstraint = new Constraint<>();
+    private Constraint<Integer> yConstraint = new Constraint<>();
+    private Constraint<Integer> widthConstraint = new Constraint<>();
+    private Constraint<Integer> heightConstraint = new Constraint<>();
+    private Constraint<Integer> layoutConstraint = new Constraint<>();
+    private Constraint<Integer> offsetConstraint = new Constraint<>();
+    private Constraint<Integer> nRowsConstraint = new Constraint<>();
+    private Constraint<Integer> nColumnsConstraint = new Constraint<>();
+
     /**
      * Constructors
-     * Caveat: user calls setLayout but did not provide required attributes
      */
     public LayoutGroup(int x, int y, int width, int height,
             int layout, int offset) {
@@ -22,27 +36,14 @@ public class LayoutGroup implements Group {
         this.height = height;
         this.layout = layout;
         this.offset = offset;
-
         checkIfSupportedLayout(layout);
-        if ((layout != HORIZONTAL) && (layout != VERTICAL)) {
-            throw new RuntimeException("Incorrect constructor");
-        }
     }
 
     public LayoutGroup(int x, int y, int width, int height,
-            int layout, int nRows, int nColumns) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-        this.layout = layout;
+            int layout, int offset, int nRows, int nColumns) {
+        this(x, y, width, height, layout, offset);
         this.nRows = nRows;
         this.nColumns = nColumns;
-
-        checkIfSupportedLayout(layout);
-        if (layout != GRID) {
-            throw new RuntimeException("Incorrect constructor");
-        }
     }
 
     public LayoutGroup() {
@@ -56,115 +57,324 @@ public class LayoutGroup implements Group {
     }
 
     /**
-     * Getters and setters
+     * Getters, setters and "users"
+     * 
+     * Note: user (e.g. useX) returns the constraint on the variable (X)
      */
     public int getX() {
+        if (xConstraint.isConstrained()) {
+            this.x = xConstraint.evaluate();
+        }
         return this.x;
     }
 
     public void setX(int x) {
-        this.x = x;
+        if (this.x != x) {
+            if (!xConstraint.isConstrained()) {
+                this.x = x;
+                xConstraint.notifyValueChange(false);
+            } else if (xConstraint.hasCycle()) {
+                // if no cycle, set a constrained x is no-op
+                // if cycle, set local value and do multi-way constraint
+                xConstraint.setValue(x);
+                xConstraint.notifyValueChange(false);
+            }
+        }
+    }
+
+    public void setX(Constraint<Integer> constraint) {
+        // update dependency graph for the new constraint
+        xConstraint.updateConstraint(constraint);
+        xConstraint = constraint;
+        xConstraint.setValue(this.x);
+        xConstraint.notifyValueChange(true);
+    }
+
+    public Constraint<Integer> useX() {
+        return this.xConstraint;
     }
 
     public int getY() {
+        if (yConstraint.isConstrained()) {
+            this.y = yConstraint.evaluate();
+        }
         return this.y;
     }
 
     public void setY(int y) {
-        this.y = y;
+        if (this.y != y) {
+            if (!yConstraint.isConstrained()) {
+                this.y = y;
+                yConstraint.notifyValueChange(false);
+            } else if (yConstraint.hasCycle()) {
+                yConstraint.setValue(y);
+                yConstraint.notifyValueChange(false);
+            }
+        }
+    }
+
+    public void setY(Constraint<Integer> constraint) {
+        yConstraint.updateConstraint(constraint);
+        yConstraint = constraint;
+        yConstraint.setValue(this.y);
+        yConstraint.notifyValueChange(true);
+    }
+
+    public Constraint<Integer> useY() {
+        return this.yConstraint;
     }
 
     public int getWidth() {
+        if (widthConstraint.isConstrained()) {
+            this.width = widthConstraint.evaluate();
+        }
         return this.width;
     }
 
     public void setWidth(int width) {
-        this.width = width;
+        if (this.width != width) {
+            if (!widthConstraint.isConstrained()) {
+                this.width = width;
+                widthConstraint.notifyValueChange(false);
+            } else if (widthConstraint.hasCycle()) {
+                widthConstraint.setValue(width);
+                widthConstraint.notifyValueChange(false);
+            }
+        }
+    }
+
+    public void setWidth(Constraint<Integer> constraint) {
+        widthConstraint.updateConstraint(constraint);
+        widthConstraint = constraint;
+        widthConstraint.setValue(this.width);
+        widthConstraint.notifyValueChange(true);
+    }
+
+    public Constraint<Integer> useWidth() {
+        return this.widthConstraint;
     }
 
     public int getHeight() {
+        if (heightConstraint.isConstrained()) {
+            this.height = heightConstraint.evaluate();
+        }
         return this.height;
     }
 
     public void setHeight(int height) {
-        this.height = height;
+        if (this.height != height) {
+            if (!heightConstraint.isConstrained()) {
+                this.height = height;
+                heightConstraint.notifyValueChange(false);
+            } else if (heightConstraint.hasCycle()) {
+                heightConstraint.setValue(height);
+                heightConstraint.notifyValueChange(false);
+            }
+        }
+    }
+
+    public void setHeight(Constraint<Integer> constraint) {
+        heightConstraint.updateConstraint(constraint);
+        heightConstraint = constraint;
+        heightConstraint.setValue(this.height);
+        heightConstraint.notifyValueChange(true);
+    }
+
+    public Constraint<Integer> useHeight() {
+        return this.heightConstraint;
     }
 
     public int getLayout() {
+        if (layoutConstraint.isConstrained()) {
+            this.layout = layoutConstraint.evaluate();
+        }
         return this.layout;
     }
 
     public void setLayout(int layout) {
         checkIfSupportedLayout(layout);
-        this.layout = layout;
+        if (this.layout != layout) {
+            if (!layoutConstraint.isConstrained()) {
+                this.layout = layout;
+                layoutConstraint.notifyValueChange(false);
+            } else if (layoutConstraint.hasCycle()) {
+                layoutConstraint.setValue(layout);
+                layoutConstraint.notifyValueChange(false);
+            }
+        }
+    }
+
+    public void setLayout(Constraint<Integer> constraint) {
+        layoutConstraint.updateConstraint(constraint);
+        layoutConstraint = constraint;
+        layoutConstraint.setValue(this.layout);
+        layoutConstraint.notifyValueChange(true);
+    }
+
+    public Constraint<Integer> useLayout() {
+        return this.layoutConstraint;
     }
 
     public int getOffset() {
+        if (offsetConstraint.isConstrained()) {
+            this.offset = offsetConstraint.evaluate();
+        }
         return this.offset;
     }
 
     public void setOffset(int offset) {
-        this.offset = offset;
+        if (this.offset != offset) {
+            if (!offsetConstraint.isConstrained()) {
+                this.offset = offset;
+                offsetConstraint.notifyValueChange(false);
+            } else if (offsetConstraint.hasCycle()) {
+                offsetConstraint.setValue(offset);
+                offsetConstraint.notifyValueChange(false);
+            }
+        }
+    }
+
+    public void setOffset(Constraint<Integer> constraint) {
+        offsetConstraint.updateConstraint(constraint);
+        offsetConstraint = constraint;
+        offsetConstraint.setValue(this.offset);
+        offsetConstraint.notifyValueChange(true);
+    }
+
+    public Constraint<Integer> useOffset() {
+        return this.offsetConstraint;
     }
 
     public int getNRows() {
+        if (nRowsConstraint.isConstrained()) {
+            this.nRows = nRowsConstraint.evaluate();
+        }
         return this.nRows;
     }
 
     public void setNRows(int nRows) {
-        this.nRows = nRows;
+        if (this.nRows != nRows) {
+            if (!nRowsConstraint.isConstrained()) {
+                this.nRows = nRows;
+                nRowsConstraint.notifyValueChange(false);
+            } else if (nRowsConstraint.hasCycle()) {
+                nRowsConstraint.setValue(nRows);
+                nRowsConstraint.notifyValueChange(false);
+            }
+        }
+    }
+
+    public void setNRows(Constraint<Integer> constraint) {
+        nRowsConstraint.updateConstraint(constraint);
+        nRowsConstraint = constraint;
+        nRowsConstraint.setValue(this.nRows);
+        nRowsConstraint.notifyValueChange(true);
+    }
+
+    public Constraint<Integer> useNRows() {
+        return this.nRowsConstraint;
     }
 
     public int getNColumns() {
+        if (nColumnsConstraint.isConstrained()) {
+            this.nColumns = nColumnsConstraint.evaluate();
+        }
         return this.nColumns;
     }
 
     public void setNColumns(int nColumns) {
-        this.nColumns = nColumns;
+        if (this.nColumns != nColumns) {
+            if (!nColumnsConstraint.isConstrained()) {
+                this.nColumns = nColumns;
+                nColumnsConstraint.notifyValueChange(false);
+            } else if (nColumnsConstraint.hasCycle()) {
+                nColumnsConstraint.setValue(nColumns);
+                nColumnsConstraint.notifyValueChange(false);
+            }
+        }
+    }
+
+    public void setNColumns(Constraint<Integer> constraint) {
+        nColumnsConstraint.updateConstraint(constraint);
+        nColumnsConstraint = constraint;
+        nColumnsConstraint.setValue(this.nColumns);
+        nColumnsConstraint.notifyValueChange(true);
+    }
+
+    public Constraint<Integer> useNColumns() {
+        return this.nColumnsConstraint;
     }
 
     /**
      * Methods defined in the GraphicalObject interface
      */
+    private Object[] getGridSizes(List<GraphicalObject> children) {
+        int[] rowHeight = new int[nRows];
+        int[] columnWidth = new int[nColumns];
+
+        for (int idx = 0; idx < children.size(); ++idx) {
+            if (idx >= nRows * nColumns) {
+                break;
+            }
+            GraphicalObject child = children.get(idx);
+            BoundaryRectangle box = child.getBoundingBox();
+
+            rowHeight[idx / nColumns] = Math.max(
+                rowHeight[idx / nColumns], box.height);
+            columnWidth[idx % nColumns] = Math.max(
+                columnWidth[idx % nColumns], box.width);
+        }
+        return new Object[] {rowHeight, columnWidth};
+    }
+
     public void draw(Graphics2D graphics, Shape clipShape) {
         // Intersect the clip shape with the group bounding box
         Shape commonClipArea = getBoundingBox().intersection(clipShape.getBounds());
 
         // Translate the new clip shape to pass to children
         AffineTransform transform = new AffineTransform();
+        int x = getX(), y = getY();
         transform.translate(-x, -y);
         Shape childClipShape = transform.createTransformedShape(commonClipArea);
 
         // Translate the origin to draw children
         graphics.translate(x, y);
-        int currentPosition = 0;
-        int gridWidth = 0, gridHeight = 0;
+        int layout = getLayout(), offset = getOffset();
+        int nRows = getNRows(), nColumns = getNColumns();
+
+        int currentXPosition = 0, currentYPosition = 0;
+        int[] rowHeight = {0}, columnWidth ={0};
+
         if (layout == GRID) {
-            gridWidth = width / nColumns;
-            gridHeight = height / nRows;
+            Object[] gridSizes = getGridSizes(children);
+            rowHeight = (int[]) gridSizes[0];
+            columnWidth = (int[]) gridSizes[1];
         }
 
         for (int idx = 0; idx < children.size(); ++idx) {
-            GraphicalObject child = children.get(idx);
-            BoundaryRectangle oldBoundingBox = child.getBoundingBox();
             if ((layout == GRID) && (idx >= nRows * nColumns)) {
                 break;
             }
+            GraphicalObject child = children.get(idx);
+            BoundaryRectangle oldBoundingBox = child.getBoundingBox();
 
             switch (layout) {
                 case HORIZONTAL:
-                    child.moveTo(currentPosition, 0);
-                    currentPosition += oldBoundingBox.width + offset;
+                    child.moveTo(currentXPosition, 0);
+                    currentXPosition += oldBoundingBox.width + offset;
                     break;
                 case VERTICAL:
-                    child.moveTo(0, currentPosition);
-                    currentPosition += oldBoundingBox.height + offset;
+                    child.moveTo(0, currentYPosition);
+                    currentYPosition += oldBoundingBox.height + offset;
                     break;
                 case GRID:
-                    child.moveTo(
-                        (idx % nColumns) * gridWidth,
-                        (idx / nColumns) * gridHeight
-                    );
+                    child.moveTo(currentXPosition, currentYPosition);
+                    if ((idx + 1) % nColumns != 0) {
+                        currentXPosition += columnWidth[idx % nColumns] + offset;
+                    } else {
+                        currentXPosition = 0;
+                        currentYPosition += rowHeight[idx / nColumns] + offset;
+                    }
                     break;
                 default:
                     throw new RuntimeException("Not supported layout type");
@@ -176,16 +386,17 @@ public class LayoutGroup implements Group {
     }
 
     public BoundaryRectangle getBoundingBox() {
+        int x = getX(), y = getY(), width = getWidth(), height = getHeight();
         return new BoundaryRectangle(x, y, width, height);
     }
 
     public void moveTo(int x, int y) {
-        this.x = x;
-        this.y = y;
+        this.setX(x);
+        this.setY(y);
     }
 
     public Group getGroup() {
-        return group;
+        return this.group;
     }
 
     public void setGroup(Group group) {
@@ -227,6 +438,7 @@ public class LayoutGroup implements Group {
 
     public void resizeToChildren() {
         int newWidth = 0, newHeight = 0;
+        int layout = getLayout(), offset = getOffset();
 
         for (GraphicalObject child: children) {
             Rectangle boundingBox = child.getBoundingBox();
@@ -236,21 +448,43 @@ public class LayoutGroup implements Group {
             } else if (layout == VERTICAL) {
                 newHeight += boundingBox.height + offset;
                 newWidth = Math.max(newWidth, boundingBox.width);
-            } else if (layout == GRID) {
-                newWidth = Math.max(newWidth, boundingBox.width * nColumns);
-                newHeight = Math.max(newHeight, boundingBox.height * nRows);
+            }
+        }
+
+        if (layout == GRID) {
+            int nRows = getNRows(), nColumns = getNColumns();
+            Object[] gridSizes = getGridSizes(children);
+            int[] rowHeight = (int[]) gridSizes[0];
+            int[] columnWidth = (int[]) gridSizes[1];
+            System.out.println(nRows + " " + nColumns);
+            for (int a : rowHeight) {
+                System.out.println(a);
+            }
+            for (int a : columnWidth) {
+                System.out.println(a);
+            }
+
+            int countColumn = Math.min(nColumns, children.size());
+            for (int i = 0; i < countColumn; ++i) {
+                newWidth += columnWidth[i] + offset;
+            }
+            int countRow = (children.size() - 1) / nColumns + 1;
+            for (int i = 0; i < countRow; ++i) {
+                newHeight += rowHeight[i] + offset;
             }
         }
 
         if (children.size() > 0) {
-            if (layout == HORIZONTAL) {
+            if (layout != VERTICAL) {
                 newWidth -= offset;
-            } else if (layout == VERTICAL) {
+            }
+            if (layout != HORIZONTAL) {
                 newHeight -= offset;
             }
         }
-        this.width = newWidth;
-        this.height = newHeight;
+        this.setWidth(newWidth);
+        this.setHeight(newHeight);
+        System.out.println(newWidth + " " + newHeight);
     }
 
     public List<GraphicalObject> getChildren() {
@@ -260,12 +494,14 @@ public class LayoutGroup implements Group {
     }
 
     public Point parentToChild(Point pt) {
+        int x = getX(), y = getY();
         int childX = pt.x - x;
         int childY = pt.y - y;
         return new Point(childX, childY);
     }
 
     public Point childToParent(Point pt) {
+        int x = getX(), y = getY();
         int parentX = pt.x + x;
         int parentY = pt.y + y;
         return new Point(parentX, parentY);
