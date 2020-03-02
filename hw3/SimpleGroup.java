@@ -4,9 +4,17 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class SimpleGroup implements Group {
+    /**
+     * SimpleGroup class: a group of objects at their fixed positions
+     */
     private int x, y, width, height;
     private Group group = null;
     private List<GraphicalObject> children = new ArrayList<>();
+
+    private Constraint<Integer> xConstraint = new Constraint<>();
+    private Constraint<Integer> yConstraint = new Constraint<>();
+    private Constraint<Integer> widthConstraint = new Constraint<>();
+    private Constraint<Integer> heightConstraint = new Constraint<>();
 
     /**
      * Constructors
@@ -23,38 +31,131 @@ public class SimpleGroup implements Group {
     }
 
     /**
-     * Getters and setters
+     * Getters, setters and "users"
+     * 
+     * Note: user (e.g. useX) returns the constraint on the variable (X)
      */
     public int getX() {
+        if (xConstraint.isConstrained()) {
+            this.x = xConstraint.evaluate();
+        }
         return this.x;
     }
 
     public void setX(int x) {
-        this.x = x;
+        if (this.x != x) {
+            if (!xConstraint.isConstrained()) {
+                this.x = x;
+                xConstraint.notifyValueChange(false);
+            } else if (xConstraint.hasCycle()) {
+                // if no cycle, set a constrained x is no-op
+                // if cycle, set local value and do multi-way constraint
+                xConstraint.setValue(x);
+                xConstraint.notifyValueChange(false);
+            }
+        }
+    }
+
+    public void setX(Constraint<Integer> constraint) {
+        // update dependency graph for the new constraint
+        xConstraint.updateConstraint(constraint);
+        xConstraint = constraint;
+        xConstraint.setValue(this.x);
+        xConstraint.notifyValueChange(true);
+    }
+
+    public Constraint<Integer> useX() {
+        return this.xConstraint;
     }
 
     public int getY() {
+        if (yConstraint.isConstrained()) {
+            this.y = yConstraint.evaluate();
+        }
         return this.y;
     }
 
     public void setY(int y) {
-        this.y = y;
+        if (this.y != y) {
+            if (!yConstraint.isConstrained()) {
+                this.y = y;
+                yConstraint.notifyValueChange(false);
+            } else if (yConstraint.hasCycle()) {
+                yConstraint.setValue(y);
+                yConstraint.notifyValueChange(false);
+            }
+        }
+    }
+
+    public void setY(Constraint<Integer> constraint) {
+        yConstraint.updateConstraint(constraint);
+        yConstraint = constraint;
+        yConstraint.setValue(this.y);
+        yConstraint.notifyValueChange(true);
+    }
+
+    public Constraint<Integer> useY() {
+        return this.yConstraint;
     }
 
     public int getWidth() {
+        if (widthConstraint.isConstrained()) {
+            this.width = widthConstraint.evaluate();
+        }
         return this.width;
     }
 
     public void setWidth(int width) {
-        this.width = width;
+        if (this.width != width) {
+            if (!widthConstraint.isConstrained()) {
+                this.width = width;
+                widthConstraint.notifyValueChange(false);
+            } else if (widthConstraint.hasCycle()) {
+                widthConstraint.setValue(width);
+                widthConstraint.notifyValueChange(false);
+            }
+        }
+    }
+
+    public void setWidth(Constraint<Integer> constraint) {
+        widthConstraint.updateConstraint(constraint);
+        widthConstraint = constraint;
+        widthConstraint.setValue(this.width);
+        widthConstraint.notifyValueChange(true);
+    }
+
+    public Constraint<Integer> useWidth() {
+        return this.widthConstraint;
     }
 
     public int getHeight() {
+        if (heightConstraint.isConstrained()) {
+            this.height = heightConstraint.evaluate();
+        }
         return this.height;
     }
 
     public void setHeight(int height) {
-        this.height = height;
+        if (this.height != height) {
+            if (!heightConstraint.isConstrained()) {
+                this.height = height;
+                heightConstraint.notifyValueChange(false);
+            } else if (heightConstraint.hasCycle()) {
+                heightConstraint.setValue(height);
+                heightConstraint.notifyValueChange(false);
+            }
+        }
+    }
+
+    public void setHeight(Constraint<Integer> constraint) {
+        heightConstraint.updateConstraint(constraint);
+        heightConstraint = constraint;
+        heightConstraint.setValue(this.height);
+        heightConstraint.notifyValueChange(true);
+    }
+
+    public Constraint<Integer> useHeight() {
+        return this.heightConstraint;
     }
 
     /**
@@ -65,6 +166,7 @@ public class SimpleGroup implements Group {
         Shape commonClipArea = getBoundingBox().intersection(clipShape.getBounds());
 
         // Translate the new clip shape to pass to children
+        int x = getX(), y = getY();
         AffineTransform transform = new AffineTransform();
         transform.translate(-x, -y);
         Shape childClipShape = transform.createTransformedShape(commonClipArea);
@@ -78,16 +180,17 @@ public class SimpleGroup implements Group {
     }
 
     public BoundaryRectangle getBoundingBox() {
+        int x = getX(), y = getY(), width = getWidth(), height = getHeight();
         return new BoundaryRectangle(x, y, width, height);
     }
 
     public void moveTo(int x, int y) {
-        this.x = x;
-        this.y = y;
+        this.setX(x);
+        this.setY(y);
     }
 
     public Group getGroup() {
-        return group;
+        return this.group;
     }
 
     public void setGroup(Group group) {
@@ -134,8 +237,8 @@ public class SimpleGroup implements Group {
             newWidth = Math.max(newWidth, (int)box.getMaxX());
             newHeight = Math.max(newHeight, (int)box.getMaxY());
         }
-        this.width = newWidth;
-        this.height = newHeight;
+        this.setWidth(newWidth);
+        this.setHeight(newHeight);
     }
 
     public List<GraphicalObject> getChildren() {
