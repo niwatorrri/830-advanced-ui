@@ -248,12 +248,14 @@ public class SimpleGroup implements Group {
     }
 
     public Point parentToChild(Point pt) {
+        int x = getX(), y = getY();
         int childX = pt.x - x;
         int childY = pt.y - y;
         return new Point(childX, childY);
     }
 
     public Point childToParent(Point pt) {
+        int x = getX(), y = getY();
         int parentX = pt.x + x;
         int parentY = pt.y + y;
         return new Point(parentX, parentY);
