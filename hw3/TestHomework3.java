@@ -59,7 +59,7 @@ public class TestHomework3 extends TestFrame {
             println("5. Changing constraint on x of red rect to be x of blue rect divided by 0");
             println("   (Test: crashed user implementation)");
             pause();
-            redRect.setX(new Constraint<Integer>(blueRect.useX()) {
+            redRect.setX(new Constraint<Integer>("redRect.x", blueRect.useX()) {
                 public Integer getValue() {
                     return blueRect.getX() / 0;
                 }
@@ -229,14 +229,50 @@ public class TestHomework3 extends TestFrame {
             blueRect.setColor(Color.magenta);
             redraw(windowGroup);
 
-            println("19.");
+            println("19. Creating a line");
+            pause();
+            Line line = new Line(250, 280, 300, 280, Color.black, 2);
+            group.addChild(line);
+            redraw(windowGroup);
+
+            println("20. Constraint the line to connect filled rects by their centers");
+            pause();
+            // should have provided easier API for this
+            line.setX1(new Constraint<Integer>(filledRect1.useX(), filledRect1.useWidth()) {
+                public Integer getValue() {
+                    return filledRect1.getX() + filledRect1.getWidth() / 2;
+                }
+            });
+            line.setY1(new Constraint<Integer>(filledRect1.useY(), filledRect1.useHeight()) {
+                public Integer getValue() {
+                    return filledRect1.getY() + filledRect1.getHeight() / 2;
+                }
+            });
+            line.setX2(new Constraint<Integer>(filledRect2.useX(), filledRect2.useWidth()) {
+                public Integer getValue() {
+                    return filledRect2.getX() + filledRect2.getWidth() / 2;
+                }
+            });
+            line.setY2(new Constraint<Integer>(filledRect2.useY(), filledRect2.useHeight()) {
+                public Integer getValue() {
+                    return filledRect2.getY() + filledRect2.getHeight() / 2;
+                }
+            });
+            redraw(windowGroup);
+
+            println("21. Moving the brighter filled rect up and the darker one down");
+            pause();
+            filledRect1.moveTo(200, 0);
+            filledRect2.moveTo(300, 160);
+            redraw(windowGroup);
+            pause();
 
             println("    (Test: Constraint on mixed types of variables)");
             pause();
 
-            println("17. Constraint on subclass object");
-            println("18. Constraint on groups");
-            println("19. Stress test");
+            println("Constraint on subclass object");
+            println("Constraint on groups");
+            println("Stress test");
             println("20");
 
             println("DONE! Close the window to exit");
