@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.util.Arrays;
+import java.io.IOException;
 
 public class TestHomework3 extends TestFrame {
     private static final int FRAME_WIDTH = 400;
@@ -273,7 +274,7 @@ public class TestHomework3 extends TestFrame {
             println("    (Test: text objects)");
             pause();
             Graphics2D g = (Graphics2D) buffer.getGraphics();
-            Text text = new Text(g, "60,20,240", 250, 250,
+            Text text = new Text(g, "60,20,240", 250, 260,
                 new Font("Monospaced", Font.PLAIN, 14), Color.black);
             group.addChild(text);
             redraw(windowGroup);
@@ -291,19 +292,52 @@ public class TestHomework3 extends TestFrame {
             });
             redraw(windowGroup);
 
-            // try {
-            //     topGroup.addChild(new Icon(loadImageFully("dog.gif"), 80, 200));
-            // } catch (IOException e) {
-            //     println("dog.gif failed to load");
-            // }
-
-            println("    (Test: Constraint on mixed types of variables)");
+            println("24. Constraint on the text to have the RGB color specified by itself");
+            println("    (Test: constraint that depends on attributes of itself)");
             pause();
+            text.setColor(new Constraint<Color>(text.useText()) {
+                public Color getValue() {
+                    int[] rgb = Arrays.stream(text.getText().split(","))
+                                      .mapToInt(Integer::parseInt).toArray();
+                    return new Color(rgb[0], rgb[1], rgb[2]);
+                }
+            });
+            redraw(windowGroup);
 
-            println("Constraint on subclass object");
+            println("25. Creating an icon object to load images constrained by");
+            println("    the file name specified by another text object");
+            pause();
+            Text fileName = new Text(g, "dog.gif", 250, 290,
+                new Font("Monospaced", Font.PLAIN, 14), Color.black);
+            Icon image = new Icon(null, 20, 20);
+            group.addChild(fileName);
+            group.addChild(image);
+            redraw(windowGroup);
+
+            println("    Begin loading image");
+            pause();
+            image.setImage(new Constraint<Image>(fileName.useText()) {
+                public Image getValue() {
+                    String file = fileName.getText();
+                    try {
+                        Image loadedImage = loadImageFully(file);
+                        return loadedImage;
+                    } catch (IOException e) {
+                        println("Failed to load" + file);
+                        return null;
+                    }
+                }
+            });
+            redraw(windowGroup);
+
+            println("    Removing loaded image");
+            pause();
+            group.removeChild(image);
+
+            println("26. Constraint on subclass object");
+            pause();
             println("Constraint on groups");
             println("Stress test");
-            println("20");
 
             println("DONE! Close the window to exit");
 
