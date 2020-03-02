@@ -1,24 +1,30 @@
 import java.awt.*;
 
 public class TestHomework3 extends TestFrame {
-    private static final int WIDTH = 400;
-    private static final int HEIGHT = 400;
+    private static final int FRAME_WIDTH = 400;
+    private static final int FRAME_HEIGHT = 400;
 
     public static void main(String[] args) {
         new TestHomework3(args);
     }
 
     public TestHomework3(String[] args) {
-        super("TestHomework3", WIDTH, HEIGHT);
+        super("TestHomework3", FRAME_WIDTH, FRAME_HEIGHT);
 
         try {
-            println("1. Creating blue, red and black rects");
-            OutlineRect blueRect = new OutlineRect(0, 0, 50, 80, Color.blue, 5);
-            OutlineRect redRect = new OutlineRect(100, 0, 50, 80, Color.red, 1);
-            OutlineRect blackRect = new OutlineRect(250, 0, 50, 80, Color.black, 3);
+            final int DEFAULT_RECT_WIDTH = 50;
+            final int DEFAULT_RECT_HEIGHT = 80;
 
-            Group windowGroup = new SimpleGroup(0, 0, WIDTH, HEIGHT);
-            Group group = new SimpleGroup(0, 0, WIDTH, HEIGHT);
+            println("1. Creating blue, red and black rects");
+            OutlineRect blueRect = new OutlineRect(0, 0,
+                DEFAULT_RECT_WIDTH, DEFAULT_RECT_HEIGHT, Color.blue, 5);
+            OutlineRect redRect = new OutlineRect(100, 0,
+                DEFAULT_RECT_WIDTH, DEFAULT_RECT_HEIGHT, Color.red, 1);
+            OutlineRect blackRect = new OutlineRect(250, 0,
+                DEFAULT_RECT_WIDTH, DEFAULT_RECT_HEIGHT, Color.black, 3);
+
+            Group windowGroup = new SimpleGroup(0, 0, FRAME_WIDTH, FRAME_HEIGHT);
+            Group group = new SimpleGroup(0, 0, FRAME_WIDTH, FRAME_HEIGHT);
             addChild(windowGroup);
             windowGroup.addChild(group);
             group.addChild(blueRect);
@@ -35,10 +41,9 @@ public class TestHomework3 extends TestFrame {
             pause();
             redRect.setX(new Constraint<Integer>(blueRect.useX()) {
                 public Integer getValue() {
-                    return blueRect.getX() + 50;
+                    return blueRect.getX() + DEFAULT_RECT_WIDTH;
                 }
             });
-
             redraw(windowGroup);
 
             println("4. Changing constraint on x of red rect to be next to black");
@@ -46,7 +51,7 @@ public class TestHomework3 extends TestFrame {
             pause();
             redRect.setX(new Constraint<Integer>(blackRect.useX()) {
                 public Integer getValue() {
-                    return blackRect.getX() + 50;
+                    return blackRect.getX() + DEFAULT_RECT_WIDTH;
                 }
             });
             redraw(windowGroup);
@@ -68,7 +73,7 @@ public class TestHomework3 extends TestFrame {
                 blueRect.useX(), blackRect.useX()
             ) {
                 public Integer getValue() {
-                    return Math.min(blueRect.getX(), blackRect.getX()) + 50;
+                    return Math.min(blueRect.getX(), blackRect.getX()) + DEFAULT_RECT_WIDTH;
                 }
             });
             redraw(windowGroup);
@@ -84,14 +89,18 @@ public class TestHomework3 extends TestFrame {
             println("8. Constraint on x and y of red rect to be at bottom-right of blue rect");
             println("   (Test: two constraints imposed on different attributes)");
             pause();
-            redRect.setX(new Constraint<Integer>(blueRect.useX()) {
+            redRect.setX(new Constraint<Integer>(
+                blueRect.useX(), blueRect.useWidth()
+            ) {
                 public Integer getValue() {
-                    return blueRect.getX() + 50;
+                    return blueRect.getX() + blueRect.getWidth();
                 }
             });
-            redRect.setY(new Constraint<Integer>(blueRect.useY()) {
+            redRect.setY(new Constraint<Integer>(
+                blueRect.useY(), blueRect.useHeight()
+            ) {
                 public Integer getValue() {
-                    return blueRect.getY() + 80;
+                    return blueRect.getY() + blueRect.getHeight();
                 }
             });
             redraw(windowGroup);
@@ -99,14 +108,18 @@ public class TestHomework3 extends TestFrame {
             println("9. Constraint on x and y of black rect to be at bottom-right of red rect");
             println("   (Test: chain of constraints)");
             pause();
-            blackRect.setX(new Constraint<Integer>(redRect.useX()) {
+            blackRect.setX(new Constraint<Integer>(
+                redRect.useX(), redRect.useWidth()
+            ) {
                 public Integer getValue() {
-                    return redRect.getX() + 50;
+                    return redRect.getX() + redRect.getWidth();
                 }
             });
-            blackRect.setY(new Constraint<Integer>(redRect.useY()) {
+            blackRect.setY(new Constraint<Integer>(
+                redRect.useY(), redRect.useHeight()
+            ) {
                 public Integer getValue() {
-                    return redRect.getY() + 80;
+                    return redRect.getY() + redRect.getHeight();
                 }
             });
             redraw(windowGroup);
@@ -114,14 +127,14 @@ public class TestHomework3 extends TestFrame {
             println("10. Moving blue rect to (50, 80)");
             println("    Red and black rects should follow");
             pause();
-            blueRect.moveTo(50, 80);
+            blueRect.moveTo(DEFAULT_RECT_WIDTH, DEFAULT_RECT_HEIGHT);
             redraw(windowGroup);
 
-            println("11. Moving red rect to (150, 240) where black rect is at");
+            println("11. Moving red rect to (50, 80) where blue rect is at");
             println("    Red should not move");
             println("    (Test: set value on a constrained attribute)");
             pause();
-            redRect.moveTo(150, 240);
+            redRect.moveTo(DEFAULT_RECT_WIDTH, DEFAULT_RECT_HEIGHT);
             redraw(windowGroup);
 
             println("12. Adding constraint on blue rect to be at top-left of red rect");
@@ -129,20 +142,20 @@ public class TestHomework3 extends TestFrame {
             pause();
             blueRect.setX(new Constraint<Integer>("blueRect.x", redRect.useX()) {
                 public Integer getValue() {
-                    return redRect.getX() - 50;
+                    return redRect.getX() - DEFAULT_RECT_WIDTH;
                 }
             });
             blueRect.setY(new Constraint<Integer>("blueRect.y", redRect.useY()) {
                 public Integer getValue() {
-                    return redRect.getY() - 80;
+                    return redRect.getY() - DEFAULT_RECT_HEIGHT;
                 }
             });
             redraw(windowGroup);
 
-            println("13. Moving red rect to (150, 240) again");
+            println("13. Moving red rect to (50, 80) again");
             println("    (Test: multi-way constraint in case of cycle)");
             pause();
-            redRect.moveTo(150, 240);
+            redRect.moveTo(DEFAULT_RECT_WIDTH, DEFAULT_RECT_HEIGHT);
             redraw(windowGroup);
 
             println("14. Changing constraint on blue rect to be at bottom-right of red rect");
@@ -150,22 +163,67 @@ public class TestHomework3 extends TestFrame {
             pause();
             blueRect.setX(new Constraint<Integer>("blueRect.x", redRect.useX()) {
                 public Integer getValue() {
-                    return redRect.getX() + 50;
+                    return redRect.getX() + DEFAULT_RECT_WIDTH;
                 }
             });
             blueRect.setY(new Constraint<Integer>("blueRect.y", redRect.useY()) {
                 public Integer getValue() {
-                    return redRect.getY() + 80;
+                    return redRect.getY() + DEFAULT_RECT_HEIGHT;
                 }
             });
             redraw(windowGroup);
 
-            println("15.")
-            println("15. Constraint on variables of more than one type");
+            println("   Removing invalid constraints on blue rect");
+            blueRect.setX(new Constraint<Integer>());
+            blueRect.setY(new Constraint<Integer>());
+
+            println("15. Adding constraint on width, height and line thickness of red rect");
+            println("    to be twice as that of blue rect");
             pause();
-            println("16. Constraint on subclass object");
-            println("17. Constraint on groups");
-            println("18. Stress test");
+            redRect.setWidth(new Constraint<Integer>(blueRect.useWidth()) {
+                public Integer getValue() {
+                    return blueRect.getWidth() * 2;
+                }
+            });
+            redRect.setHeight(new Constraint<Integer>(blueRect.useHeight()) {
+                public Integer getValue() {
+                    return blueRect.getHeight() * 2;
+                }
+            });
+            redraw(windowGroup);
+
+            println("16. Creating green filled rect");
+            pause();
+            FilledRect greenRect = new FilledRect(200, 80,
+                DEFAULT_RECT_WIDTH, DEFAULT_RECT_HEIGHT, Color.green);
+            group.addChild(greenRect);
+            redraw(windowGroup);
+
+            println("17. Adding constraint to new rect to have the same color as blue rect");
+            println("    (Test: Constraint on colors rather than ints)");
+            pause();
+            greenRect.setColor(new Constraint<Color>(blueRect.useColor()) {
+                public Color getValue() {
+                    return blueRect.getColor();
+                }
+            });
+            redraw(windowGroup);
+
+            println("18. Changing blue outline rect to pink");
+            println("    Filled rect should change to pink as well");
+            pause();
+            blueRect.setColor(Color.pink);
+            redraw(windowGroup);
+
+            println("19.");
+
+            println("    (Test: Constraint on variables of more than one type)");
+            pause();
+
+            println("17. Constraint on subclass object");
+            println("18. Constraint on groups");
+            println("19. Stress test");
+            println("20");
 
             println("DONE! Close the window to exit");
 

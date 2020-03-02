@@ -228,10 +228,9 @@ public class OutlineRect implements GraphicalObject {
         Shape oldClip = graphics.getClip();
         graphics.setClip(clipShape);
 
-        int x = getX(), y = getY();
-        int width = getWidth(), height = getHeight();
-        Color color = getColor();
+        int x = getX(), y = getY(), width = getWidth(), height = getHeight();
         int lineThickness = getLineThickness();
+        Color color = getColor();
 
         graphics.setColor(color);
         graphics.setStroke(new BasicStroke(lineThickness));
