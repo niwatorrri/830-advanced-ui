@@ -223,9 +223,12 @@ public class Text implements GraphicalObject {
         Color color = getColor();
         String text = getText();
 
+        int textHeight = internalGraphics.getFontMetrics().getHeight();
         graphics.setFont(font);
         graphics.setColor(color);
-        graphics.drawString(text, x, y);
+        for (String line : text.split("\n")) {  // deal with newlines
+            graphics.drawString(line, x, y += textHeight);
+        }
 
         graphics.setClip(oldClip);
     }

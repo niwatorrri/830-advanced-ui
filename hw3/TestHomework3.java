@@ -36,12 +36,12 @@ public class TestHomework3 extends TestFrame {
             redraw(windowGroup);
 
             println("2. Moving blue to (80, 0), others shouldn't move");
-            // pause();
+            pause();
             blueRect.moveTo(80, 0);
             redraw(windowGroup);
 
             println("3. Adding constraint on x of red rect to be next to blue");
-            // pause();
+            pause();
             redRect.setX(new Constraint<Integer>(blueRect.useX()) {
                 public Integer getValue() {
                     return blueRect.getX() + DEFAULT_RECT_WIDTH;
@@ -51,7 +51,7 @@ public class TestHomework3 extends TestFrame {
 
             println("4. Changing constraint on x of red rect to be next to black");
             println("   (Test: replace the original constraint with a new one)");
-            // pause();
+            pause();
             redRect.setX(new Constraint<Integer>(blackRect.useX()) {
                 public Integer getValue() {
                     return blackRect.getX() + DEFAULT_RECT_WIDTH;
@@ -61,7 +61,7 @@ public class TestHomework3 extends TestFrame {
 
             println("5. Changing constraint on x of red rect to be x of blue rect divided by 0");
             println("   (Test: crashed user implementation)");
-            // pause();
+            pause();
             redRect.setX(new Constraint<Integer>("redRect.x", blueRect.useX()) {
                 public Integer getValue() {
                     return blueRect.getX() / 0;
@@ -71,7 +71,7 @@ public class TestHomework3 extends TestFrame {
 
             println("6. Changing constraint on x of red rect to be next to the leftmost rect");
             println("   (Test: constraint depending on two objects)");
-            // pause();
+            pause();
             redRect.setX(new Constraint<Integer>(
                 blueRect.useX(), blackRect.useX()
             ) {
@@ -83,7 +83,7 @@ public class TestHomework3 extends TestFrame {
 
             println("7. Switching positions of blue and black rects");
             println("   Red rect should not move");
-            // pause();
+            pause();
             int blackX = blackRect.getX(), blueX = blueRect.getX();
             blueRect.setX(blackX);
             blackRect.setX(blueX);
@@ -91,7 +91,7 @@ public class TestHomework3 extends TestFrame {
 
             println("8. Constraint on x and y of red rect to be at bottom-right of blue rect");
             println("   (Test: two constraints imposed on different attributes)");
-            // pause();
+            pause();
             redRect.setX(new Constraint<Integer>(
                 blueRect.useX(), blueRect.useWidth()
             ) {
@@ -110,7 +110,7 @@ public class TestHomework3 extends TestFrame {
 
             println("9. Constraint on x and y of black rect to be at bottom-right of red rect");
             println("   (Test: chain of constraints)");
-            // pause();
+            pause();
             blackRect.setX(new Constraint<Integer>(
                 redRect.useX(), redRect.useWidth()
             ) {
@@ -129,20 +129,20 @@ public class TestHomework3 extends TestFrame {
 
             println("10. Moving blue rect to (50, 80)");
             println("    Red and black rects should follow");
-            // pause();
+            pause();
             blueRect.moveTo(DEFAULT_RECT_WIDTH, DEFAULT_RECT_HEIGHT);
             redraw(windowGroup);
 
             println("11. Moving red rect to (50, 80) where blue rect is at");
             println("    Red should not move");
             println("    (Test: set value on a constrained attribute)");
-            // pause();
+            pause();
             redRect.moveTo(DEFAULT_RECT_WIDTH, DEFAULT_RECT_HEIGHT);
             redraw(windowGroup);
 
             println("12. Adding constraint on blue rect to be at top-left of red rect");
             println("    (Test: valid cycle in dependency graph)");
-            // pause();
+            pause();
             blueRect.setX(new Constraint<Integer>("blueRect.x", redRect.useX()) {
                 public Integer getValue() {
                     return redRect.getX() - DEFAULT_RECT_WIDTH;
@@ -157,13 +157,13 @@ public class TestHomework3 extends TestFrame {
 
             println("13. Moving red rect to (50, 80) again");
             println("    (Test: multi-way constraint in case of cycle)");
-            // pause();
+            pause();
             redRect.moveTo(DEFAULT_RECT_WIDTH, DEFAULT_RECT_HEIGHT);
             redraw(windowGroup);
 
             println("14. Changing constraint on blue rect to be at bottom-right of red rect");
             println("    (Test: invalid cycle in dependency graph)");
-            // pause();
+            pause();
             blueRect.setX(new Constraint<Integer>("blueRect.x", redRect.useX()) {
                 public Integer getValue() {
                     return redRect.getX() + DEFAULT_RECT_WIDTH;
@@ -182,7 +182,7 @@ public class TestHomework3 extends TestFrame {
 
             println("15. Adding constraint on width, height and line thickness of red rect");
             println("    to be twice as that of blue rect");
-            // pause();
+            pause();
             redRect.setWidth(new Constraint<Integer>(blueRect.useWidth()) {
                 public Integer getValue() {
                     return blueRect.getWidth() * 2;
@@ -202,7 +202,7 @@ public class TestHomework3 extends TestFrame {
 
             println("16. Creating two green filled rects");
             println("    (Test: filled rect objects)");
-            // pause();
+            pause();
             FilledRect filledRect1 = new FilledRect(200, 80,
                 DEFAULT_RECT_WIDTH, DEFAULT_RECT_HEIGHT, Color.green);
             FilledRect filledRect2 = new FilledRect(300, 80,
@@ -214,7 +214,7 @@ public class TestHomework3 extends TestFrame {
             println("17. Constraint on one new rect to have the same color as blue rect");
             println("    and on another to have a darker blue");
             println("    (Test: Constraint on colors rather than ints)");
-            // pause();
+            pause();
             filledRect1.setColor(new Constraint<Color>(blueRect.useColor()) {
                 public Color getValue() {
                     return blueRect.getColor();
@@ -229,19 +229,19 @@ public class TestHomework3 extends TestFrame {
 
             println("18. Changing blue outline rect to magenta");
             println("    Filled rects should change to magenta as well");
-            // pause();
+            pause();
             blueRect.setColor(Color.magenta);
             redraw(windowGroup);
 
             println("19. Creating a black line");
             println("    (Test: line objects)");
-            // pause();
+            pause();
             Line line = new Line(250, 280, 300, 280, Color.black, 2);
             group.addChild(line);
             redraw(windowGroup);
 
             println("20. Constraint on the line to connect filled rects by their centers");
-            // pause();
+            pause();
             // should have provided easier API for this
             line.setX1(new Constraint<Integer>(filledRect1.useX(), filledRect1.useWidth()) {
                 public Integer getValue() {
@@ -266,14 +266,14 @@ public class TestHomework3 extends TestFrame {
             redraw(windowGroup);
 
             println("21. Moving the brighter filled rect up and the darker one down");
-            // pause();
+            pause();
             filledRect1.moveTo(200, 0);
             filledRect2.moveTo(300, 160);
             redraw(windowGroup);
 
             println("22. Creating text that specifies an RGB '60,20,240'");
             println("    (Test: text objects)");
-            // pause();
+            pause();
             Graphics2D g = (Graphics2D) buffer.getGraphics();
             final Font DEFAULT_FONT = new Font("Monospaced", Font.PLAIN, 14);
             Text text = new Text(g, "60,20,240", 250, 260, DEFAULT_FONT, Color.black);
@@ -283,7 +283,7 @@ public class TestHomework3 extends TestFrame {
             println("23. Constraint on the top-left outline rect to have " +
                         "the text-specified RGB color");
             println("    (Test: example of arbitrary code in constraints)");
-            // pause();
+            pause();
             blueRect.setColor(new Constraint<Color>(text.useText()) {
                 public Color getValue() {
                     int[] rgb = Arrays.stream(text.getText().split(","))
@@ -295,7 +295,7 @@ public class TestHomework3 extends TestFrame {
 
             println("24. Constraint on the text to have the RGB color specified by itself");
             println("    (Test: constraint that depends on attributes of itself)");
-            // pause();
+            pause();
             text.setColor(new Constraint<Color>(text.useText()) {
                 public Color getValue() {
                     int[] rgb = Arrays.stream(text.getText().split(","))
@@ -307,7 +307,7 @@ public class TestHomework3 extends TestFrame {
 
             println("25. Creating an icon object to load images constrained by");
             println("    the file name specified by another text object");
-            // pause();
+            pause();
             Text fileName = new Text(g, "dog.gif", 250, 290, DEFAULT_FONT, Color.black);
             Icon image = new Icon(null, 20, 20);
             group.addChild(fileName);
@@ -315,7 +315,7 @@ public class TestHomework3 extends TestFrame {
             redraw(windowGroup);
 
             println("    Begin loading image");
-            // pause();
+            pause();
             image.setImage(new Constraint<Image>(fileName.useText()) {
                 public Image getValue() {
                     String file = fileName.getText();
@@ -331,13 +331,13 @@ public class TestHomework3 extends TestFrame {
             redraw(windowGroup);
 
             println("    Removing loaded image");
-            // pause();
+            pause();
             group.removeChild(image);
             redraw(windowGroup);
 
             println("26. Creating a text that shows the size of canvas");
             println("    (Test: constraint on group objects)");
-            // pause();
+            pause();
             Text canvasSize = new Text(g, "", 190, 160, DEFAULT_FONT, Color.black);
             group.addChild(canvasSize);
             canvasSize.setText(new Constraint<String>(group.useWidth(), group.useHeight()) {
@@ -350,13 +350,13 @@ public class TestHomework3 extends TestFrame {
 
             println("27. Resizing the group to children");
             println("    Group size should change and be reflected on text");
-            // pause();
+            pause();
             group.resizeToChildren();
             redraw(windowGroup);
 
             println("28. Creating a value rect with a new attribute 'value'");
             println("    (Test: constraint on a subclass object)");
-            // pause();
+            pause();
             ValueRect valueRect = new ValueRect();
             group.addChild(valueRect);
             redraw(windowGroup);
