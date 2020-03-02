@@ -1,8 +1,10 @@
 import java.util.List;
 import java.util.ArrayList;
 
-
 public class Constraint<T> extends Dependency<T> {
+    /**
+     * Constraint class: an alias for Dependency class
+     */
     public Constraint() {
         super();
     }
@@ -15,9 +17,12 @@ public class Constraint<T> extends Dependency<T> {
 }
 
 class Dependency<T> {
+    /**
+     * Dependency class: vertices in the dependency graph
+     */
     private T value;
     private boolean outOfDate = true;
-    private boolean visited = false; // TODO: ?
+    private boolean visited = false;
     private boolean evaluated = true;
     private List<Edge> outEdges = new ArrayList<>();
     private List<Edge> inEdges = new ArrayList<>();
@@ -39,7 +44,9 @@ class Dependency<T> {
         this.name = name;
     }
 
-    // This should be overridden by custom constraints
+    /**
+     * This should be overridden by custom constraints
+     */
     public T getValue() {
         return this.value;
     }
@@ -54,14 +61,6 @@ class Dependency<T> {
 
     public void setOutOfDate(boolean outOfDate) {
         this.outOfDate = outOfDate;
-    }
-
-    public boolean isVisited() {
-        return this.visited;
-    }
-
-    public void setVisited(boolean visited) {
-        this.visited = visited;
     }
 
     public List<Edge> getOutEdges() {
@@ -96,6 +95,11 @@ class Dependency<T> {
         return (this.name != null) ? this.name : super.toString();
     }
 
+    /**
+     * Replace this old constraint with a new constraint
+     * 
+     * @param newConstraint
+     */
     public void updateConstraint(Dependency<T> newConstraint) {
         // remove previous outgoing edges
         for (Edge outEdge: this.outEdges) {
@@ -114,9 +118,11 @@ class Dependency<T> {
         }
     }
     
+    /**
+     * Detect if the constraint is involved in a dependency cycle
+     */
     public boolean hasCycle() {
         if (this.visited) {
-            System.err.println("Warning: Cycle detected in dependency graph");
             return true;
         }
 
@@ -132,6 +138,11 @@ class Dependency<T> {
         return cycleDetected;
     }
 
+    /**
+     * Notify its direct successor to propagate out-of-date signals
+     * 
+     * @param selfOutOfDate whether to mark itself as out-of-date
+     */
     public void notifyValueChange(boolean selfOutOfDate) {
         this.visited = true;
         this.outOfDate = selfOutOfDate;
@@ -142,6 +153,9 @@ class Dependency<T> {
         this.visited = false;
     }    
 
+    /**
+     * Mark all successors of this dependency as out-of-date
+     */
     public void markOutOfDate() {
         if (this.visited) {
             return;
@@ -157,14 +171,13 @@ class Dependency<T> {
         this.visited = false;
     }
 
-    public boolean isEvaluated() {
-        return this.evaluated;
-    }
-
+    /**
+     * Lazy evaluation of constraint (based on Hudson's algorithm)
+     * 
+     * @return evaluated constraint value
+     */
     public T evaluate() {
-        // TODO: detect cycles
-        // deal with constraint conflicts / support multiway constraints
-
+        // yet to be evaluated
         this.evaluated = false;
 
         // consider re-evaluating if out of date
@@ -180,15 +193,15 @@ class Dependency<T> {
             if (anyPending) {
                 try {
                     T newValue = this.getValue();
-                    // System.out.println(this + " " + newValue);
                     if (newValue != this.value) {
-                        // if value changes, set outgoing edges to be pending
                         if (this.evaluated) {
+                            // if cycle, report cyclic dependency conflict
                             System.err.println(
-                                "Contradiction found when evaluating constraint: "
-                                + this.toString()
+                                "ERROR: Conflict found " + 
+                                "when evaluating constraint " + this
                             );
                         } else {
+                            // if no cycles, update value and set pending edges
                             this.value = newValue;
                             for (Edge outEdge : this.outEdges) {
                                 outEdge.setPending(true);
@@ -196,7 +209,10 @@ class Dependency<T> {
                         }
                     }
                 } catch (Exception e) {
-                    System.err.println("Exception in getValue(): " + e);
+                    // error in user-implemented getValue method
+                    System.err.println(String.format(
+                        "ERROR: in %s.getValue(): %s", this, e
+                    ));
                     return this.value;
                 }
             }
@@ -204,14 +220,16 @@ class Dependency<T> {
             // in case user implemented getValue() crashes
             this.outOfDate = false;
         }
-        // System.out.println(this + " " + this.value);
-
+        // finish evaluation
         this.evaluated = true;
         return this.value;
     }
 }
 
 class Edge {
+    /**
+     * Edge class: directed edges in the dependency graph
+     */
     private Dependency<?> start;
     private Dependency<?> end;
     private boolean isPending;
