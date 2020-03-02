@@ -190,34 +190,48 @@ public class TestHomework3 extends TestFrame {
                     return blueRect.getHeight() * 2;
                 }
             });
-            redraw(windowGroup);
-
-            println("16. Creating green filled rect");
-            pause();
-            FilledRect greenRect = new FilledRect(200, 80,
-                DEFAULT_RECT_WIDTH, DEFAULT_RECT_HEIGHT, Color.green);
-            group.addChild(greenRect);
-            redraw(windowGroup);
-
-            println("17. Adding constraint to new rect to have the same color as blue rect");
-            println("    (Test: Constraint on colors rather than ints)");
-            pause();
-            greenRect.setColor(new Constraint<Color>(blueRect.useColor()) {
-                public Color getValue() {
-                    return blueRect.getColor();
+            redRect.setLineThickness(new Constraint<Integer>(blueRect.useLineThickness()) {
+                public Integer getValue() {
+                    return blueRect.getLineThickness() * 2;
                 }
             });
             redraw(windowGroup);
 
-            println("18. Changing blue outline rect to pink");
-            println("    Filled rect should change to pink as well");
+            println("16. Creating two green filled rects");
             pause();
-            blueRect.setColor(Color.pink);
+            FilledRect filledRect1 = new FilledRect(200, 80,
+                DEFAULT_RECT_WIDTH, DEFAULT_RECT_HEIGHT, Color.green);
+            FilledRect filledRect2 = new FilledRect(300, 80,
+                DEFAULT_RECT_WIDTH, DEFAULT_RECT_HEIGHT, Color.green);
+            group.addChild(filledRect1);
+            group.addChild(filledRect2);
+            redraw(windowGroup);
+
+            println("17. Constraint one new rect to have the same color as blue rect");
+            println("    and another to have a darker blue color");
+            println("    (Test: Constraint on colors rather than ints)");
+            pause();
+            filledRect1.setColor(new Constraint<Color>(blueRect.useColor()) {
+                public Color getValue() {
+                    return blueRect.getColor();
+                }
+            });
+            filledRect2.setColor(new Constraint<Color>(filledRect1.useColor()) {
+                public Color getValue() {
+                    return filledRect1.getColor().darker();
+                }
+            });
+            redraw(windowGroup);
+
+            println("18. Changing blue outline rect to magenta");
+            println("    Filled rects should change to magenta as well");
+            pause();
+            blueRect.setColor(Color.magenta);
             redraw(windowGroup);
 
             println("19.");
 
-            println("    (Test: Constraint on variables of more than one type)");
+            println("    (Test: Constraint on mixed types of variables)");
             pause();
 
             println("17. Constraint on subclass object");
