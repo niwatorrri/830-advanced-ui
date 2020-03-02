@@ -6,7 +6,7 @@ public class OutlineRect implements GraphicalObject {
     private int lineThickness;
     private Group group = null;
 
-    // TODO: allow multiple constraints on a member
+    // TODO: more to come
     private Constraint<Integer> xConstraint = new Constraint<>();
     private Constraint<Integer> yConstraint = new Constraint<>();
 
@@ -38,19 +38,16 @@ public class OutlineRect implements GraphicalObject {
         return this.x;
     }
 
-    private void notifyValueChange(Constraint<?> constraint, boolean selfOutOfDate) {
-        constraint.setOutOfDate(selfOutOfDate);
-        for (Edge outEdge: constraint.getOutEdges()) {
-            outEdge.setPending(true);
-            outEdge.getEnd().markOutOfDate();
-        }
-    }
-
     public void setX(int x) {
         // TODO: no-op or (set local value and do multi-way constraint)
         if (this.x != x) {
-            this.x = x;
-            notifyValueChange(xConstraint, false);
+            if (!xConstraint.isConstrained()) {
+                this.x = x;
+                xConstraint.notifyValueChange(false);
+            } else if (xConstraint.hasCycle()) {
+                xConstraint.setValue(x);
+                xConstraint.notifyValueChange(false);
+            }
         }
     }
 
@@ -59,7 +56,7 @@ public class OutlineRect implements GraphicalObject {
         xConstraint.updateConstraint(constraint);
         xConstraint = constraint;
         xConstraint.setValue(this.x);
-        notifyValueChange(xConstraint, true);
+        xConstraint.notifyValueChange(true);
     }
 
     public Constraint<Integer> useX() {
@@ -77,7 +74,7 @@ public class OutlineRect implements GraphicalObject {
         // TODO: no-op or (set local value and do multi-way constraint)
         if (this.y != y) {
             this.y = y;
-            notifyValueChange(yConstraint, false);
+            yConstraint.notifyValueChange(false);
         }
     }
 
@@ -86,7 +83,7 @@ public class OutlineRect implements GraphicalObject {
         yConstraint.updateConstraint(constraint);
         yConstraint = constraint;
         yConstraint.setValue(this.y);
-        notifyValueChange(yConstraint, true);
+        yConstraint.notifyValueChange(true);
     }
 
     public Constraint<Integer> useY() {

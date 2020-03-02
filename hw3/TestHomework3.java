@@ -28,12 +28,12 @@ public class TestHomework3 extends TestFrame {
             redraw(windowGroup);
 
             println("2. Moving blue to (80, 0), others shouldn't move");
-            // pause();
+            pause();
             blueRect.moveTo(80, 0);
             redraw(windowGroup);
 
             println("3. Adding constraint on x of red rect to be next to blue");
-            // pause();
+            pause();
             redRect.setX(new Constraint<Integer>(blueRect.useX()) {
                 public Integer getValue() {
                     return blueRect.getX() + 50;
@@ -42,9 +42,9 @@ public class TestHomework3 extends TestFrame {
 
             redraw(windowGroup);
 
-            println("4. Setting a new constraint on x of red rect to be next to black");
+            println("4. Changing constraint on x of red rect to be next to black");
             println("   (Test: replace the original constraint with a new one)");
-            // pause();
+            pause();
             redRect.setX(new Constraint<Integer>(blackRect.useX()) {
                 public Integer getValue() {
                     return blackRect.getX() + 50;
@@ -52,9 +52,9 @@ public class TestHomework3 extends TestFrame {
             });
             redraw(windowGroup);
 
-            println("5. Constraint on x of red rect to be x of blue rect divided by zero");
+            println("5. Changing constraint on x of red rect to be x of blue rect divided by zero");
             println("   (Test: crashed user implementation)");
-            // pause();
+            pause();
             redRect.setX(new Constraint<Integer>(blueRect.useX()) {
                 public Integer getValue() {
                     return blueRect.getX() / 0;
@@ -62,9 +62,9 @@ public class TestHomework3 extends TestFrame {
             });
             redraw(windowGroup);
 
-            println("6. Constraint on x of red rect to be next to the leftmost rect");
+            println("6. Changing constraint on x of red rect to be next to the leftmost rect");
             println("   (Test: constraint depending on two objects)");
-            // pause();
+            pause();
             redRect.setX(new Constraint<Integer>(
                 blueRect.useX(), blackRect.useX()
             ) {
@@ -76,16 +76,16 @@ public class TestHomework3 extends TestFrame {
 
             println("7. Switching positions of blue and black rects");
             println("   Red rect should not move");
-            // pause();
+            pause();
             int blackX = blackRect.getX(), blueX = blueRect.getX();
             blueRect.setX(blackX);
             blackRect.setX(blueX);
             redraw(windowGroup);
 
             println("8. Constraint on x and y of red rect to be at bottom-right of blue rect");
-            println("   (Test: constraints imposed on two attributes)");
-            // pause();
-            redRect.setX(new Constraint<Integer>(blueRect.useX()) {
+            println("   (Test: two constraints imposed on different attributes)");
+            pause();
+            redRect.setX(new Constraint<Integer>("redRect.x", blueRect.useX()) {
                 public Integer getValue() {
                     return blueRect.getX() + 50;
                 }
@@ -99,7 +99,7 @@ public class TestHomework3 extends TestFrame {
 
             println("9. Constraint on x and y of black rect to be at bottom-right of red rect");
             println("   (Test: chain of constraints)");
-            // pause();
+            pause();
             blackRect.setX(new Constraint<Integer>(redRect.useX()) {
                 public Integer getValue() {
                     return redRect.getX() + 50;
@@ -112,18 +112,59 @@ public class TestHomework3 extends TestFrame {
             });
             redraw(windowGroup);
 
-            println("10. Move blue rect to (50, 80)");
+            println("10. Moving blue rect to (50, 80)");
             println("    Red and black rects should follow");
             pause();
             blueRect.moveTo(50, 80);
-            System.out.println(blueRect.useX().getOutEdges().get(0));
             redraw(windowGroup);
 
+            println("11. Moving red rect to (150, 240) where black rect is at");
+            println("    Should not move");
+            println("    (Test: set value on a constrained attribute)");
             pause();
-            println("Constraint on variables of more than one type");
-            println("Constraint on subclass object");
-            println("Stress test");
-            println("Test loop");
+            redRect.moveTo(150, 240);
+            redraw(windowGroup);
+
+            println("12. Adding constraint on blue rect to be at top-left of red rect");
+            println("    (Test: valid cycle in dependency graph)");
+            pause();
+            blueRect.setX(new Constraint<Integer>("blueRect.x", redRect.useX()) {
+                public Integer getValue() {
+                    return redRect.getX() - 50;
+                }
+            });
+            blueRect.setY(new Constraint<Integer>(redRect.useY()) {
+                public Integer getValue() {
+                    return redRect.getY() - 80;
+                }
+            });
+            redraw(windowGroup);
+
+            println("13. Moving red rect to (150, 240) again");
+            println("    (Test: multi-way constraint in case of cycle)");
+            pause();
+            redRect.moveTo(150, 240);
+            redraw(windowGroup);
+
+            println("14. Changing constraint on blue rect to be at bottom-right of red rect");
+            println("    (Test: invalid cycle in dependency graph)");
+            pause();
+            blueRect.setX(new Constraint<Integer>("blueRect.x", redRect.useX()) {
+                public Integer getValue() {
+                    return redRect.getX() + 50;
+                }
+            });
+            blueRect.setY(new Constraint<Integer>(redRect.useY()) {
+                public Integer getValue() {
+                    return redRect.getY() + 80;
+                }
+            });
+            redraw(windowGroup);
+
+            println("14. Constraint on variables of more than one type");
+            pause();
+            println("15. Constraint on subclass object");
+            println("16. Stress test");
 
             println("============= Basic Tests End =============");
             println("============= Advanced Tests =============");
@@ -133,7 +174,7 @@ public class TestHomework3 extends TestFrame {
             println("DONE! Close the window to exit");
 
         } catch (Exception e) {
-            println("Got an exception " + e);
+            println("An exception occurred: " + e);
         }
     }
 

@@ -35,8 +35,9 @@ public class TestFrame extends JFrame implements Group {
             private static final long serialVersionUID = 1L;
 
             public void paintComponent(Graphics g) {
-                if (buffer != null)
+                if (buffer != null) {
                     g.drawImage(buffer, 0, 0, null);
+                }
             }
         };
         canvas.setBackground(Color.white);
@@ -62,7 +63,7 @@ public class TestFrame extends JFrame implements Group {
 
     public void redraw(GraphicalObject gobj) {
         Graphics2D g = (Graphics2D) buffer.getGraphics();
-        BoundaryRectangle r = new BoundaryRectangle(0,0, getWidth(), getHeight());
+        BoundaryRectangle r = new BoundaryRectangle(0, 0, getWidth(), getHeight());
         g.setColor(canvas.getBackground());
         g.fill(r);
         gobj.draw(g, r);

@@ -17,6 +17,8 @@ public class Constraint<T> extends Dependency<T> {
 class Dependency<T> {
     private T value;
     private boolean outOfDate = true;
+    private boolean visited = false; // TODO: ?
+    private boolean evaluated = true;
     private List<Edge> outEdges = new ArrayList<>();
     private List<Edge> inEdges = new ArrayList<>();
     private String name = null;
@@ -54,6 +56,14 @@ class Dependency<T> {
         this.outOfDate = outOfDate;
     }
 
+    public boolean isVisited() {
+        return this.visited;
+    }
+
+    public void setVisited(boolean visited) {
+        this.visited = visited;
+    }
+
     public List<Edge> getOutEdges() {
         return this.outEdges;
     }
@@ -79,7 +89,7 @@ class Dependency<T> {
     }
 
     public boolean isConstrained() {
-        return (this.inEdges.size() != 0);
+        return (this.inEdges.size() > 0);
     }
 
     public String toString() {
@@ -103,19 +113,59 @@ class Dependency<T> {
             inEdge.getStart().removeOutEdge(inEdge);
         }
     }
+    
+    public boolean hasCycle() {
+        if (this.visited) {
+            System.err.println("Warning: Cycle detected in dependency graph");
+            return true;
+        }
+
+        this.visited = true;
+        boolean cycleDetected = false;
+        for (Edge outEdge : this.outEdges) {
+            if (outEdge.getEnd().hasCycle()) {
+                cycleDetected = true;
+                break;
+            }
+        }
+        this.visited = false;
+        return cycleDetected;
+    }
+
+    public void notifyValueChange(boolean selfOutOfDate) {
+        this.visited = true;
+        this.outOfDate = selfOutOfDate;
+        for (Edge outEdge : this.outEdges) {
+            outEdge.setPending(true);
+            outEdge.getEnd().markOutOfDate();
+        }
+        this.visited = false;
+    }    
 
     public void markOutOfDate() {
+        if (this.visited) {
+            return;
+        }
+
+        this.visited = true;
         if (!this.outOfDate) {
             this.outOfDate = true;
             for (Edge outEdge : this.outEdges) {
                 outEdge.getEnd().markOutOfDate();
             }
         }
+        this.visited = false;
+    }
+
+    public boolean isEvaluated() {
+        return this.evaluated;
     }
 
     public T evaluate() {
         // TODO: detect cycles
         // deal with constraint conflicts / support multiway constraints
+
+        this.evaluated = false;
 
         // consider re-evaluating if out of date
         if (this.outOfDate) {
@@ -130,15 +180,23 @@ class Dependency<T> {
             if (anyPending) {
                 try {
                     T newValue = this.getValue();
+                    // System.out.println(this + " " + newValue);
                     if (newValue != this.value) {
                         // if value changes, set outgoing edges to be pending
-                        this.value = newValue;
-                        for (Edge outEdge : this.outEdges) {
-                            outEdge.setPending(true);
+                        if (this.evaluated) {
+                            System.err.println(
+                                "Contradiction found when evaluating constraint: "
+                                + this.toString()
+                            );
+                        } else {
+                            this.value = newValue;
+                            for (Edge outEdge : this.outEdges) {
+                                outEdge.setPending(true);
+                            }
                         }
                     }
                 } catch (Exception e) {
-                    System.err.println(e);
+                    System.err.println("Exception in getValue(): " + e);
                     return this.value;
                 }
             }
@@ -146,6 +204,9 @@ class Dependency<T> {
             // in case user implemented getValue() crashes
             this.outOfDate = false;
         }
+        // System.out.println(this + " " + this.value);
+
+        this.evaluated = true;
         return this.value;
     }
 }
