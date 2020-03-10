@@ -1,6 +1,9 @@
 import java.awt.*;
 import java.util.List;
 
+import graphics.object.*;
+import graphics.group.*;
+
 public class TestSimpleGroup extends TestFrame {
 
     private static final long serialVersionUID = 1L;

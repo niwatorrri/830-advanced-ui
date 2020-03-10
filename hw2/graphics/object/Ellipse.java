@@ -1,6 +1,13 @@
-import java.awt.*;
+package graphics.object;
 
-public class OutlineRect implements GraphicalObject {
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Shape;
+
+import graphics.group.Group;
+
+public class Ellipse implements GraphicalObject {
     private int x, y, width, height;
     private Color color;
     private int lineThickness;
@@ -9,7 +16,7 @@ public class OutlineRect implements GraphicalObject {
     /**
      * Constructors
      */
-    public OutlineRect(int x, int y, int width, int height,
+    public Ellipse(int x, int y, int width, int height,
             Color color, int lineThickness) {
         this.x = x;
         this.y = y;
@@ -19,7 +26,7 @@ public class OutlineRect implements GraphicalObject {
         this.lineThickness = lineThickness;
     }
 
-    public OutlineRect() {
+    public Ellipse() {
         this(0, 0, 10, 10, Color.BLACK, 1);
     }
 
@@ -83,7 +90,7 @@ public class OutlineRect implements GraphicalObject {
 
         graphics.setColor(color);
         graphics.setStroke(new BasicStroke(lineThickness));
-        graphics.drawRect(
+        graphics.drawOval(
             x + lineThickness / 2,
             y + lineThickness / 2,
             width - lineThickness,

@@ -1,5 +1,8 @@
 import java.awt.*;
 
+import graphics.object.*;
+import graphics.group.*;
+
 public class TestOutlineRect extends TestFrame {
     private static final long serialVersionUID = 1L;
 

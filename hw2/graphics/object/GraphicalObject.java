@@ -1,4 +1,9 @@
-import java.awt.*;
+package graphics.object;
+
+import java.awt.Graphics2D;
+import java.awt.Shape;
+
+import graphics.group.Group;
 
 public interface GraphicalObject {
     public void draw(Graphics2D graphics, Shape clipShape);

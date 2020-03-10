@@ -1,26 +1,29 @@
-import java.awt.*;
+package graphics.object;
 
-public class Ellipse implements GraphicalObject {
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Shape;
+
+import graphics.group.Group;
+
+public class FilledRect implements GraphicalObject {
     private int x, y, width, height;
     private Color color;
-    private int lineThickness;
     private Group group = null;
 
     /**
      * Constructors
      */
-    public Ellipse(int x, int y, int width, int height,
-            Color color, int lineThickness) {
+    public FilledRect(int x, int y, int width, int height, Color color) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
         this.color = color;
-        this.lineThickness = lineThickness;
     }
 
-    public Ellipse() {
-        this(0, 0, 10, 10, Color.BLACK, 1);
+    public FilledRect() {
+        this(0, 0, 10, 10, Color.RED);
     }
 
     /**
@@ -66,14 +69,6 @@ public class Ellipse implements GraphicalObject {
         this.color = color;
     }
 
-    public int getLineThickness() {
-        return this.lineThickness;
-    }
-
-    public void setLineThickness(int lineThickness) {
-        this.lineThickness = lineThickness;
-    }
-
     /**
      * Methods defined in the GraphicalObject interface
      */
@@ -82,13 +77,8 @@ public class Ellipse implements GraphicalObject {
         graphics.setClip(clipShape);
 
         graphics.setColor(color);
-        graphics.setStroke(new BasicStroke(lineThickness));
-        graphics.drawOval(
-            x + lineThickness / 2,
-            y + lineThickness / 2,
-            width - lineThickness,
-            height - lineThickness
-        );
+        graphics.fillRect(x, y, width, height);
+
         graphics.setClip(oldClip);
     }
 

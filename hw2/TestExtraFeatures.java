@@ -1,5 +1,8 @@
 import java.awt.*;
 
+import graphics.object.*;
+import graphics.group.*;
+
 public class TestExtraFeatures extends TestFrame {
     /**
      * Test for extra features

@@ -1,23 +1,33 @@
-import java.awt.*;
+package graphics.object;
 
-public class FilledRect implements GraphicalObject {
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Shape;
+
+import graphics.group.Group;
+
+public class OutlineRect implements GraphicalObject {
     private int x, y, width, height;
     private Color color;
+    private int lineThickness;
     private Group group = null;
 
     /**
      * Constructors
      */
-    public FilledRect(int x, int y, int width, int height, Color color) {
+    public OutlineRect(int x, int y, int width, int height,
+            Color color, int lineThickness) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
         this.color = color;
+        this.lineThickness = lineThickness;
     }
 
-    public FilledRect() {
-        this(0, 0, 10, 10, Color.RED);
+    public OutlineRect() {
+        this(0, 0, 10, 10, Color.BLACK, 1);
     }
 
     /**
@@ -63,6 +73,14 @@ public class FilledRect implements GraphicalObject {
         this.color = color;
     }
 
+    public int getLineThickness() {
+        return this.lineThickness;
+    }
+
+    public void setLineThickness(int lineThickness) {
+        this.lineThickness = lineThickness;
+    }
+
     /**
      * Methods defined in the GraphicalObject interface
      */
@@ -71,8 +89,13 @@ public class FilledRect implements GraphicalObject {
         graphics.setClip(clipShape);
 
         graphics.setColor(color);
-        graphics.fillRect(x, y, width, height);
-
+        graphics.setStroke(new BasicStroke(lineThickness));
+        graphics.drawRect(
+            x + lineThickness / 2,
+            y + lineThickness / 2,
+            width - lineThickness,
+            height - lineThickness
+        );
         graphics.setClip(oldClip);
     }
 

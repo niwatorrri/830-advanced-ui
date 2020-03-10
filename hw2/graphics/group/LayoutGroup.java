@@ -1,7 +1,15 @@
-import java.awt.*;
+package graphics.group;
+
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.util.List;
 import java.util.ArrayList;
+
+import graphics.object.GraphicalObject;
+import graphics.object.BoundaryRectangle;
+import graphics.object.AlreadyHasGroupRunTimeException;
 
 public class LayoutGroup implements Group {
     private int x, y, width, height;
@@ -230,7 +238,7 @@ public class LayoutGroup implements Group {
         int newWidth = 0, newHeight = 0;
 
         for (GraphicalObject child: children) {
-            Rectangle boundingBox = child.getBoundingBox();
+            BoundaryRectangle boundingBox = child.getBoundingBox();
             if (layout == HORIZONTAL) {
                 newWidth += boundingBox.width + offset;
                 newHeight = Math.max(newHeight, boundingBox.height);

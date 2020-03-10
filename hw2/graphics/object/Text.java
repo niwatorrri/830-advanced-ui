@@ -1,8 +1,16 @@
-import java.awt.*;
+package graphics.object;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
+import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 
+import graphics.group.Group;
+
 public class Text implements GraphicalObject {
-    private Graphics internalGraphics; // for calculation only
+    private Graphics2D internalGraphics; // for calculation only
     private String text;
     private int x, y;
     private Font font;
@@ -15,9 +23,9 @@ public class Text implements GraphicalObject {
     /**
      * Constructors
      */
-    public Text(Graphics graphics, String text, int x, int y,
+    public Text(Graphics2D graphics, String text, int x, int y,
             Font font, Color color) {
-        this.internalGraphics = graphics.create();
+        this.internalGraphics = (Graphics2D) graphics.create();
         this.text = text;
         this.x = x;
         this.y = y;
@@ -35,11 +43,11 @@ public class Text implements GraphicalObject {
     /**
      * Getters and setters
      */
-    public Graphics getGraphics() {
+    public Graphics2D getGraphics() {
         return this.internalGraphics;
     }
 
-    public void setGraphics(Graphics graphics) {
+    public void setGraphics(Graphics2D graphics) {
         this.internalGraphics = graphics;
     }
 

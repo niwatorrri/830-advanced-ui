@@ -2,9 +2,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
-
 import javax.swing.*;
 import javax.imageio.*;
+
+import graphics.object.*;
+import graphics.group.*;
 
 public class TestFrame extends JFrame implements Group {
     private static final long serialVersionUID = 1L;

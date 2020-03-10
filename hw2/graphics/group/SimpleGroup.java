@@ -1,7 +1,15 @@
-import java.awt.*;
+package graphics.group;
+
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.util.List;
 import java.util.ArrayList;
+
+import graphics.object.GraphicalObject;
+import graphics.object.BoundaryRectangle;
+import graphics.object.AlreadyHasGroupRunTimeException;
 
 public class SimpleGroup implements Group {
     private int x, y, width, height;
@@ -131,7 +139,7 @@ public class SimpleGroup implements Group {
     public void resizeToChildren() {
         int newWidth = 0, newHeight = 0;
         for (GraphicalObject child: children) {
-            Rectangle box = child.getBoundingBox();
+            BoundaryRectangle box = child.getBoundingBox();
             newWidth = Math.max(newWidth, (int)box.getMaxX());
             newHeight = Math.max(newHeight, (int)box.getMaxY());
         }

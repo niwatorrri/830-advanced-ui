@@ -1,6 +1,9 @@
 import java.awt.*;
 import java.io.IOException;
 
+import graphics.object.*;
+import graphics.group.*;
+
 public class TestAllObjects extends TestFrame {
 
     private static final long serialVersionUID = 1L;

@@ -1,4 +1,11 @@
-import java.awt.*;
+package graphics.object;
+
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Shape;
+
+import graphics.group.Group;
 
 public class Line implements GraphicalObject {
     private int x1, y1, x2, y2;
