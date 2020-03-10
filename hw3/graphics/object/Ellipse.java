@@ -1,33 +1,44 @@
-import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.util.List;
-import java.util.ArrayList;
+package graphics.object;
 
-public class SimpleGroup implements Group {
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Shape;
+
+import graphics.group.Group;
+import constraint.Constraint;
+
+public class Ellipse implements GraphicalObject {
     /**
-     * SimpleGroup class: a group of objects at their fixed positions
+     * Ellipse class: ellipses
      */
     private int x, y, width, height;
+    private Color color;
+    private int lineThickness;
     private Group group = null;
-    private List<GraphicalObject> children = new ArrayList<>();
 
     private Constraint<Integer> xConstraint = new Constraint<>();
     private Constraint<Integer> yConstraint = new Constraint<>();
     private Constraint<Integer> widthConstraint = new Constraint<>();
     private Constraint<Integer> heightConstraint = new Constraint<>();
+    private Constraint<Color> colorConstraint = new Constraint<>();
+    private Constraint<Integer> lineThicknessConstraint = new Constraint<>();
 
     /**
      * Constructors
      */
-    public SimpleGroup(int x, int y, int width, int height) {
+    public Ellipse(int x, int y, int width, int height,
+            Color color, int lineThickness) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
+        this.color = color;
+        this.lineThickness = lineThickness;
     }
 
-    public SimpleGroup() {
-        this(0, 0, 200, 200);
+    public Ellipse() {
+        this(0, 0, 10, 10, Color.BLACK, 1);
     }
 
     /**
@@ -158,25 +169,86 @@ public class SimpleGroup implements Group {
         return this.heightConstraint;
     }
 
+    public Color getColor() {
+        if (colorConstraint.isConstrained()) {
+            this.color = colorConstraint.evaluate();
+        }
+        return this.color;
+    }
+
+    public void setColor(Color color) {
+        if (this.color != color) {
+            if (!colorConstraint.isConstrained()) {
+                this.color = color;
+                colorConstraint.notifyValueChange(false);
+            } else if (colorConstraint.hasCycle()) {
+                colorConstraint.setValue(color);
+                colorConstraint.notifyValueChange(false);
+            }
+        }
+    }
+
+    public void setColor(Constraint<Color> constraint) {
+        colorConstraint.updateConstraint(constraint);
+        colorConstraint = constraint;
+        colorConstraint.setValue(this.color);
+        colorConstraint.notifyValueChange(true);
+    }
+
+    public Constraint<Color> useColor() {
+        return this.colorConstraint;
+    }
+
+    public int getLineThickness() {
+        if (lineThicknessConstraint.isConstrained()) {
+            this.lineThickness = lineThicknessConstraint.evaluate();
+        }
+        return this.lineThickness;
+    }
+
+    public void setLineThickness(int lineThickness) {
+        if (this.lineThickness != lineThickness) {
+            if (!lineThicknessConstraint.isConstrained()) {
+                this.lineThickness = lineThickness;
+                lineThicknessConstraint.notifyValueChange(false);
+            } else if (lineThicknessConstraint.hasCycle()) {
+                lineThicknessConstraint.setValue(lineThickness);
+                lineThicknessConstraint.notifyValueChange(false);
+            }
+        }
+    }
+
+    public void setLineThickness(Constraint<Integer> constraint) {
+        lineThicknessConstraint.updateConstraint(constraint);
+        lineThicknessConstraint = constraint;
+        lineThicknessConstraint.setValue(this.lineThickness);
+        lineThicknessConstraint.notifyValueChange(true);
+    }
+
+    public Constraint<Integer> useLineThickness() {
+        return this.lineThicknessConstraint;
+    }
+
     /**
      * Methods defined in the GraphicalObject interface
      */
     public void draw(Graphics2D graphics, Shape clipShape) {
-        // Intersect the clip shape with the group bounding box
-        Shape commonClipArea = getBoundingBox().intersection(clipShape.getBounds());
+        Shape oldClip = graphics.getClip();
+        graphics.setClip(clipShape);
 
-        // Translate the new clip shape to pass to children
-        int x = getX(), y = getY();
-        AffineTransform transform = new AffineTransform();
-        transform.translate(-x, -y);
-        Shape childClipShape = transform.createTransformedShape(commonClipArea);
+        int x = getX(), y = getY(), width = getWidth(), height = getHeight();
+        int lineThickness = getLineThickness();
+        Color color = getColor();
 
-        // Translate the origin to draw children
-        graphics.translate(x, y);
-        for (GraphicalObject child: children) {
-            child.draw(graphics, childClipShape);
-        }
-        graphics.translate(-x, -y);
+        graphics.setColor(color);
+        graphics.setStroke(new BasicStroke(lineThickness));
+        graphics.drawOval(
+            x + lineThickness / 2,
+            y + lineThickness / 2,
+            width - lineThickness,
+            height - lineThickness
+        );
+        graphics.setClip(oldClip);
     }
 
     public BoundaryRectangle getBoundingBox() {
@@ -202,62 +274,5 @@ public class SimpleGroup implements Group {
 
     public boolean contains(int x, int y) {
         return getBoundingBox().contains(x, y);
-    }
-
-    /**
-     * Methods defined in the Group interface
-     */
-    public void addChild(GraphicalObject child) {
-        Group childGroup = child.getGroup();
-        if (childGroup != null) {
-            throw new AlreadyHasGroupRunTimeException();
-        } else {
-            children.add(child);
-            child.setGroup(this);
-        }
-    }
-
-    public void removeChild(GraphicalObject child) {
-        children.remove(child);
-        child.setGroup(null);
-    }
-
-    public void bringChildToFront(GraphicalObject child) {
-        if (children.remove(child)) {
-            children.add(child);
-        } else {
-            throw new RuntimeException("Object is not in the group");
-        }
-    }
-
-    public void resizeToChildren() {
-        int newWidth = 0, newHeight = 0;
-        for (GraphicalObject child: children) {
-            Rectangle box = child.getBoundingBox();
-            newWidth = Math.max(newWidth, (int)box.getMaxX());
-            newHeight = Math.max(newHeight, (int)box.getMaxY());
-        }
-        this.setWidth(newWidth);
-        this.setHeight(newHeight);
-    }
-
-    public List<GraphicalObject> getChildren() {
-        List<GraphicalObject> childrenCopy
-            = new ArrayList<GraphicalObject>(children);
-        return childrenCopy;
-    }
-
-    public Point parentToChild(Point pt) {
-        int x = getX(), y = getY();
-        int childX = pt.x - x;
-        int childY = pt.y - y;
-        return new Point(childX, childY);
-    }
-
-    public Point childToParent(Point pt) {
-        int x = getX(), y = getY();
-        int parentX = pt.x + x;
-        int parentY = pt.y + y;
-        return new Point(parentX, parentY);
     }
 }

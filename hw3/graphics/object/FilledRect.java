@@ -1,44 +1,39 @@
-import java.awt.*;
-import java.awt.geom.Rectangle2D;
+package graphics.object;
 
-public class Text implements GraphicalObject {
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Shape;
+
+import graphics.group.Group;
+import constraint.Constraint;
+
+public class FilledRect implements GraphicalObject {
     /**
-     * Text class: texts
+     * FilledRect class: filled rectangles
      */
-    private Graphics internalGraphics; // for calculation only
-    private String text;
-    private int x, y;
-    private Font font;
+    private int x, y, width, height;
     private Color color;
     private Group group = null;
 
-    private static final Font DEFAULT_FONT
-        = new Font("Monospaced", Font.PLAIN, 10);
-
-    private Constraint<String> textConstraint = new Constraint<>();
     private Constraint<Integer> xConstraint = new Constraint<>();
     private Constraint<Integer> yConstraint = new Constraint<>();
-    private Constraint<Font> fontConstraint = new Constraint<>();
+    private Constraint<Integer> widthConstraint = new Constraint<>();
+    private Constraint<Integer> heightConstraint = new Constraint<>();
     private Constraint<Color> colorConstraint = new Constraint<>();
 
     /**
      * Constructors
      */
-    public Text(Graphics graphics, String text, int x, int y,
-            Font font, Color color) {
-        this.internalGraphics = graphics.create();
-        this.text = text;
+    public FilledRect(int x, int y, int width, int height, Color color) {
         this.x = x;
         this.y = y;
-        this.font = font;
+        this.width = width;
+        this.height = height;
         this.color = color;
-
-        internalGraphics.setFont(font);
-        internalGraphics.setColor(color);
     }
 
-    public Text() {
-        this(null, "Text", 10, 10, DEFAULT_FONT, Color.BLACK);
+    public FilledRect() {
+        this(0, 0, 10, 10, Color.RED);
     }
 
     /**
@@ -46,14 +41,6 @@ public class Text implements GraphicalObject {
      * 
      * Note: user (e.g. useX) returns the constraint on the variable (X)
      */
-    public Graphics getGraphics() {
-        return this.internalGraphics;
-    }
-
-    public void setGraphics(Graphics graphics) {
-        this.internalGraphics = graphics;
-    }
-    
     public int getX() {
         if (xConstraint.isConstrained()) {
             this.x = xConstraint.evaluate();
@@ -117,72 +104,69 @@ public class Text implements GraphicalObject {
         return this.yConstraint;
     }
 
-    public String getText() {
-        if (textConstraint.isConstrained()) {
-            this.text = textConstraint.evaluate();
+    public int getWidth() {
+        if (widthConstraint.isConstrained()) {
+            this.width = widthConstraint.evaluate();
         }
-        return this.text;
+        return this.width;
     }
 
-    public void setText(String text) {
-        if (this.text != text) {
-            if (!textConstraint.isConstrained()) {
-                this.text = text;
-                textConstraint.notifyValueChange(false);
-            } else if (textConstraint.hasCycle()) {
-                textConstraint.setValue(text);
-                textConstraint.notifyValueChange(false);
+    public void setWidth(int width) {
+        if (this.width != width) {
+            if (!widthConstraint.isConstrained()) {
+                this.width = width;
+                widthConstraint.notifyValueChange(false);
+            } else if (widthConstraint.hasCycle()) {
+                widthConstraint.setValue(width);
+                widthConstraint.notifyValueChange(false);
             }
         }
     }
 
-    public void setText(Constraint<String> constraint) {
-        textConstraint.updateConstraint(constraint);
-        textConstraint = constraint;
-        textConstraint.setValue(this.text);
-        textConstraint.notifyValueChange(true);
+    public void setWidth(Constraint<Integer> constraint) {
+        widthConstraint.updateConstraint(constraint);
+        widthConstraint = constraint;
+        widthConstraint.setValue(this.width);
+        widthConstraint.notifyValueChange(true);
     }
 
-    public Constraint<String> useText() {
-        return this.textConstraint;
+    public Constraint<Integer> useWidth() {
+        return this.widthConstraint;
     }
 
-    public Font getFont() {
-        if (fontConstraint.isConstrained()) {
-            this.font = fontConstraint.evaluate();
-            internalGraphics.setFont(this.font);
+    public int getHeight() {
+        if (heightConstraint.isConstrained()) {
+            this.height = heightConstraint.evaluate();
         }
-        return this.font;
+        return this.height;
     }
 
-    public void setFont(Font font) {
-        if (this.font != font) {
-            if (!fontConstraint.isConstrained()) {
-                this.font = font;
-                internalGraphics.setFont(this.font);
-                fontConstraint.notifyValueChange(false);
-            } else if (fontConstraint.hasCycle()) {
-                fontConstraint.setValue(font);
-                fontConstraint.notifyValueChange(false);
+    public void setHeight(int height) {
+        if (this.height != height) {
+            if (!heightConstraint.isConstrained()) {
+                this.height = height;
+                heightConstraint.notifyValueChange(false);
+            } else if (heightConstraint.hasCycle()) {
+                heightConstraint.setValue(height);
+                heightConstraint.notifyValueChange(false);
             }
         }
     }
 
-    public void setFont(Constraint<Font> constraint) {
-        fontConstraint.updateConstraint(constraint);
-        fontConstraint = constraint;
-        fontConstraint.setValue(this.font);
-        fontConstraint.notifyValueChange(true);
+    public void setHeight(Constraint<Integer> constraint) {
+        heightConstraint.updateConstraint(constraint);
+        heightConstraint = constraint;
+        heightConstraint.setValue(this.height);
+        heightConstraint.notifyValueChange(true);
     }
 
-    public Constraint<Font> useFont() {
-        return this.fontConstraint;
+    public Constraint<Integer> useHeight() {
+        return this.heightConstraint;
     }
-    
+
     public Color getColor() {
         if (colorConstraint.isConstrained()) {
             this.color = colorConstraint.evaluate();
-            internalGraphics.setColor(this.color);
         }
         return this.color;
     }
@@ -191,7 +175,6 @@ public class Text implements GraphicalObject {
         if (this.color != color) {
             if (!colorConstraint.isConstrained()) {
                 this.color = color;
-                internalGraphics.setColor(this.color);
                 colorConstraint.notifyValueChange(false);
             } else if (colorConstraint.hasCycle()) {
                 colorConstraint.setValue(color);
@@ -218,45 +201,23 @@ public class Text implements GraphicalObject {
         Shape oldClip = graphics.getClip();
         graphics.setClip(clipShape);
 
-        int x = getX(), y = getY();
-        Font font = getFont();
+        int x = getX(), y = getY(), width = getWidth(), height = getHeight();
         Color color = getColor();
-        String text = getText();
 
-        int textHeight = internalGraphics.getFontMetrics().getHeight();
-        graphics.setFont(font);
         graphics.setColor(color);
-        for (String line : text.split("\n")) {  // deal with newlines
-            graphics.drawString(line, x, y += textHeight);
-        }
+        graphics.fillRect(x, y, width, height);
 
         graphics.setClip(oldClip);
     }
 
     public BoundaryRectangle getBoundingBox() {
-        if (internalGraphics == null) {
-            return new BoundaryRectangle(x, y, -1, -1);
-        }
-        // The bounding box includes leading
-        String text = getText();
-        FontMetrics metrics = internalGraphics.getFontMetrics();
-        Rectangle2D box = metrics.getStringBounds(text, internalGraphics);
-
-        // Coordinates were relative to the reference point
-        int x = getX(), y = getY();
-        box.setRect(x + box.getX(), y + box.getY(),
-                    box.getWidth(), box.getHeight());
-        return new BoundaryRectangle(box);
+        int x = getX(), y = getY(), width = getWidth(), height = getHeight();
+        return new BoundaryRectangle(x, y, width, height);
     }
 
     public void moveTo(int x, int y) {
-        BoundaryRectangle boundingBox = getBoundingBox();
-        int topLeftX = boundingBox.x;
-        int topLeftY = boundingBox.y;
-
-        int prevX = getX(), prevY = getY();
-        this.setX(prevX + x - topLeftX);
-        this.setY(prevY + y - topLeftY);
+        this.setX(x);
+        this.setY(y);
     }
 
     public Group getGroup() {

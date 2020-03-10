@@ -1,7 +1,13 @@
 import java.awt.*;
-import java.util.Arrays;
+import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Random;
+import javax.imageio.ImageIO;
+
+import graphics.object.*;
+import graphics.group.SimpleGroup;
+import constraint.Constraint;
 
 public class TestHomework3 extends TestFrame {
     private static final int FRAME_WIDTH = 400;
@@ -328,10 +334,10 @@ public class TestHomework3 extends TestFrame {
                 public Image getValue() {
                     String file = fileName.getText();
                     try {
-                        Image loadedImage = loadImageFully(file);
+                        Image loadedImage = ImageIO.read(new File(file));
                         return loadedImage;
                     } catch (IOException e) {
-                        println("Failed to load" + file);
+                        println("Failed to load " + file);
                         return null;
                     }
                 }
@@ -383,7 +389,7 @@ public class TestHomework3 extends TestFrame {
                 Thread.sleep(400);
             }
 
-            println("30. Removing outline rects for fiinal test");
+            println("30. Removing outline rects for final test");
             pause();
             group.removeChild(blueRect);
             group.removeChild(redRect);

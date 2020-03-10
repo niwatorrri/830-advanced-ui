@@ -1,4 +1,7 @@
-import java.awt.*;
+import java.awt.Color;
+
+import graphics.object.OutlineRect;
+import constraint.Constraint;
 
 public class ValueRect extends OutlineRect {
     /**

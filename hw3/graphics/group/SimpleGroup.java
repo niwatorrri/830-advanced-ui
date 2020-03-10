@@ -1,16 +1,22 @@
-import java.awt.*;
+package graphics.group;
+
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.util.List;
 import java.util.ArrayList;
 
-public class ScaledGroup implements Group {
+import graphics.object.GraphicalObject;
+import graphics.object.BoundaryRectangle;
+import graphics.object.AlreadyHasGroupRunTimeException;
+import constraint.Constraint;
+
+public class SimpleGroup implements Group {
     /**
-     * ScaledGroup class
-     * 
-     * Shrinks or enlarges a group of graphical objects by a scale factor
+     * SimpleGroup class: a group of objects at their fixed positions
      */
     private int x, y, width, height;
-    private double scaleX, scaleY;
     private Group group = null;
     private List<GraphicalObject> children = new ArrayList<>();
 
@@ -18,24 +24,19 @@ public class ScaledGroup implements Group {
     private Constraint<Integer> yConstraint = new Constraint<>();
     private Constraint<Integer> widthConstraint = new Constraint<>();
     private Constraint<Integer> heightConstraint = new Constraint<>();
-    private Constraint<Double> scaleXConstraint = new Constraint<>();
-    private Constraint<Double> scaleYConstraint = new Constraint<>();    
 
     /**
      * Constructors
      */
-    public ScaledGroup(int x, int y, int width, int height,
-            double scaleX, double scaleY) {
+    public SimpleGroup(int x, int y, int width, int height) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
-        this.scaleX = scaleX;
-        this.scaleY = scaleY;
     }
 
-    public ScaledGroup() {
-        this(0, 0, 200, 200, 1.0, 1.0);
+    public SimpleGroup() {
+        this(0, 0, 200, 200);
     }
 
     /**
@@ -166,110 +167,30 @@ public class ScaledGroup implements Group {
         return this.heightConstraint;
     }
 
-    public double getScaleX() {
-        if (scaleXConstraint.isConstrained()) {
-            this.scaleX = scaleXConstraint.evaluate();
-        }
-        return this.scaleX;
-    }
-
-    public void setScaleX(double scaleX) {
-        if (this.scaleX != scaleX) {
-            if (!scaleXConstraint.isConstrained()) {
-                this.scaleX = scaleX;
-                scaleXConstraint.notifyValueChange(false);
-            } else if (scaleXConstraint.hasCycle()) {
-                scaleXConstraint.setValue(scaleX);
-                scaleXConstraint.notifyValueChange(false);
-            }
-        }
-    }
-
-    public void setScaleX(Constraint<Double> constraint) {
-        scaleXConstraint.updateConstraint(constraint);
-        scaleXConstraint = constraint;
-        scaleXConstraint.setValue(this.scaleX);
-        scaleXConstraint.notifyValueChange(true);
-    }
-
-    public Constraint<Double> useScaleX() {
-        return this.scaleXConstraint;
-    }
-
-    public double getScaleY() {
-        if (scaleYConstraint.isConstrained()) {
-            this.scaleY = scaleYConstraint.evaluate();
-        }
-        return this.scaleY;
-    }
-
-    public void setScaleY(double scaleY) {
-        if (this.scaleY != scaleY) {
-            if (!scaleYConstraint.isConstrained()) {
-                this.scaleY = scaleY;
-                scaleYConstraint.notifyValueChange(false);
-            } else if (scaleYConstraint.hasCycle()) {
-                scaleYConstraint.setValue(scaleY);
-                scaleYConstraint.notifyValueChange(false);
-            }
-        }
-    }
-
-    public void setScaleY(Constraint<Double> constraint) {
-        scaleYConstraint.updateConstraint(constraint);
-        scaleYConstraint = constraint;
-        scaleYConstraint.setValue(this.scaleY);
-        scaleYConstraint.notifyValueChange(true);
-    }
-
-    public Constraint<Double> useScaleY() {
-        return this.scaleYConstraint;
-    }
-
     /**
      * Methods defined in the GraphicalObject interface
      */
     public void draw(Graphics2D graphics, Shape clipShape) {
-        // Turn on anti-aliasing for aesthetics
-        RenderingHints oldRenderingHints = graphics.getRenderingHints();
-        graphics.setRenderingHint(
-            RenderingHints.KEY_ANTIALIASING,
-            RenderingHints.VALUE_ANTIALIAS_ON
-        );
-
         // Intersect the clip shape with the group bounding box
         Shape commonClipArea = getBoundingBox().intersection(clipShape.getBounds());
 
-        // Transform the new clip shape to pass to children
-        // Note: transforms are right-associative
+        // Translate the new clip shape to pass to children
         int x = getX(), y = getY();
-        double scaleX = getScaleX(), scaleY = getScaleY();
-        AffineTransform shapeTransform = new AffineTransform();
-        shapeTransform.scale(1.0 / scaleX, 1.0 / scaleY);
-        shapeTransform.translate(-x, -y);
-        Shape childClipShape = shapeTransform.createTransformedShape(commonClipArea);
+        AffineTransform transform = new AffineTransform();
+        transform.translate(-x, -y);
+        Shape childClipShape = transform.createTransformedShape(commonClipArea);
 
-        // Transform the graphics to draw children
-        AffineTransform oldTransform = graphics.getTransform();
-        graphics.translate(x, y);           // 1. translate the origin
-        graphics.scale(scaleX, scaleY);     // 2. scale the graphics
+        // Translate the origin to draw children
+        graphics.translate(x, y);
         for (GraphicalObject child: children) {
             child.draw(graphics, childClipShape);
         }
-
-        // Restore old graphical attributes
-        graphics.setTransform(oldTransform);
-        graphics.setRenderingHints(oldRenderingHints);
+        graphics.translate(-x, -y);
     }
 
     public BoundaryRectangle getBoundingBox() {
         int x = getX(), y = getY(), width = getWidth(), height = getHeight();
-        double scaleX = getScaleX(), scaleY = getScaleY();
-
-        // Relaxed a little bit to count for floating point error
-        return new BoundaryRectangle(
-            x, y, width * scaleX, height * scaleY
-        );
+        return new BoundaryRectangle(x, y, width, height);
     }
 
     public void moveTo(int x, int y) {
@@ -321,9 +242,9 @@ public class ScaledGroup implements Group {
     public void resizeToChildren() {
         int newWidth = 0, newHeight = 0;
         for (GraphicalObject child: children) {
-            Rectangle box = child.getBoundingBox();
-            newWidth = Math.max(newWidth, (int)box.getMaxX());
-            newHeight = Math.max(newHeight, (int)box.getMaxY());
+            BoundaryRectangle box = child.getBoundingBox();
+            newWidth = Math.max(newWidth, (int) box.getMaxX());
+            newHeight = Math.max(newHeight, (int) box.getMaxY());
         }
         this.setWidth(newWidth);
         this.setHeight(newHeight);
@@ -337,19 +258,15 @@ public class ScaledGroup implements Group {
 
     public Point parentToChild(Point pt) {
         int x = getX(), y = getY();
-        double scaleX = getScaleX(), scaleY = getScaleY();
-
-        int childX = (int) ((pt.x - x) / scaleX);
-        int childY = (int) ((pt.y - y) / scaleY);
+        int childX = pt.x - x;
+        int childY = pt.y - y;
         return new Point(childX, childY);
     }
 
     public Point childToParent(Point pt) {
         int x = getX(), y = getY();
-        double scaleX = getScaleX(), scaleY = getScaleY();
-
-        int parentX = (int) (pt.x * scaleX + x);
-        int parentY = (int) (pt.y * scaleY + y);
+        int parentX = pt.x + x;
+        int parentY = pt.y + y;
         return new Point(parentX, parentY);
     }
 }

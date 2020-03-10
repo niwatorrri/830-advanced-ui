@@ -1,4 +1,11 @@
-import java.awt.*;
+package graphics.object;
+
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Shape;
+
+import graphics.group.Group;
+import constraint.Constraint;
 
 public class Icon implements GraphicalObject {
     /**

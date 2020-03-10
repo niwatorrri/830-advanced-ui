@@ -1,5 +1,10 @@
-import java.awt.*;
+package graphics.group;
+
+import java.awt.Point;
 import java.util.List;
+
+import graphics.object.GraphicalObject;
+import graphics.object.AlreadyHasGroupRunTimeException;
 
 public interface Group extends GraphicalObject {
     public void addChild(GraphicalObject child) throws AlreadyHasGroupRunTimeException;

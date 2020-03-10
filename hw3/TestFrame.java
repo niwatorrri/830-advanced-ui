@@ -2,9 +2,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
-
 import javax.swing.*;
 import javax.imageio.*;
+
+import graphics.object.*;
+import graphics.group.*;
 
 public class TestFrame extends JFrame implements Group {
     private static final long serialVersionUID = 1L;
@@ -61,12 +63,12 @@ public class TestFrame extends JFrame implements Group {
     // Drawing GraphicalObjects in the window.
     //
 
-    public void redraw(GraphicalObject gobj) {
+    public void redraw(GraphicalObject gObj) {
         Graphics2D g = (Graphics2D) buffer.getGraphics();
         BoundaryRectangle r = new BoundaryRectangle(0, 0, getWidth(), getHeight());
         g.setColor(canvas.getBackground());
         g.fill(r);
-        gobj.draw(g, r);
+        gObj.draw(g, r);
         canvas.repaint();
     }
 
