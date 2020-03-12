@@ -1,4 +1,4 @@
-package input;
+package behavior;
 
 public class BehaviorEvent {
     private int id;
@@ -14,23 +14,23 @@ public class BehaviorEvent {
     }
 
     public int getID() {
-        return id;
+        return this.id;
     }
 
     public int getModifiers() {
-        return modifiers;
+        return this.modifiers;
     }
 
     public int getKey() {
-        return key;
+        return this.key;
     }
 
     public int getX() {
-        return x;
+        return this.x;
     }
 
     public int getY() {
-        return y;
+        return this.y;
     }
 
     // only supports exact matches. Add support for ANY modifier as extra credit

@@ -1,4 +1,4 @@
-package input;
+package behavior;
 
 import graphics.group.Group;
 
