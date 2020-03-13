@@ -3,6 +3,7 @@ import java.io.IOException;
 
 import graphics.group.Group;
 import graphics.group.SimpleGroup;
+import behavior.InteractiveWindowGroup;
 
 public class TestAllBehaviors extends InteractiveWindowGroup {
 
@@ -54,6 +55,9 @@ public class TestAllBehaviors extends InteractiveWindowGroup {
 		 */
 
 		// start the main event loop so the behaviors start running
+
+		// test: use set start event to parameterize start events
+		// test: move overlapping objects where one is not in the group
 
 		println("close the window to stop");
 	}

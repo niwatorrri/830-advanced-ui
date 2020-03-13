@@ -2,7 +2,8 @@ package behavior;
 
 public class BehaviorEvent {
     private int id;
-    private int modifiers, key;
+    private int modifiers;
+    private int key;
     private int x, y;
 
     public BehaviorEvent(int id, int modifiers, int key, int x, int y) {
@@ -35,10 +36,17 @@ public class BehaviorEvent {
 
     // only supports exact matches. Add support for ANY modifier as extra credit
     public boolean matches(BehaviorEvent event) {
-        return 
-            (event.id == id)
-            && ((modifiers & MAX_MODIFIER) == (event.modifiers & MAX_MODIFIER)) //sometimes there are some out of range
-            && (event.key == key);
+        return (event.id == this.id)
+                && ((event.modifiers & MAX_MODIFIER) == (this.modifiers & MAX_MODIFIER))
+                && (event.key == this.key);
+    }
+
+    public static boolean isMouseEvent(int id) {
+        return (id == MOUSE_DOWN_ID) || (id == MOUSE_UP_ID) || (id == MOUSE_MOVE_ID);
+    }
+
+    public static boolean isMouseWheelEvent(int id) {
+        return (id == SCROLLWHEEL_ID);
     }
 
     public static final int KEY_DOWN_ID = 0;
@@ -48,6 +56,7 @@ public class BehaviorEvent {
     public static final int MOUSE_MOVE_ID = 4;
     public static final int SCROLLWHEEL_ID = 5;
 
+    public static final int NO_MODIFIER = 0x0;
     public static final int SHIFT_MODIFIER = 0x1;
     public static final int CONTROL_MODIFIER = 0x2;
     public static final int ALT_MODIFIER = 0x4;
@@ -55,8 +64,9 @@ public class BehaviorEvent {
     public static final int FUNCTION_KEY_MODIFIER = 0x10;
     public static final int COMMAND_KEY_MODIFIER = 0x20;
 
-    private static final int MAX_MODIFIER = 0x3F; //OR of all supported modifiers; used internally to ignore modifiers that are not supported
-   
+    private static final int MAX_MODIFIER = 0x3F; // OR of all supported modifiers
+
+    public static final int NO_KEY = 0;
     public static final int LEFT_MOUSE_KEY = 10000;
     public static final int MIDDLE_MOUSE_KEY = 10001;
     public static final int RIGHT_MOUSE_KEY = 10002;

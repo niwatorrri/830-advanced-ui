@@ -340,9 +340,7 @@ public class ScaledGroup implements Group {
     }
 
     public List<GraphicalObject> getChildren() {
-        List<GraphicalObject> childrenCopy
-            = new ArrayList<GraphicalObject>(children);
-        return childrenCopy;
+        return new ArrayList<GraphicalObject>(children);
     }
 
     public Point parentToChild(Point pt) {

@@ -12,10 +12,10 @@ public interface Behavior {
     public static final int RUNNING_OUTSIDE = 2;
 
     public BehaviorEvent getStartEvent();
-    public void setStartEvent(BehaviorEvent mask);
+    public void setStartEvent(BehaviorEvent startEvent);
 
     public BehaviorEvent getStopEvent();
-    public void setStopEvent(BehaviorEvent mask);
+    public void setStopEvent(BehaviorEvent stopEvent);
 
     public Boolean start(BehaviorEvent event);
     public Boolean running(BehaviorEvent event);
