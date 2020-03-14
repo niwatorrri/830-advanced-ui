@@ -29,7 +29,7 @@ public class ScaledGroup implements Group {
     private Constraint<Integer> widthConstraint = new Constraint<>();
     private Constraint<Integer> heightConstraint = new Constraint<>();
     private Constraint<Double> scaleXConstraint = new Constraint<>();
-    private Constraint<Double> scaleYConstraint = new Constraint<>();    
+    private Constraint<Double> scaleYConstraint = new Constraint<>();
 
     /**
      * Constructors
@@ -263,7 +263,7 @@ public class ScaledGroup implements Group {
         AffineTransform oldTransform = graphics.getTransform();
         graphics.translate(x, y);           // 1. translate the origin
         graphics.scale(scaleX, scaleY);     // 2. scale the graphics
-        for (GraphicalObject child: children) {
+        for (GraphicalObject child : children) {
             child.draw(graphics, childClipShape);
         }
 
@@ -277,9 +277,7 @@ public class ScaledGroup implements Group {
         double scaleX = getScaleX(), scaleY = getScaleY();
 
         // Relaxed a little bit to count for floating point error
-        return new BoundaryRectangle(
-            x, y, width * scaleX, height * scaleY
-        );
+        return new BoundaryRectangle(x, y, width * scaleX, height * scaleY);
     }
 
     public void moveTo(int x, int y) {
@@ -299,7 +297,12 @@ public class ScaledGroup implements Group {
     }
 
     public boolean contains(int x, int y) {
-        return getBoundingBox().contains(x, y);
+        for (GraphicalObject child : children) {
+            if (child.contains(x, y)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -330,7 +333,7 @@ public class ScaledGroup implements Group {
 
     public void resizeToChildren() {
         int newWidth = 0, newHeight = 0;
-        for (GraphicalObject child: children) {
+        for (GraphicalObject child : children) {
             BoundaryRectangle box = child.getBoundingBox();
             newWidth = Math.max(newWidth, (int) box.getMaxX());
             newHeight = Math.max(newHeight, (int) box.getMaxY());

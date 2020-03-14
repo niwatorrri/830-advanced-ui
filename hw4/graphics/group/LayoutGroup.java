@@ -16,8 +16,8 @@ public class LayoutGroup implements Group {
     /**
      * LayoutGroup class
      * 
-     * Automatically places its children in a certain layout
-     * Options include horizontal, vertical and grid layouts
+     * Automatically places its children in a certain layout Options include
+     * horizontal, vertical and grid layouts
      */
     private int x, y, width, height;
     private int layout, offset;
@@ -37,8 +37,7 @@ public class LayoutGroup implements Group {
     /**
      * Constructors
      */
-    public LayoutGroup(int x, int y, int width, int height,
-            int layout, int offset) {
+    public LayoutGroup(int x, int y, int width, int height, int layout, int offset) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -48,8 +47,7 @@ public class LayoutGroup implements Group {
         checkIfSupportedLayout(layout);
     }
 
-    public LayoutGroup(int x, int y, int width, int height,
-            int layout, int offset, int nRows, int nColumns) {
+    public LayoutGroup(int x, int y, int width, int height, int layout, int offset, int nRows, int nColumns) {
         this(x, y, width, height, layout, offset);
         this.nRows = nRows;
         this.nColumns = nColumns;
@@ -328,12 +326,10 @@ public class LayoutGroup implements Group {
             GraphicalObject child = children.get(idx);
             BoundaryRectangle box = child.getBoundingBox();
 
-            rowHeight[idx / nColumns] = Math.max(
-                rowHeight[idx / nColumns], box.height);
-            columnWidth[idx % nColumns] = Math.max(
-                columnWidth[idx % nColumns], box.width);
+            rowHeight[idx / nColumns] = Math.max(rowHeight[idx / nColumns], box.height);
+            columnWidth[idx % nColumns] = Math.max(columnWidth[idx % nColumns], box.width);
         }
-        return new Object[] {rowHeight, columnWidth};
+        return new Object[] { rowHeight, columnWidth };
     }
 
     public void draw(Graphics2D graphics, Shape clipShape) {
@@ -352,7 +348,7 @@ public class LayoutGroup implements Group {
         int nRows = getNRows(), nColumns = getNColumns();
 
         int currentXPosition = 0, currentYPosition = 0;
-        int[] rowHeight = {0}, columnWidth ={0};
+        int[] rowHeight = { 0 }, columnWidth = { 0 };
 
         if (layout == GRID) {
             Object[] gridSizes = getGridSizes(children);
@@ -416,7 +412,12 @@ public class LayoutGroup implements Group {
     }
 
     public boolean contains(int x, int y) {
-        return getBoundingBox().contains(x, y);
+        for (GraphicalObject child : children) {
+            if (child.contains(x, y)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -449,7 +450,7 @@ public class LayoutGroup implements Group {
         int newWidth = 0, newHeight = 0;
         int layout = getLayout(), offset = getOffset();
 
-        for (GraphicalObject child: children) {
+        for (GraphicalObject child : children) {
             BoundaryRectangle boundingBox = child.getBoundingBox();
             if (layout == HORIZONTAL) {
                 newWidth += boundingBox.width + offset;

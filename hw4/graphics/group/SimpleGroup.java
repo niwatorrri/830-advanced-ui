@@ -182,7 +182,7 @@ public class SimpleGroup implements Group {
 
         // Translate the origin to draw children
         graphics.translate(x, y);
-        for (GraphicalObject child: children) {
+        for (GraphicalObject child : children) {
             child.draw(graphics, childClipShape);
         }
         graphics.translate(-x, -y);
@@ -210,7 +210,12 @@ public class SimpleGroup implements Group {
     }
 
     public boolean contains(int x, int y) {
-        return getBoundingBox().contains(x, y);
+        for (GraphicalObject child : children) {
+            if (child.contains(x, y)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -241,7 +246,7 @@ public class SimpleGroup implements Group {
 
     public void resizeToChildren() {
         int newWidth = 0, newHeight = 0;
-        for (GraphicalObject child: children) {
+        for (GraphicalObject child : children) {
             BoundaryRectangle box = child.getBoundingBox();
             newWidth = Math.max(newWidth, (int) box.getMaxX());
             newHeight = Math.max(newHeight, (int) box.getMaxY());
