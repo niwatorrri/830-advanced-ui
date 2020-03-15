@@ -106,10 +106,6 @@ public class InteractiveWindowGroup extends JFrame implements Group {
             );
         }
 
-        private BehaviorEvent getBehaviorEvent(KeyEvent event, int id) {
-            return null; // TODO
-        }
-
         // mouse event keys
         private int getKey(MouseEvent event, int id) {
             if (BehaviorEvent.isMouseEvent(id)) {

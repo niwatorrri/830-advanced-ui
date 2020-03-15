@@ -3,7 +3,9 @@ import java.io.IOException;
 
 import graphics.object.*;
 import graphics.group.*;
+import constraint.Constraint;
 import behavior.*;
+import static behavior.BehaviorEvent.*;
 
 public class TestAllBehaviors extends InteractiveWindowGroup {
 
@@ -40,10 +42,6 @@ public class TestAllBehaviors extends InteractiveWindowGroup {
 		// objectGroup.addChild(l1);
 		// objectGroup.addChild(t1);
 
-		Behavior move = new MoveBehavior();
-		move.setGroup(objectGroup);
-		addBehavior(move);
-
 		/*
 		 * Add constraint(s) to r1, r2, and t1 so that the color of each is: if
 		 * (this.selected) { if (this.interimSelected) blue; //both else green; // just
@@ -55,12 +53,19 @@ public class TestAllBehaviors extends InteractiveWindowGroup {
 
 		/*
 		 * Create a ChoiceBehavior in MULTIPLE mode that operates on the members of
-		 * objectGroup with event LEFT_MOUSEDOWN Create a NewBehavior that creates
-		 * SelectableFillRect in objectGroup with startEvent SHIFT_LEFT_MOUSEDOWN Create a
-		 * NewBehavior that creates SelectableLines in objectGroup with startEvent
-		 * CONTROL_LEFT_MOUSEDOWN Create a MoveBehavior that moves an object in
-		 * objectGroup with startEvent CONTROL_SHIFT_LEFT_MOUSEDOWN
+		 * objectGroup with event LEFT_MOUSEDOWN
+		 * Create a NewBehavior that creates SelectableFillRect in objectGroup with
+		 * startEvent SHIFT_LEFT_MOUSEDOWN
+		 * Create a NewBehavior that creates SelectableLines in objectGroup with startEvent
+		 * CONTROL_LEFT_MOUSEDOWN
+		 * Create a MoveBehavior that moves an object in objectGroup with startEvent
+		 * CONTROL_SHIFT_LEFT_MOUSEDOWN
 		 */
+		Behavior move = new MoveBehavior();
+		move.setGroup(objectGroup);
+		move.setStartEvent(new BehaviorEvent(
+			MOUSE_DOWN_ID, CONTROL_MODIFIER | SHIFT_MODIFIER, LEFT_MOUSE_KEY));
+		addBehavior(move);
 
 		// start the main event loop so the behaviors start running
 

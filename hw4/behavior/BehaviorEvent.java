@@ -16,6 +16,10 @@ public class BehaviorEvent {
         this.y = y;
     }
 
+    public BehaviorEvent(int id, int modifiers, int key) {
+        this(id, modifiers, key, 0, 0);
+    }
+
     public int getID() {
         return this.id;
     }
@@ -63,14 +67,11 @@ public class BehaviorEvent {
     public static final int SCROLLWHEEL_DOWN_KEY = 10004;
 
     public static BehaviorEvent DEFAULT_START_EVENT = new BehaviorEvent(
-        MOUSE_DOWN_ID, NO_MODIFIER, LEFT_MOUSE_KEY, 0, 0
-    );
+        MOUSE_DOWN_ID, NO_MODIFIER, LEFT_MOUSE_KEY);
     public static BehaviorEvent DEFAULT_STOP_EVENT = new BehaviorEvent(
-        MOUSE_UP_ID, NO_MODIFIER, LEFT_MOUSE_KEY, 0, 0
-    );
+        MOUSE_UP_ID, NO_MODIFIER, LEFT_MOUSE_KEY);
     public static BehaviorEvent DEFAULT_CANCEL_EVENT = new BehaviorEvent(
-        KEY_UP_ID, NO_MODIFIER, KeyEvent.VK_ESCAPE, 0, 0
-    );
+        KEY_UP_ID, NO_MODIFIER, KeyEvent.VK_ESCAPE);
 
     // only supports exact matches. Add support for ANY modifier as extra credit
     public boolean matches(BehaviorEvent event) {
