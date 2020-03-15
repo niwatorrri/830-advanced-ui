@@ -91,4 +91,4 @@ For more examples and features, see `TestHomework3.java`.
 
 1. Fixed the bug of `Graphics.drawString` unable to handle newlines `\n` in text.
 2. Fixed grid layout behavior in LayoutGroup.
-3. Maybe consider Java Reflection API to make writing things (e.g., subclasses) and code refactoring easier, but should also consider its overhead and a resulting degraded performance.
+3. Maybe consider Java Reflection API to make writing things (e.g., subclasses) and code refactoring easier, but should also consider its performance overhead. Didn't try this but one potential issue is the indefinite return type from getVariable.
