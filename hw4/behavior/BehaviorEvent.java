@@ -1,5 +1,7 @@
 package behavior;
 
+import java.awt.event.KeyEvent;
+
 public class BehaviorEvent {
     private int id;
     private int modifiers;
@@ -34,27 +36,14 @@ public class BehaviorEvent {
         return this.y;
     }
 
-    // only supports exact matches. Add support for ANY modifier as extra credit
-    public boolean matches(BehaviorEvent event) {
-        return (event.id == this.id)
-                && ((event.modifiers & MAX_MODIFIER) == (this.modifiers & MAX_MODIFIER))
-                && (event.key == this.key);
-    }
-
-    public static boolean isMouseEvent(int id) {
-        return (id == MOUSE_DOWN_ID) || (id == MOUSE_UP_ID) || (id == MOUSE_MOVE_ID);
-    }
-
-    public static boolean isMouseWheelEvent(int id) {
-        return (id == SCROLLWHEEL_ID);
-    }
-
+    // Behavior event static constants
     public static final int KEY_DOWN_ID = 0;
     public static final int KEY_UP_ID = 1;
     public static final int MOUSE_DOWN_ID = 2;
     public static final int MOUSE_UP_ID = 3;
     public static final int MOUSE_MOVE_ID = 4;
-    public static final int SCROLLWHEEL_ID = 5;
+    public static final int MOUSE_DRAGGED_ID = 5;
+    public static final int SCROLLWHEEL_ID = 6;
 
     public static final int NO_MODIFIER = 0x0;
     public static final int SHIFT_MODIFIER = 0x1;
@@ -72,4 +61,34 @@ public class BehaviorEvent {
     public static final int RIGHT_MOUSE_KEY = 10002;
     public static final int SCROLLWHEEL_UP_KEY = 10003;
     public static final int SCROLLWHEEL_DOWN_KEY = 10004;
+
+    public static BehaviorEvent DEFAULT_START_EVENT = new BehaviorEvent(
+        MOUSE_DOWN_ID, NO_MODIFIER, LEFT_MOUSE_KEY, 0, 0
+    );
+    public static BehaviorEvent DEFAULT_STOP_EVENT = new BehaviorEvent(
+        MOUSE_UP_ID, NO_MODIFIER, LEFT_MOUSE_KEY, 0, 0
+    );
+    public static BehaviorEvent DEFAULT_CANCEL_EVENT = new BehaviorEvent(
+        KEY_UP_ID, NO_MODIFIER, KeyEvent.VK_ESCAPE, 0, 0
+    );
+
+    // only supports exact matches. Add support for ANY modifier as extra credit
+    public boolean matches(BehaviorEvent event) {
+        return (event.id == this.id)
+                && ((event.modifiers & MAX_MODIFIER) == (this.modifiers & MAX_MODIFIER))
+                && (event.key == this.key);
+    }
+
+    public static boolean isMouseEvent(int id) {
+        return (id == MOUSE_DOWN_ID) || (id == MOUSE_UP_ID)
+                || (id == MOUSE_MOVE_ID) || (id == MOUSE_DRAGGED_ID);
+    }
+
+    public static boolean isMouseWheelEvent(int id) {
+        return (id == SCROLLWHEEL_ID);
+    }
+
+    public static boolean isKeyEvent(int id) {
+        return (id == KEY_DOWN_ID) || (id == KEY_UP_ID);
+    }
 }

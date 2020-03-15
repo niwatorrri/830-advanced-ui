@@ -1,29 +1,30 @@
 package behavior;
 
+import java.awt.Point;
+import java.util.List;
+
 import graphics.group.Group;
+import graphics.object.BoundaryRectangle;
 import graphics.object.GraphicalObject;
 
 public class MoveBehavior implements Behavior {
     private Group group;
     private int state;
 
+    private int startX, startY;  // location of start event
+    private int prevX, prevY;    // location of previous move
+    private GraphicalObject movingObject;
+
     private BehaviorEvent startEvent;
     private BehaviorEvent stopEvent;
+    private BehaviorEvent cancelEvent;
 
     public MoveBehavior() {
-        // TODO
         this.group = null;
         this.state = Behavior.IDLE;
-        this.startEvent = new BehaviorEvent(
-            BehaviorEvent.MOUSE_DOWN_ID,
-            BehaviorEvent.NO_MODIFIER,
-            BehaviorEvent.LEFT_MOUSE_KEY, 0, 0
-        );
-        this.stopEvent = new BehaviorEvent(
-            BehaviorEvent.MOUSE_UP_ID,
-            BehaviorEvent.NO_MODIFIER,
-            BehaviorEvent.LEFT_MOUSE_KEY, 0, 0
-        );
+        this.startEvent = BehaviorEvent.DEFAULT_START_EVENT;
+        this.stopEvent = BehaviorEvent.DEFAULT_STOP_EVENT;
+        this.cancelEvent = BehaviorEvent.DEFAULT_CANCEL_EVENT;
     }
 
     public Group getGroup() {
@@ -32,7 +33,6 @@ public class MoveBehavior implements Behavior {
 
     public void setGroup(Group group) {
         this.group = group;
-        // TODO: set behavior in group?
     }
 
     public int getState() {
@@ -55,10 +55,37 @@ public class MoveBehavior implements Behavior {
         this.stopEvent = stopEvent;
     }
 
-    public Boolean start(BehaviorEvent event) {
-        if (event.matches(this.startEvent)) {
-            for (GraphicalObject child : group.getChildren()) {
-                if (child.contains(x, y)) {
+    public BehaviorEvent getCancelEvent() {
+        return this.cancelEvent;
+    }
+
+    public void setCancelEvent(BehaviorEvent cancelEvent) {
+        this.cancelEvent = cancelEvent;
+    }
+
+    private Point findCoordinates(Group group, int x, int y) {
+        if (group.getGroup() == null) {
+            return new Point(x, y);
+        }
+        return group.parentToChild(findCoordinates(group.getGroup(), x, y));
+    }
+
+    public boolean start(BehaviorEvent event) {
+        if (event.matches(this.startEvent)
+                && this.state == Behavior.IDLE
+                && this.group != null) {
+            int eventX = event.getX(), eventY = event.getY();
+            Point eventInGroup = findCoordinates(group, eventX, eventY);
+
+            // find the object to be moved
+            List<GraphicalObject> children = group.getChildren();
+            for (int idx = children.size() - 1; idx >= 0; --idx) { // front to back
+                GraphicalObject child = children.get(idx);
+                if (child.contains(eventInGroup.x, eventInGroup.y)) {
+                    System.out.println("Move starts!");
+                    this.startX = this.prevX = eventX;
+                    this.startY = this.prevY = eventY;
+                    this.movingObject = child;
                     this.state = Behavior.RUNNING_INSIDE;
                     return true;
                 }
@@ -67,9 +94,62 @@ public class MoveBehavior implements Behavior {
         return false;
     }
 
-    public Boolean running(BehaviorEvent event);
+    public boolean running(BehaviorEvent event) {
+        if (event.matches(this.stopEvent)) {
+            return stop(event);
+        }
+        if (event.matches(this.cancelEvent)) {
+            return cancel(event);
+        }
 
-    public Boolean stop(BehaviorEvent event);
+        if (this.state != Behavior.IDLE
+                && event.getID() == BehaviorEvent.MOUSE_DRAGGED_ID) {
+            int eventX = event.getX(), eventY = event.getY();
+            Point eventBesideGroup = group.childToParent(findCoordinates(group, eventX, eventY));
+            if (!group.getBoundingBox().contains(eventBesideGroup.x, eventBesideGroup.y)) {
+                System.out.println("outside!");
+                this.state = Behavior.RUNNING_OUTSIDE;
+                return true;
+            }
 
-    public Boolean cancel(BehaviorEvent event);
+            // move the object with mouse
+            this.state = Behavior.RUNNING_INSIDE;
+            BoundaryRectangle r = movingObject.getBoundingBox();
+            int newX = r.x - prevX + eventX;
+            int newY = r.y - prevY + eventY;
+            movingObject.moveTo(newX, newY);
+            prevX = eventX;
+            prevY = eventY;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean stop(BehaviorEvent event) {
+        if (event.matches(this.stopEvent)) {
+            this.state = Behavior.IDLE;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * cancel: 
+     */
+    public boolean cancel(BehaviorEvent event) {
+        if (event.matches(this.cancelEvent)
+                && this.state != Behavior.IDLE) {
+            BoundaryRectangle r = movingObject.getBoundingBox();
+            int originalX = r.x - prevX + startX;
+            int originalY = r.y - prevY + startY;
+            movingObject.moveTo(originalX, originalY);
+            this.state = Behavior.IDLE;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean check(BehaviorEvent event) {
+        return start(event) || running(event) || stop(event) || cancel(event);
+    }
 }

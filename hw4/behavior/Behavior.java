@@ -17,8 +17,12 @@ public interface Behavior {
     public BehaviorEvent getStopEvent();
     public void setStopEvent(BehaviorEvent stopEvent);
 
-    public Boolean start(BehaviorEvent event);
-    public Boolean running(BehaviorEvent event);
-    public Boolean stop(BehaviorEvent event);
-    public Boolean cancel(BehaviorEvent event);
+    public BehaviorEvent getCancelEvent();
+    public void setCancelEvent(BehaviorEvent cancelEvent);
+
+    public boolean start(BehaviorEvent event);
+    public boolean running(BehaviorEvent event);
+    public boolean stop(BehaviorEvent event);
+    public boolean cancel(BehaviorEvent event);
+    public boolean check(BehaviorEvent event);
 }
