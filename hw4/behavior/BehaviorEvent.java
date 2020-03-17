@@ -50,7 +50,7 @@ public class BehaviorEvent {
     public static final int MOUSE_DOWN_ID = 2;
     public static final int MOUSE_UP_ID = 3;
     public static final int MOUSE_MOVE_ID = 4;
-    public static final int MOUSE_DRAGGED_ID = 5;
+    public static final int MOUSE_DRAG_ID = 5;
     public static final int SCROLLWHEEL_ID = 6;
 
     public static final int NO_MODIFIER = 0x0;
@@ -78,15 +78,20 @@ public class BehaviorEvent {
         KEY_UP_ID, NO_MODIFIER, KeyEvent.VK_ESCAPE);
 
     // only supports exact matches. Add support for ANY modifier as extra credit
+    // TODO: match modifiers
     public boolean matches(BehaviorEvent event) {
         return (event.id == this.id)
                 && ((event.modifiers & MAX_MODIFIER) == (this.modifiers & MAX_MODIFIER))
                 && (event.key == this.key);
     }
 
+    public boolean isMouseMoved() {
+        return (id == MOUSE_MOVE_ID) || (id == MOUSE_DRAG_ID);
+    }
+    
     public static boolean isMouseEvent(int id) {
         return (id == MOUSE_DOWN_ID) || (id == MOUSE_UP_ID)
-                || (id == MOUSE_MOVE_ID) || (id == MOUSE_DRAGGED_ID);
+                || (id == MOUSE_MOVE_ID) || (id == MOUSE_DRAG_ID);
     }
 
     public static boolean isMouseWheelEvent(int id) {

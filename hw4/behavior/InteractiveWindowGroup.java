@@ -21,7 +21,9 @@ public class InteractiveWindowGroup extends JFrame implements Group {
     private List<GraphicalObject> children = new ArrayList<>();
     private List<Behavior> behaviors = new ArrayList<>();
 
-    // make a top-level window with specified title, width and height
+    /**
+     * Constructor: make a top-level window with specified title, width and height
+     */
     public InteractiveWindowGroup(String title, int width, int height) {
         super(title);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -45,8 +47,7 @@ public class InteractiveWindowGroup extends JFrame implements Group {
         this.add(canvas);
         this.pack();
         this.setVisible(true);
-
-        this.makeBuffer(width, height); // must be after setVisible
+        this.makeBuffer(width, height);
         this.insets = getInsets();
     }
 
@@ -54,9 +55,12 @@ public class InteractiveWindowGroup extends JFrame implements Group {
         for (Behavior behavior : behaviors) {
             behavior.check(behaviorEvent);
         }
-        redraw(children.get(0));
+        if (!children.isEmpty()) {
+            redraw(children.get(0));
+        }
     }
 
+    // Mouse listener
     private class WindowMouseListener extends MouseAdapter {
         public void mousePressed(MouseEvent event) {
             int id = BehaviorEvent.MOUSE_DOWN_ID;
@@ -76,18 +80,16 @@ public class InteractiveWindowGroup extends JFrame implements Group {
 
         public void mouseDragged(MouseEvent event) {
             System.out.println("mouse dragged");
-            int id = BehaviorEvent.MOUSE_DRAGGED_ID;
+            int id = BehaviorEvent.MOUSE_DRAG_ID;
             handleBehaviorEvent(getBehaviorEvent(event, id));
         }
 
         // public void mouseExited(MouseEvent event) {
-        //     System.out.println("mouse exited " + event.getX() + " " + event.getY());
         //     int id = BehaviorEvent.MOUSE_MOVE_ID;
         //     handleBehaviorEvent(getBehaviorEvent(event, id));
         // }
 
         // public void mouseEntered(MouseEvent event) {
-        //     System.out.println("mouse entered");
         //     int id = BehaviorEvent.MOUSE_MOVE_ID;
         //     handleBehaviorEvent(getBehaviorEvent(event, id));
         // }
@@ -106,7 +108,7 @@ public class InteractiveWindowGroup extends JFrame implements Group {
             );
         }
 
-        // mouse event keys
+        // Get mouse event keys
         private int getKey(MouseEvent event, int id) {
             if (BehaviorEvent.isMouseEvent(id)) {
                 int button = event.getButton();
@@ -130,7 +132,7 @@ public class InteractiveWindowGroup extends JFrame implements Group {
         }
     }
 
-    // applicable to all input events
+    // Get modifiers: applicable to all input events
     private int getModifiers(InputEvent event) {
         int modifiers = BehaviorEvent.NO_MODIFIER;
         modifiers |= event.isAltDown() ? BehaviorEvent.ALT_MODIFIER : 0;
@@ -141,6 +143,7 @@ public class InteractiveWindowGroup extends JFrame implements Group {
         return modifiers;
     }
 
+    // Key listener
     private class WindowKeyListener extends KeyAdapter {
         private Point getCursor() {
             Point cursor = getMousePosition();
@@ -169,8 +172,8 @@ public class InteractiveWindowGroup extends JFrame implements Group {
             ));
         }
 
-        public void keyTyped(KeyEvent event) {
-        }
+        // public void keyTyped(KeyEvent event) {
+        // }
     }
 
     private void makeBuffer(int width, int height) {
@@ -202,7 +205,7 @@ public class InteractiveWindowGroup extends JFrame implements Group {
     }
 
     /**
-     * Methods defined in the Group and GraphicalObject interface
+     * Methods defined in the Group and GraphicalObject interfaces
      */
     public void addChild(GraphicalObject child) {
         if (!children.isEmpty()) {

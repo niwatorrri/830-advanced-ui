@@ -62,6 +62,7 @@ public class MoveBehavior implements Behavior {
         this.cancelEvent = cancelEvent;
     }
 
+    // Convert event coordinates from absolute to relative to group
     private Point findCoordinates(Group group, int x, int y) {
         if (group.getGroup() == null) {
             return new Point(x, y);
@@ -107,9 +108,7 @@ public class MoveBehavior implements Behavior {
             return cancel(event);
         }
 
-        // TODO: need fixes on MOUSE_DRAGGED_ID as the start event may be not left mouse click
-        if (this.state != Behavior.IDLE
-                && event.getID() == BehaviorEvent.MOUSE_DRAGGED_ID) {
+        if (this.state != Behavior.IDLE && event.isMouseMoved()) {
             int eventX = event.getX(), eventY = event.getY();
             Point eventBesideGroup = group.childToParent(findCoordinates(group, eventX, eventY));
             if (!group.getBoundingBox().contains(eventBesideGroup.x, eventBesideGroup.y)) {

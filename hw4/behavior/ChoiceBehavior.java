@@ -78,6 +78,7 @@ public class ChoiceBehavior implements Behavior {
         return new ArrayList<GraphicalObject>(selection);
     }
 
+    // Convert event coordinates from absolute to relative to group
     private Point findCoordinates(Group group, int x, int y) {
         if (group.getGroup() == null) {
             return new Point(x, y);
@@ -118,9 +119,7 @@ public class ChoiceBehavior implements Behavior {
             return cancel(event);
         }
 
-        // TODO: need fixes same as MoveBehavior
-        if (this.state != Behavior.IDLE
-                && event.getID() == BehaviorEvent.MOUSE_DRAGGED_ID) {
+        if (this.state != Behavior.IDLE && event.isMouseMoved()) {
             return true;
         }
         return false;
