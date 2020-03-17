@@ -8,25 +8,24 @@ import graphics.object.BoundaryRectangle;
 import graphics.object.GraphicalObject;
 
 public class MoveBehavior implements Behavior {
-    private Group group;
-    private int state;
+    private Group group = null;
+    private int state = Behavior.IDLE;
 
     private int startX, startY;  // location of start event
     private int prevX, prevY;    // location of previous move
     private GraphicalObject movingObject;
 
-    private BehaviorEvent startEvent;
-    private BehaviorEvent stopEvent;
-    private BehaviorEvent cancelEvent;
+    private BehaviorEvent startEvent = BehaviorEvent.DEFAULT_START_EVENT;
+    private BehaviorEvent stopEvent = BehaviorEvent.DEFAULT_STOP_EVENT;
+    private BehaviorEvent cancelEvent = BehaviorEvent.DEFAULT_CANCEL_EVENT;
 
     public MoveBehavior() {
-        this.group = null;
-        this.state = Behavior.IDLE;
-        this.startEvent = BehaviorEvent.DEFAULT_START_EVENT;
-        this.stopEvent = BehaviorEvent.DEFAULT_STOP_EVENT;
-        this.cancelEvent = BehaviorEvent.DEFAULT_CANCEL_EVENT;
+        // nothing needs to be done
     }
 
+    /**
+     * Methods defined in the Behavior interface
+     */
     public Group getGroup() {
         return this.group;
     }
@@ -70,6 +69,9 @@ public class MoveBehavior implements Behavior {
         return group.parentToChild(findCoordinates(group.getGroup(), x, y));
     }
 
+    /**
+     * start
+     */
     public boolean start(BehaviorEvent event) {
         if (event.matches(this.startEvent)
                 && this.state == Behavior.IDLE
@@ -94,6 +96,9 @@ public class MoveBehavior implements Behavior {
         return false;
     }
 
+    /**
+     * running
+     */
     public boolean running(BehaviorEvent event) {
         if (event.matches(this.stopEvent)) {
             return stop(event);
@@ -102,6 +107,7 @@ public class MoveBehavior implements Behavior {
             return cancel(event);
         }
 
+        // TODO: need fixes on MOUSE_DRAGGED_ID as the start event may be not left mouse click
         if (this.state != Behavior.IDLE
                 && event.getID() == BehaviorEvent.MOUSE_DRAGGED_ID) {
             int eventX = event.getX(), eventY = event.getY();
@@ -125,6 +131,9 @@ public class MoveBehavior implements Behavior {
         return false;
     }
 
+    /**
+     * stop
+     */
     public boolean stop(BehaviorEvent event) {
         if (event.matches(this.stopEvent)) {
             this.state = Behavior.IDLE;
@@ -134,7 +143,7 @@ public class MoveBehavior implements Behavior {
     }
 
     /**
-     * cancel: 
+     * cancel
      */
     public boolean cancel(BehaviorEvent event) {
         if (event.matches(this.cancelEvent)

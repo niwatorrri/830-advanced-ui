@@ -20,6 +20,10 @@ public class BehaviorEvent {
         this(id, modifiers, key, 0, 0);
     }
 
+    public BehaviorEvent(int id, int modifiers, char key) {
+        this(id, modifiers, Character.toUpperCase(key), 0, 0);
+    }
+
     public int getID() {
         return this.id;
     }
