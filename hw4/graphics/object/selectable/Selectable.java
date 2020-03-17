@@ -1,4 +1,4 @@
-package graphics.object;
+package graphics.object.selectable;
 
 public interface Selectable {
      public void setInterimSelected(boolean interimSelected);
