@@ -5,7 +5,7 @@ import java.awt.Color;
 import graphics.object.FilledRect;
 import constraint.Constraint;
 
-public class SelectableFilledRect extends FilledRect implements Selectable {
+public class SelectableFilledRect extends FilledRect implements SelectableObject {
     /**
      * SelectableFilledRect class: selectable filled rectangles
      */

@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 
@@ -281,5 +282,9 @@ public class Text implements GraphicalObject {
 
     public boolean contains(int x, int y) {
         return getBoundingBox().contains(x, y);
+    }
+    
+    public boolean contains(Point pt) {
+        return contains(pt.x, pt.y);
     }
 }

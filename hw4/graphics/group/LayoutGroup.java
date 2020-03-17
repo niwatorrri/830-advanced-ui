@@ -412,14 +412,11 @@ public class LayoutGroup implements Group {
     }
 
     public boolean contains(int x, int y) {
-        if (getBoundingBox().contains(x, y)) {
-            for (GraphicalObject child : children) {
-                if (child.contains(x, y)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return getBoundingBox().contains(x, y);
+    }
+
+    public boolean contains(Point pt) {
+        return contains(pt.x, pt.y);
     }
 
     /**

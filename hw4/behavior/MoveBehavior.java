@@ -63,11 +63,17 @@ public class MoveBehavior implements Behavior {
     }
 
     // Convert event coordinates from absolute to relative to group
-    private Point findCoordinates(Group group, int x, int y) {
-        if (group.getGroup() == null) {
-            return new Point(x, y);
+    private Point findCoordinates(Group group, int x, int y, String option) {
+        assert (option == "inside") || (option == "beside");
+        if (option == "beside") {
+            return group.childToParent(findCoordinates(group, x, y, "inside"));
+        } else {
+            Group parentGroup = group.getGroup();
+            if (parentGroup == null) {
+                return new Point(x, y);
+            }
+            return group.parentToChild(findCoordinates(parentGroup, x, y, option));
         }
-        return group.parentToChild(findCoordinates(group.getGroup(), x, y));
     }
 
     /**
@@ -78,13 +84,17 @@ public class MoveBehavior implements Behavior {
                 && this.state == Behavior.IDLE
                 && this.group != null) {
             int eventX = event.getX(), eventY = event.getY();
-            Point eventInGroup = findCoordinates(group, eventX, eventY);
+            Point eventInGroup = findCoordinates(group, eventX, eventY, "inside");
+            Point eventBesideGroup = group.childToParent(eventInGroup);
+            if (!group.contains(eventBesideGroup)) {
+                return false;
+            }
 
             // find the object to be moved
             List<GraphicalObject> children = group.getChildren();
             for (int idx = children.size() - 1; idx >= 0; --idx) { // front to back
                 GraphicalObject child = children.get(idx);
-                if (child.contains(eventInGroup.x, eventInGroup.y)) {
+                if (child.contains(eventInGroup)) {
                     System.out.println("Move starts!");
                     this.startX = this.prevX = eventX;
                     this.startY = this.prevY = eventY;
@@ -110,8 +120,8 @@ public class MoveBehavior implements Behavior {
 
         if (this.state != Behavior.IDLE && event.isMouseMoved()) {
             int eventX = event.getX(), eventY = event.getY();
-            Point eventBesideGroup = group.childToParent(findCoordinates(group, eventX, eventY));
-            if (!group.getBoundingBox().contains(eventBesideGroup.x, eventBesideGroup.y)) {
+            Point eventBesideGroup = findCoordinates(group, eventX, eventY, "beside");
+            if (!group.contains(eventBesideGroup)) {
                 System.out.println("outside!");
                 this.state = Behavior.RUNNING_OUTSIDE;
                 return true;

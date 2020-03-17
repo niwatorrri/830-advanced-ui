@@ -5,7 +5,7 @@ import java.awt.Color;
 import graphics.object.OutlineRect;
 import constraint.Constraint;
 
-public class SelectableOutlineRect extends OutlineRect implements Selectable {
+public class SelectableOutlineRect extends OutlineRect implements SelectableObject {
     /**
      * SelectableOutlineRect class: selectable outline rectangles
      */

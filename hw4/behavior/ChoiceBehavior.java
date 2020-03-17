@@ -79,11 +79,17 @@ public class ChoiceBehavior implements Behavior {
     }
 
     // Convert event coordinates from absolute to relative to group
-    private Point findCoordinates(Group group, int x, int y) {
-        if (group.getGroup() == null) {
-            return new Point(x, y);
+    private Point findCoordinates(Group group, int x, int y, String option) {
+        assert (option == "inside") || (option == "beside");
+        if (option == "beside") {
+            return group.childToParent(findCoordinates(group, x, y, "inside"));
+        } else {
+            Group parentGroup = group.getGroup();
+            if (parentGroup == null) {
+                return new Point(x, y);
+            }
+            return group.parentToChild(findCoordinates(parentGroup, x, y, option));
         }
-        return group.parentToChild(findCoordinates(group.getGroup(), x, y));
     }
 
     /**
@@ -94,14 +100,17 @@ public class ChoiceBehavior implements Behavior {
                 && this.state == Behavior.IDLE
                 && this.group != null) {
             int eventX = event.getX(), eventY = event.getY();
-            Point eventInGroup = findCoordinates(group, eventX, eventY);
+            Point eventInGroup = findCoordinates(group, eventX, eventY, "inside");
+            Point eventBesideGroup = group.childToParent(eventInGroup);
+            if (!group.contains(eventBesideGroup)) {
+                return false;
+            }
 
-            // find the object to be moved
+            // find the object on which the event occurs
             List<GraphicalObject> children = group.getChildren();
             for (int idx = children.size() - 1; idx >= 0; --idx) { // front to back
                 GraphicalObject child = children.get(idx);
-                if (child.contains(eventInGroup.x, eventInGroup.y)
-                        && child instanceof Selectable) {
+                if (child.contains(eventInGroup) && child instanceof Selectable) {
                     System.out.println("Choice starts!");
                     this.state = Behavior.RUNNING_INSIDE;
                     return true;
@@ -112,7 +121,7 @@ public class ChoiceBehavior implements Behavior {
     }
 
     public boolean running(BehaviorEvent event) {
-                if (event.matches(this.stopEvent)) {
+        if (event.matches(this.stopEvent)) {
             return stop(event);
         }
         if (event.matches(this.cancelEvent)) {

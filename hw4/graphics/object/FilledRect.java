@@ -2,6 +2,7 @@ package graphics.object;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Shape;
 
 import graphics.group.Group;
@@ -233,5 +234,9 @@ public class FilledRect implements GraphicalObject {
 
     public boolean contains(int x, int y) {
         return getBoundingBox().contains(x, y);
+    }
+    
+    public boolean contains(Point pt) {
+        return contains(pt.x, pt.y);
     }
 }

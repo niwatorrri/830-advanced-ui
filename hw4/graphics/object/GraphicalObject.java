@@ -1,6 +1,7 @@
 package graphics.object;
 
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Shape;
 
 import graphics.group.Group;
@@ -12,4 +13,5 @@ public interface GraphicalObject {
     public Group getGroup();
     public void setGroup(Group group);
     public boolean contains(int x, int y);
+    public boolean contains(Point pt);
 }
