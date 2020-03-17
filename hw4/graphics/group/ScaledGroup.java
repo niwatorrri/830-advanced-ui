@@ -297,9 +297,11 @@ public class ScaledGroup implements Group {
     }
 
     public boolean contains(int x, int y) {
-        for (GraphicalObject child : children) {
-            if (child.contains(x, y)) {
-                return true;
+        if (getBoundingBox().contains(x, y)) {
+            for (GraphicalObject child : children) {
+                if (child.contains(x, y)) {
+                    return true;
+                }
             }
         }
         return false;
