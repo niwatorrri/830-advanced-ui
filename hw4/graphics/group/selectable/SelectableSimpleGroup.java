@@ -1,13 +1,11 @@
-package graphics.object.selectable;
+package graphics.group.selectable;
 
-import java.awt.Color;
-
-import graphics.object.OutlineRect;
+import graphics.group.SimpleGroup;
 import constraint.Constraint;
 
-public class SelectableOutlineRect extends OutlineRect implements Selectable {
+public class SelectableSimpleGroup extends SimpleGroup implements SelectableGroup {
     /**
-     * SelectableOutlineRect class: selectable outline rectangles
+     * SelectableSimpleGroup class: a selectable group with objects at their fixed positions
      */
     private boolean interimSelected;
     private boolean selected;
@@ -18,12 +16,11 @@ public class SelectableOutlineRect extends OutlineRect implements Selectable {
     /**
      * Constructors
      */
-    public SelectableOutlineRect(int x, int y, int width, int height,
-            Color color, int lineThickness) {
-        super(x, y, width, height, color, lineThickness);
+    public SelectableSimpleGroup(int x, int y, int width, int height) {
+        super(x, y, width, height);
     }
 
-    public SelectableOutlineRect() {
+    public SelectableSimpleGroup() {
         super();
     }
 
