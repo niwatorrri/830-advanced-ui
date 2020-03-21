@@ -9,7 +9,7 @@ import java.awt.Shape;
 import graphics.group.Group;
 import constraint.Constraint;
 
-public class OutlineRect implements GraphicalObject {
+public class OutlineRect implements Rect {
     /**
      * OutlineRect class: outline rectangles
      */

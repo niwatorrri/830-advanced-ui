@@ -8,7 +8,7 @@ import java.awt.Shape;
 import graphics.group.Group;
 import constraint.Constraint;
 
-public class FilledRect implements GraphicalObject {
+public class FilledRect implements Rect {
     /**
      * FilledRect class: filled rectangles
      */
