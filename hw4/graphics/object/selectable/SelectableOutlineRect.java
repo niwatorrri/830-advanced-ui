@@ -5,12 +5,12 @@ import java.awt.Color;
 import graphics.object.OutlineRect;
 import constraint.Constraint;
 
-public class SelectableOutlineRect extends OutlineRect implements SelectableObject {
+public class SelectableOutlineRect extends OutlineRect implements SelectableGraphicalObject {
     /**
      * SelectableOutlineRect class: selectable outline rectangles
      */
-    private boolean interimSelected;
-    private boolean selected;
+    private boolean interimSelected = false;
+    private boolean selected = false;
 
     private Constraint<Boolean> interimSelectedConstraint = new Constraint<>();
     private Constraint<Boolean> selectedConstraint = new Constraint<>();
