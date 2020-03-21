@@ -10,6 +10,8 @@ import javax.swing.JFrame;
 import graphics.group.Group;
 import graphics.object.BoundaryRectangle;
 import graphics.object.GraphicalObject;
+import graphics.object.selectable.SelectableGraphicalObject;
+import behavior.*;
 
 public class InteractiveWindowGroup extends JFrame implements Group {
     private static final long serialVersionUID = 1L;
@@ -63,42 +65,42 @@ public class InteractiveWindowGroup extends JFrame implements Group {
     // Mouse listener
     private class WindowMouseListener extends MouseAdapter {
         public void mousePressed(MouseEvent event) {
+            // System.out.println("mouse down");
             int id = BehaviorEvent.MOUSE_DOWN_ID;
             handleBehaviorEvent(getBehaviorEvent(event, id));
         }
 
         public void mouseReleased(MouseEvent event) {
+            // System.out.println("mouse up");
             int id = BehaviorEvent.MOUSE_UP_ID;
             handleBehaviorEvent(getBehaviorEvent(event, id));
         }
 
         public void mouseMoved(MouseEvent event) {
-            System.out.println("mouse moved");
+            // System.out.println("mouse moved");
             int id = BehaviorEvent.MOUSE_MOVE_ID;
             handleBehaviorEvent(getBehaviorEvent(event, id));
         }
 
         public void mouseDragged(MouseEvent event) {
-            System.out.println("mouse dragged");
+            // System.out.println("mouse dragged");
             int id = BehaviorEvent.MOUSE_DRAG_ID;
             handleBehaviorEvent(getBehaviorEvent(event, id));
         }
 
-        // public void mouseExited(MouseEvent event) {
-        //     int id = BehaviorEvent.MOUSE_MOVE_ID;
-        //     handleBehaviorEvent(getBehaviorEvent(event, id));
-        // }
-
-        // public void mouseEntered(MouseEvent event) {
-        //     int id = BehaviorEvent.MOUSE_MOVE_ID;
-        //     handleBehaviorEvent(getBehaviorEvent(event, id));
-        // }
+        public void mouseClicked(MouseEvent event) {
+            // System.out.println("mouse clicked");
+            int id = BehaviorEvent.MOUSE_CLICK_ID;
+            handleBehaviorEvent(getBehaviorEvent(event, id));
+        }
 
         public void mouseWheelMoved(MouseWheelEvent event) {
+            // System.out.println("mouse wheel moved");
             int id = BehaviorEvent.SCROLLWHEEL_ID;
             handleBehaviorEvent(getBehaviorEvent(event, id));
         }
 
+        // convert an awt MouseEvent to our BehaviorEvent
         private BehaviorEvent getBehaviorEvent(MouseEvent event, int id) {
             return new BehaviorEvent(id,
                 getModifiers(event),
@@ -171,9 +173,6 @@ public class InteractiveWindowGroup extends JFrame implements Group {
                 cursor.y - insets.top
             ));
         }
-
-        // public void keyTyped(KeyEvent event) {
-        // }
     }
 
     private void makeBuffer(int width, int height) {
@@ -189,10 +188,10 @@ public class InteractiveWindowGroup extends JFrame implements Group {
 
     public void redraw(GraphicalObject object) {
         Graphics2D graphics = (Graphics2D) buffer.getGraphics();
-        BoundaryRectangle area = new BoundaryRectangle(0, 0, getWidth(), getHeight());
+        BoundaryRectangle r = new BoundaryRectangle(0, 0, getWidth(), getHeight());
         graphics.setColor(canvas.getBackground());
-        graphics.fill(area);
-        object.draw(graphics, area);
+        graphics.fill(r);
+        object.draw(graphics, r);
         canvas.repaint();
     }
 

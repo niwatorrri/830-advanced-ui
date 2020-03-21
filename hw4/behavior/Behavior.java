@@ -4,7 +4,7 @@ import graphics.group.Group;
 
 public interface Behavior {
     public Group getGroup();
-    public void setGroup(Group group);
+    public Behavior setGroup(Group group);
 
     public int getState();
     public static final int IDLE = 0;
@@ -12,13 +12,13 @@ public interface Behavior {
     public static final int RUNNING_OUTSIDE = 2;
 
     public BehaviorEvent getStartEvent();
-    public void setStartEvent(BehaviorEvent startEvent);
+    public Behavior setStartEvent(BehaviorEvent startEvent);
 
     public BehaviorEvent getStopEvent();
-    public void setStopEvent(BehaviorEvent stopEvent);
+    public Behavior setStopEvent(BehaviorEvent stopEvent);
 
     public BehaviorEvent getCancelEvent();
-    public void setCancelEvent(BehaviorEvent cancelEvent);
+    public Behavior setCancelEvent(BehaviorEvent cancelEvent);
 
     public boolean start(BehaviorEvent event);
     public boolean running(BehaviorEvent event);

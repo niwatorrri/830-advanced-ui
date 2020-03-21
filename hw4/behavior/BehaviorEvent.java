@@ -51,7 +51,8 @@ public class BehaviorEvent {
     public static final int MOUSE_UP_ID = 3;
     public static final int MOUSE_MOVE_ID = 4;
     public static final int MOUSE_DRAG_ID = 5;
-    public static final int SCROLLWHEEL_ID = 6;
+    public static final int MOUSE_CLICK_ID = 6;
+    public static final int SCROLLWHEEL_ID = 7;
 
     public static final int NO_MODIFIER = 0x0;
     public static final int SHIFT_MODIFIER = 0x1;
@@ -90,8 +91,8 @@ public class BehaviorEvent {
     }
     
     public static boolean isMouseEvent(int id) {
-        return (id == MOUSE_DOWN_ID) || (id == MOUSE_UP_ID)
-                || (id == MOUSE_MOVE_ID) || (id == MOUSE_DRAG_ID);
+        return (id == MOUSE_DOWN_ID) || (id == MOUSE_UP_ID) || (id == MOUSE_MOVE_ID)
+                || (id == MOUSE_DRAG_ID) || (id == MOUSE_CLICK_ID);
     }
 
     public static boolean isMouseWheelEvent(int id) {

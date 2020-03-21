@@ -9,7 +9,7 @@ import graphics.object.GraphicalObject;
 
 public class MoveBehavior implements Behavior {
     private Group group = null;
-    private int state = Behavior.IDLE;
+    private int state = IDLE;
 
     private int startX, startY;  // location of start event
     private int prevX, prevY;    // location of previous move
@@ -19,9 +19,7 @@ public class MoveBehavior implements Behavior {
     private BehaviorEvent stopEvent = BehaviorEvent.DEFAULT_STOP_EVENT;
     private BehaviorEvent cancelEvent = BehaviorEvent.DEFAULT_CANCEL_EVENT;
 
-    public MoveBehavior() {
-        // nothing needs to be done
-    }
+    public MoveBehavior() {}
 
     /**
      * Methods defined in the Behavior interface
@@ -30,8 +28,9 @@ public class MoveBehavior implements Behavior {
         return this.group;
     }
 
-    public void setGroup(Group group) {
+    public Behavior setGroup(Group group) {
         this.group = group;
+        return this;
     }
 
     public int getState() {
@@ -42,24 +41,27 @@ public class MoveBehavior implements Behavior {
         return this.startEvent;
     }
 
-    public void setStartEvent(BehaviorEvent startEvent) {
+    public Behavior setStartEvent(BehaviorEvent startEvent) {
         this.startEvent = startEvent;
+        return this;
     }
 
     public BehaviorEvent getStopEvent() {
         return this.stopEvent;
     }
 
-    public void setStopEvent(BehaviorEvent stopEvent) {
+    public Behavior setStopEvent(BehaviorEvent stopEvent) {
         this.stopEvent = stopEvent;
+        return this;
     }
 
     public BehaviorEvent getCancelEvent() {
         return this.cancelEvent;
     }
 
-    public void setCancelEvent(BehaviorEvent cancelEvent) {
+    public Behavior setCancelEvent(BehaviorEvent cancelEvent) {
         this.cancelEvent = cancelEvent;
+        return this;
     }
 
     // Convert event coordinates from absolute to relative to group
@@ -81,7 +83,7 @@ public class MoveBehavior implements Behavior {
      */
     public boolean start(BehaviorEvent event) {
         if (event.matches(this.startEvent)
-                && this.state == Behavior.IDLE
+                && this.state == IDLE
                 && this.group != null) {
             int eventX = event.getX(), eventY = event.getY();
             Point eventInGroup = findCoordinates(group, eventX, eventY, "inside");
@@ -99,7 +101,7 @@ public class MoveBehavior implements Behavior {
                     this.startX = this.prevX = eventX;
                     this.startY = this.prevY = eventY;
                     this.movingObject = child;
-                    this.state = Behavior.RUNNING_INSIDE;
+                    this.state = RUNNING_INSIDE;
                     return true;
                 }
             }
@@ -111,24 +113,21 @@ public class MoveBehavior implements Behavior {
      * running
      */
     public boolean running(BehaviorEvent event) {
-        if (event.matches(this.stopEvent)) {
-            return stop(event);
-        }
-        if (event.matches(this.cancelEvent)) {
-            return cancel(event);
+        if (event.matches(this.stopEvent) || event.matches(this.cancelEvent)) {
+            return false;
         }
 
-        if (this.state != Behavior.IDLE && event.isMouseMoved()) {
+        if (this.state != IDLE && event.isMouseMoved()) {
             int eventX = event.getX(), eventY = event.getY();
             Point eventBesideGroup = findCoordinates(group, eventX, eventY, "beside");
             if (!group.contains(eventBesideGroup)) {
                 System.out.println("outside!");
-                this.state = Behavior.RUNNING_OUTSIDE;
+                this.state = RUNNING_OUTSIDE;
                 return true;
             }
 
             // move the object with mouse
-            this.state = Behavior.RUNNING_INSIDE;
+            this.state = RUNNING_INSIDE;
             BoundaryRectangle r = movingObject.getBoundingBox();
             int newX = r.x - prevX + eventX;
             int newY = r.y - prevY + eventY;
@@ -144,8 +143,8 @@ public class MoveBehavior implements Behavior {
      * stop
      */
     public boolean stop(BehaviorEvent event) {
-        if (event.matches(this.stopEvent)) {
-            this.state = Behavior.IDLE;
+        if (event.matches(this.stopEvent) && this.state != IDLE) {
+            this.state = IDLE;
             return true;
         }
         return false;
@@ -155,13 +154,12 @@ public class MoveBehavior implements Behavior {
      * cancel
      */
     public boolean cancel(BehaviorEvent event) {
-        if (event.matches(this.cancelEvent)
-                && this.state != Behavior.IDLE) {
+        if (event.matches(this.cancelEvent) && this.state != IDLE) {
             BoundaryRectangle r = movingObject.getBoundingBox();
             int originalX = r.x - prevX + startX;
             int originalY = r.y - prevY + startY;
             movingObject.moveTo(originalX, originalY);
-            this.state = Behavior.IDLE;
+            this.state = IDLE;
             return true;
         }
         return false;
