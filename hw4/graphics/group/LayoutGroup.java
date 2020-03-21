@@ -16,8 +16,8 @@ public class LayoutGroup implements Group {
     /**
      * LayoutGroup class
      * 
-     * Automatically places its children in a certain layout Options include
-     * horizontal, vertical and grid layouts
+     * Automatically places its children in a certain layout
+     * Options include horizontal, vertical and grid layouts
      */
     private int x, y, width, height;
     private int layout, offset;
@@ -47,7 +47,8 @@ public class LayoutGroup implements Group {
         checkIfSupportedLayout(layout);
     }
 
-    public LayoutGroup(int x, int y, int width, int height, int layout, int offset, int nRows, int nColumns) {
+    public LayoutGroup(int x, int y, int width, int height, int layout, int offset,
+            int nRows, int nColumns) {
         this(x, y, width, height, layout, offset);
         this.nRows = nRows;
         this.nColumns = nColumns;

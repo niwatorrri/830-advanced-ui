@@ -34,8 +34,7 @@ public class ScaledGroup implements Group {
     /**
      * Constructors
      */
-    public ScaledGroup(int x, int y, int width, int height,
-            double scaleX, double scaleY) {
+    public ScaledGroup(int x, int y, int width, int height, double scaleX, double scaleY) {
         this.x = x;
         this.y = y;
         this.width = width;
