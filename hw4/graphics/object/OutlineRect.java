@@ -28,8 +28,7 @@ public class OutlineRect implements Rect {
     /**
      * Constructors
      */
-    public OutlineRect(int x, int y, int width, int height,
-            Color color, int lineThickness) {
+    public OutlineRect(int x, int y, int width, int height, Color color, int lineThickness) {
         this.x = x;
         this.y = y;
         this.width = width;

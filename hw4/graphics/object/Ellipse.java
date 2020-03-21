@@ -9,7 +9,7 @@ import java.awt.Shape;
 import graphics.group.Group;
 import constraint.Constraint;
 
-public class Ellipse implements GraphicalObject {
+public class Ellipse implements Rect {
     /**
      * Ellipse class: ellipses
      */
@@ -28,8 +28,7 @@ public class Ellipse implements GraphicalObject {
     /**
      * Constructors
      */
-    public Ellipse(int x, int y, int width, int height,
-            Color color, int lineThickness) {
+    public Ellipse(int x, int y, int width, int height, Color color, int lineThickness) {
         this.x = x;
         this.y = y;
         this.width = width;

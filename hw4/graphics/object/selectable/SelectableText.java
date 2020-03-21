@@ -1,13 +1,15 @@
 package graphics.object.selectable;
 
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
 
-import graphics.object.OutlineRect;
+import graphics.object.Text;
 import constraint.Constraint;
 
-public class SelectableOutlineRect extends OutlineRect implements SelectableGraphicalObject {
+public class SelectableText extends Text implements SelectableGraphicalObject {
     /**
-     * SelectableOutlineRect class: selectable outline rectangles
+     * SelectableText class: selectable Texts
      */
     private boolean interimSelected = false;
     private boolean selected = false;
@@ -18,11 +20,11 @@ public class SelectableOutlineRect extends OutlineRect implements SelectableGrap
     /**
      * Constructors
      */
-    public SelectableOutlineRect(int x, int y, int width, int height, Color color, int lineThickness) {
-        super(x, y, width, height, color, lineThickness);
+    public SelectableText(Graphics2D graphics, String text, int x, int y, Font font, Color color) {
+        super(graphics, text, x, y, font, color);
     }
 
-    public SelectableOutlineRect() {
+    public SelectableText() {
         super();
     }
 

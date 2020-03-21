@@ -28,8 +28,7 @@ public class Line implements GraphicalObject {
     /**
      * Constructors
      */
-    public Line(int x1, int y1, int x2, int y2,
-            Color color, int lineThickness) {
+    public Line(int x1, int y1, int x2, int y2, Color color, int lineThickness) {
         this.x1 = x1;
         this.y1 = y1;
         this.x2 = x2;

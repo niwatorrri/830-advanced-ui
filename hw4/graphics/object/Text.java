@@ -15,15 +15,14 @@ public class Text implements GraphicalObject {
     /**
      * Text class: texts
      */
-    private Graphics2D internalGraphics; // for calculation only
+    private Graphics2D internalGraphics = null; // only for calculating bounding box
     private String text;
     private int x, y;
     private Font font;
     private Color color;
     private Group group = null;
 
-    private static final Font DEFAULT_FONT
-        = new Font("Monospaced", Font.PLAIN, 10);
+    public static final Font DEFAULT_FONT = new Font(Font.MONOSPACED, Font.PLAIN, 10);
 
     private Constraint<String> textConstraint = new Constraint<>();
     private Constraint<Integer> xConstraint = new Constraint<>();
@@ -34,17 +33,18 @@ public class Text implements GraphicalObject {
     /**
      * Constructors
      */
-    public Text(Graphics2D graphics, String text, int x, int y,
-            Font font, Color color) {
-        this.internalGraphics = (Graphics2D) graphics.create();
+    public Text(Graphics2D graphics, String text, int x, int y, Font font, Color color) {
         this.text = text;
         this.x = x;
         this.y = y;
         this.font = font;
         this.color = color;
 
-        internalGraphics.setFont(font);
-        internalGraphics.setColor(color);
+        if (graphics != null) {
+            this.internalGraphics = (Graphics2D) graphics.create();
+            this.internalGraphics.setFont(font);
+            this.internalGraphics.setColor(color);
+        }
     }
 
     public Text() {
@@ -233,13 +233,17 @@ public class Text implements GraphicalObject {
         Color color = getColor();
         String text = getText();
 
-        int textHeight = internalGraphics.getFontMetrics().getHeight();
         graphics.setFont(font);
         graphics.setColor(color);
-        for (String line : text.split("\n")) {  // deal with newlines
-            graphics.drawString(line, x, y += textHeight);
-        }
 
+        if (internalGraphics == null) {
+            graphics.drawString(text, x, y);
+        } else {
+            int textHeight = internalGraphics.getFontMetrics().getHeight();
+            for (String line : text.split("\n")) {  // deal with newlines
+                graphics.drawString(line, x, y += textHeight);
+            }
+        }
         graphics.setClip(oldClip);
     }
 

@@ -2,12 +2,12 @@ package graphics.object.selectable;
 
 import java.awt.Color;
 
-import graphics.object.OutlineRect;
+import graphics.object.Ellipse;
 import constraint.Constraint;
 
-public class SelectableOutlineRect extends OutlineRect implements SelectableGraphicalObject {
+public class SelectableEllipse extends Ellipse implements SelectableGraphicalObject {
     /**
-     * SelectableOutlineRect class: selectable outline rectangles
+     * SelectableEllipse class: selectable ellipses
      */
     private boolean interimSelected = false;
     private boolean selected = false;
@@ -18,11 +18,11 @@ public class SelectableOutlineRect extends OutlineRect implements SelectableGrap
     /**
      * Constructors
      */
-    public SelectableOutlineRect(int x, int y, int width, int height, Color color, int lineThickness) {
+    public SelectableEllipse(int x, int y, int width, int height, Color color, int lineThickness) {
         super(x, y, width, height, color, lineThickness);
     }
 
-    public SelectableOutlineRect() {
+    public SelectableEllipse() {
         super();
     }
 
