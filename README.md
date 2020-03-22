@@ -1,8 +1,8 @@
 # 830-advanced-ui
 05-830 Advanced User Interface Software
 
-- HW1: Implement a Node Editor
+- HW1: Implement a Node Editor using Swing
 - HW2: Implement a Retained Object Graphics System
 - HW3: Implement a Constraint System for the Graphics System
 - HW4: Implement an Input Model for the Graphics System
-- HW5
+- HW5: Build some widgets and an editor out of the implemented System
