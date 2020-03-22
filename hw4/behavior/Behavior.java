@@ -3,6 +3,9 @@ package behavior;
 import graphics.group.Group;
 
 public interface Behavior {
+    /**
+     * Behavior interface
+     */
     public Group getGroup();
     public Behavior setGroup(Group group);
 

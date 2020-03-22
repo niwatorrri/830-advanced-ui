@@ -6,10 +6,12 @@ import graphics.group.Group;
 import graphics.object.GraphicalObject;
 
 public abstract class NewBehavior implements Behavior {
+    /**
+     * NewBehavior abstract class: create new objects in the group
+     */
     private Group group = null;
     private int state = IDLE;
 
-    private boolean onePoint;
     private boolean rectLike;
     private int startX, startY;  // where the behavior starts (wrt group)
     private GraphicalObject newObject = null;
@@ -18,12 +20,8 @@ public abstract class NewBehavior implements Behavior {
     private BehaviorEvent stopEvent = BehaviorEvent.DEFAULT_STOP_EVENT;
     private BehaviorEvent cancelEvent = BehaviorEvent.DEFAULT_CANCEL_EVENT;
 
-    public NewBehavior(boolean onePoint, boolean rectLike) {
-        this.onePoint = onePoint;
+    public NewBehavior(boolean rectLike) {
         this.rectLike = rectLike;
-        if (rectLike && onePoint) {
-            throw new RuntimeException("Rect-like objects must take two points to create");
-        }
     }
 
     /**

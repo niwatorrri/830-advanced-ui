@@ -7,12 +7,15 @@ import graphics.object.GraphicalObject;
 import graphics.object.Text;
 
 public class NewTextBehavior extends NewBehavior {
+    /**
+     * NewTextBehavior: create new texts in the group
+     */
     private String text;
     private Font font;
     private Color color;
 
     public NewTextBehavior(String text, Font font, Color color) {
-        super(true, false);
+        super(false);
         this.text = text;
         this.font = font;
         this.color = color;
@@ -20,6 +23,33 @@ public class NewTextBehavior extends NewBehavior {
 
     public NewTextBehavior() {
         this("Text", Text.DEFAULT_FONT, Color.BLACK);
+    }
+    
+    /**
+     * Getters and setters
+     */
+    public String getText() {
+        return this.text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public Font getFont() {
+        return this.font;
+    }
+
+    public void setFont(Font font) {
+        this.font = font;
+    }
+
+    public Color getColor() {
+        return this.color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
     }
 
     /**

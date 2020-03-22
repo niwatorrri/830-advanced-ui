@@ -9,6 +9,9 @@ import graphics.object.Ellipse;
 import graphics.object.Rect;
 
 public class NewRectBehavior extends NewBehavior {
+    /**
+     * NewRectBehavior: create new rect-like objects in the group
+     */
     private int type;
     private Color color;
     private int lineThickness;
@@ -18,7 +21,7 @@ public class NewRectBehavior extends NewBehavior {
     public static final int ELLIPSE = 2;
 
     public NewRectBehavior(int type, Color color, int lineThickness) {
-        super(false, true);
+        super(true);
         if (type == FILLED_RECT) {
             throw new RuntimeException("Incorrect constructor");
         }
@@ -31,7 +34,7 @@ public class NewRectBehavior extends NewBehavior {
     }
 
     public NewRectBehavior(int type, Color color) {
-        super(false, true);
+        super(true);
         if (type == OUTLINE_RECT || type == ELLIPSE) {
             throw new RuntimeException("Incorrect constructor");
         }
@@ -44,6 +47,33 @@ public class NewRectBehavior extends NewBehavior {
 
     public NewRectBehavior() {
         this(OUTLINE_RECT, Color.BLACK, 1);
+    }
+
+    /**
+     * Getters and setters
+     */
+    public int getType() {
+        return this.type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public Color getColor() {
+        return this.color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    public int getLineThickness() {
+        return this.lineThickness;
+    }
+
+    public void setLineThickness(int lineThickness) {
+        this.lineThickness = lineThickness;
     }
 
     /**

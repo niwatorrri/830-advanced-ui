@@ -10,8 +10,6 @@ import javax.swing.JFrame;
 import graphics.group.Group;
 import graphics.object.BoundaryRectangle;
 import graphics.object.GraphicalObject;
-import graphics.object.selectable.SelectableGraphicalObject;
-import behavior.*;
 
 public class InteractiveWindowGroup extends JFrame implements Group {
     private static final long serialVersionUID = 1L;
@@ -33,6 +31,7 @@ public class InteractiveWindowGroup extends JFrame implements Group {
         WindowMouseListener mouseListener = new WindowMouseListener();
         this.addMouseListener(mouseListener);
         this.addMouseMotionListener(mouseListener);
+        this.addMouseWheelListener(mouseListener);
         this.addKeyListener(new WindowKeyListener());
 
         canvas = new JComponent() {
@@ -65,46 +64,40 @@ public class InteractiveWindowGroup extends JFrame implements Group {
     // Mouse listener
     private class WindowMouseListener extends MouseAdapter {
         public void mousePressed(MouseEvent event) {
-            // System.out.println("mouse down");
             int id = BehaviorEvent.MOUSE_DOWN_ID;
             handleBehaviorEvent(getBehaviorEvent(event, id));
         }
 
         public void mouseReleased(MouseEvent event) {
-            // System.out.println("mouse up");
             int id = BehaviorEvent.MOUSE_UP_ID;
             handleBehaviorEvent(getBehaviorEvent(event, id));
         }
 
         public void mouseMoved(MouseEvent event) {
-            // System.out.println("mouse moved");
             int id = BehaviorEvent.MOUSE_MOVE_ID;
             handleBehaviorEvent(getBehaviorEvent(event, id));
         }
 
         public void mouseDragged(MouseEvent event) {
-            // System.out.println("mouse dragged");
             int id = BehaviorEvent.MOUSE_DRAG_ID;
             handleBehaviorEvent(getBehaviorEvent(event, id));
         }
 
         public void mouseClicked(MouseEvent event) {
-            // System.out.println("mouse clicked");
             int id = BehaviorEvent.MOUSE_CLICK_ID;
             handleBehaviorEvent(getBehaviorEvent(event, id));
         }
 
         public void mouseWheelMoved(MouseWheelEvent event) {
-            // System.out.println("mouse wheel moved");
             int id = BehaviorEvent.SCROLLWHEEL_ID;
             handleBehaviorEvent(getBehaviorEvent(event, id));
         }
 
         // convert an awt MouseEvent to our BehaviorEvent
         private BehaviorEvent getBehaviorEvent(MouseEvent event, int id) {
-            return new BehaviorEvent(id,
+            return new BehaviorEvent(
                 getModifiers(event),
-                getKey(event, id),
+                getKey(event, id), id,
                 event.getX() - insets.left,
                 event.getY() - insets.top - 1  // at least this works on MacOS
             );
@@ -140,8 +133,7 @@ public class InteractiveWindowGroup extends JFrame implements Group {
         modifiers |= event.isAltDown() ? BehaviorEvent.ALT_MODIFIER : 0;
         modifiers |= event.isControlDown() ? BehaviorEvent.CONTROL_MODIFIER : 0;
         modifiers |= event.isShiftDown() ? BehaviorEvent.SHIFT_MODIFIER : 0;
-        modifiers |= event.isMetaDown() ? BehaviorEvent.COMMAND_KEY_MODIFIER : 0;
-        // TODO: check meta and other modifiers
+        modifiers |= event.isMetaDown() ? BehaviorEvent.COMMAND_MODIFIER : 0;
         return modifiers;
     }
 
@@ -155,9 +147,9 @@ public class InteractiveWindowGroup extends JFrame implements Group {
         public void keyPressed(KeyEvent event) {
             Point cursor = getCursor();
             handleBehaviorEvent(new BehaviorEvent(
-                BehaviorEvent.KEY_DOWN_ID,
                 getModifiers(event),
                 event.getKeyCode(),
+                BehaviorEvent.KEY_DOWN_ID,
                 cursor.x - insets.left,
                 cursor.y - insets.top
             ));
@@ -166,9 +158,9 @@ public class InteractiveWindowGroup extends JFrame implements Group {
         public void keyReleased(KeyEvent event) {
             Point cursor = getCursor();
             handleBehaviorEvent(new BehaviorEvent(
-                BehaviorEvent.KEY_UP_ID,
                 getModifiers(event),
                 event.getKeyCode(),
+                BehaviorEvent.KEY_UP_ID,
                 cursor.x - insets.left,
                 cursor.y - insets.top
             ));

@@ -4,6 +4,9 @@ import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
 public class BoundaryRectangle extends Rectangle {
+    /**
+     * BoundaryRectangle class: result returned by getBoundingBox()
+     */
     private static final long serialVersionUID = 1L;
 
     // Different constructors

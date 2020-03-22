@@ -3,6 +3,9 @@ package graphics.object;
 import java.awt.Color;
 
 public interface Rect extends GraphicalObject {
+    /**
+     * Rect interface: super-interface for OutlineRect, FilledRect and Ellipse
+     */
     public int getX();
     public int getY();
     public int getWidth();

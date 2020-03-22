@@ -6,17 +6,39 @@ import graphics.object.GraphicalObject;
 import graphics.object.Line;
 
 public class NewLineBehavior extends NewBehavior {
+    /**
+     * NewLineBehavior: create new lines in the group
+     */
     private Color color;
     private int lineThickness;
 
     public NewLineBehavior(Color color, int lineThickness) {
-        super(false, false);
+        super(false);
         this.color = color;
         this.lineThickness = lineThickness;
     }
 
     public NewLineBehavior() {
         this(Color.BLACK, 1);
+    }
+
+    /**
+     * Getters and setters
+     */
+    public Color getColor() {
+        return this.color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    public int getLineThickness() {
+        return this.lineThickness;
+    }
+
+    public void setLineThickness(int lineThickness) {
+        this.lineThickness = lineThickness;
     }
 
     /**

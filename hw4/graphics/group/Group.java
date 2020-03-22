@@ -14,8 +14,4 @@ public interface Group extends GraphicalObject {
     public List<GraphicalObject> getChildren();
     public Point parentToChild(Point pt);
     public Point childToParent(Point pt);
-
-    public static final int HORIZONTAL = 1;
-    public static final int VERTICAL = 2;
-    public static final int GRID = 3;
 }

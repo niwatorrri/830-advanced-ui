@@ -9,14 +9,18 @@ import graphics.object.GraphicalObject;
 import graphics.object.selectable.SelectableGraphicalObject;
 
 public class ChoiceBehavior implements Behavior {
+    /**
+     * ChoiceBehavior: select one or more objects in the group
+     */
     private Group group = null;
     private int state = IDLE;
 
-    private int type;           // control selected in stop
+    private int type;  // control selected in stop
     private boolean firstOnly;  // control interimSelected in running
     private SelectableGraphicalObject firstObject;
     private List<SelectableGraphicalObject> selection = new ArrayList<>();
 
+    // Static constants for selection type
     public static final int SINGLE = 0;
     public static final int MULTIPLE = 1;
 
@@ -84,17 +88,12 @@ public class ChoiceBehavior implements Behavior {
     }
 
     // Convert event coordinates from absolute to relative to group
-    private Point findCoordinates(Group group, int x, int y, String option) {
-        assert (option == "inside") || (option == "beside");
-        if (option == "beside") {
-            return group.childToParent(findCoordinates(group, x, y, "inside"));
-        } else {
-            Group parentGroup = group.getGroup();
-            if (parentGroup == null) {
-                return new Point(x, y);
-            }
-            return group.parentToChild(findCoordinates(parentGroup, x, y, option));
+    private Point findCoordinates(Group group, int x, int y) {
+        Group parentGroup = group.getGroup();
+        if (parentGroup == null) {
+            return new Point(x, y);
         }
+        return group.parentToChild(findCoordinates(parentGroup, x, y));
     }
 
     // De-select all the selected objects
@@ -109,12 +108,10 @@ public class ChoiceBehavior implements Behavior {
      * start
      */
     public boolean start(BehaviorEvent event) {
-        if (event.matches(this.startEvent)
-                && this.state == IDLE
-                && this.group != null) {
+        if (event.matches(this.startEvent) && this.state == IDLE && this.group != null) {
             // check if event occurs within the group
             int eventX = event.getX(), eventY = event.getY();
-            Point eventInGroup = findCoordinates(group, eventX, eventY, "inside");
+            Point eventInGroup = findCoordinates(group, eventX, eventY);
             Point eventBesideGroup = group.childToParent(eventInGroup);
             if (!group.contains(eventBesideGroup)) {
                 return false;
@@ -125,7 +122,6 @@ public class ChoiceBehavior implements Behavior {
             for (int idx = children.size() - 1; idx >= 0; --idx) { // front to back
                 GraphicalObject child = children.get(idx);
                 if (child.contains(eventInGroup) && child instanceof SelectableGraphicalObject) {
-                    System.out.println("Choice starts!");
                     SelectableGraphicalObject selectableChild = (SelectableGraphicalObject) child;
                     selectableChild.setInterimSelected(true);
                     this.firstObject = selectableChild;
@@ -147,10 +143,9 @@ public class ChoiceBehavior implements Behavior {
 
         if (this.state != IDLE && event.isMouseMoved()) {
             int eventX = event.getX(), eventY = event.getY();
-            Point eventInGroup = findCoordinates(group, eventX, eventY, "inside");
+            Point eventInGroup = findCoordinates(group, eventX, eventY);
             Point eventBesideGroup = group.childToParent(eventInGroup);
             if (!group.contains(eventBesideGroup)) {
-                System.out.println("outside!");
                 this.state = RUNNING_OUTSIDE;
                 return true;
             }
@@ -188,7 +183,7 @@ public class ChoiceBehavior implements Behavior {
     public boolean stop(BehaviorEvent event) {
         if (event.matches(this.stopEvent)) {
             int eventX = event.getX(), eventY = event.getY();
-            Point eventInGroup = findCoordinates(group, eventX, eventY, "inside");
+            Point eventInGroup = findCoordinates(group, eventX, eventY);
             Point eventBesideGroup = group.childToParent(eventInGroup);
             if (!group.contains(eventBesideGroup)) {
                 return false;
@@ -220,7 +215,7 @@ public class ChoiceBehavior implements Behavior {
                 }
                 if (targetObject == null) { // did not end on a child
                     this.state = IDLE;
-                    return false;
+                    return true;
                 }
             }
 

@@ -25,6 +25,10 @@ public class LayoutGroup implements Group {
     private Group group = null;
     private List<GraphicalObject> children = new ArrayList<>();
 
+    public static final int HORIZONTAL = 1;
+    public static final int VERTICAL = 2;
+    public static final int GRID = 3;
+
     private Constraint<Integer> xConstraint = new Constraint<>();
     private Constraint<Integer> yConstraint = new Constraint<>();
     private Constraint<Integer> widthConstraint = new Constraint<>();
