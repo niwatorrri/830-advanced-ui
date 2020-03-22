@@ -461,17 +461,10 @@ public class LayoutGroup implements Group {
         }
 
         if (layout == GRID) {
-            int nRows = getNRows(), nColumns = getNColumns();
+            int nColumns = getNColumns();
             Object[] gridSizes = getGridSizes(children);
             int[] rowHeight = (int[]) gridSizes[0];
             int[] columnWidth = (int[]) gridSizes[1];
-            System.out.println(nRows + " " + nColumns);
-            for (int a : rowHeight) {
-                System.out.println(a);
-            }
-            for (int a : columnWidth) {
-                System.out.println(a);
-            }
 
             int countColumn = Math.min(nColumns, children.size());
             for (int i = 0; i < countColumn; ++i) {
@@ -493,7 +486,6 @@ public class LayoutGroup implements Group {
         }
         this.setWidth(newWidth);
         this.setHeight(newHeight);
-        System.out.println(newWidth + " " + newHeight);
     }
 
     public List<GraphicalObject> getChildren() {
