@@ -92,7 +92,7 @@ public class Text implements GraphicalObject {
 
     public void setX(Constraint<Integer> constraint) {
         // update dependency graph for the new constraint
-        xConstraint.updateConstraint(constraint);
+        xConstraint.replaceWithConstraint(constraint);
         xConstraint = constraint;
         xConstraint.setValue(this.x);
         xConstraint.notifyValueChange(true);
@@ -122,7 +122,7 @@ public class Text implements GraphicalObject {
     }
 
     public void setY(Constraint<Integer> constraint) {
-        yConstraint.updateConstraint(constraint);
+        yConstraint.replaceWithConstraint(constraint);
         yConstraint = constraint;
         yConstraint.setValue(this.y);
         yConstraint.notifyValueChange(true);
@@ -152,7 +152,7 @@ public class Text implements GraphicalObject {
     }
 
     public void setText(Constraint<String> constraint) {
-        textConstraint.updateConstraint(constraint);
+        textConstraint.replaceWithConstraint(constraint);
         textConstraint = constraint;
         textConstraint.setValue(this.text);
         textConstraint.notifyValueChange(true);
@@ -184,7 +184,7 @@ public class Text implements GraphicalObject {
     }
 
     public void setFont(Constraint<Font> constraint) {
-        fontConstraint.updateConstraint(constraint);
+        fontConstraint.replaceWithConstraint(constraint);
         fontConstraint = constraint;
         fontConstraint.setValue(this.font);
         fontConstraint.notifyValueChange(true);
@@ -216,7 +216,7 @@ public class Text implements GraphicalObject {
     }
 
     public void setColor(Constraint<Color> constraint) {
-        colorConstraint.updateConstraint(constraint);
+        colorConstraint.replaceWithConstraint(constraint);
         colorConstraint = constraint;
         colorConstraint.setValue(this.color);
         colorConstraint.notifyValueChange(true);

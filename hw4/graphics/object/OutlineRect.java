@@ -69,7 +69,7 @@ public class OutlineRect implements Rect {
 
     public void setX(Constraint<Integer> constraint) {
         // update dependency graph for the new constraint
-        xConstraint.updateConstraint(constraint);
+        xConstraint.replaceWithConstraint(constraint);
         xConstraint = constraint;
         xConstraint.setValue(this.x);
         xConstraint.notifyValueChange(true);
@@ -99,7 +99,7 @@ public class OutlineRect implements Rect {
     }
 
     public void setY(Constraint<Integer> constraint) {
-        yConstraint.updateConstraint(constraint);
+        yConstraint.replaceWithConstraint(constraint);
         yConstraint = constraint;
         yConstraint.setValue(this.y);
         yConstraint.notifyValueChange(true);
@@ -129,7 +129,7 @@ public class OutlineRect implements Rect {
     }
 
     public void setWidth(Constraint<Integer> constraint) {
-        widthConstraint.updateConstraint(constraint);
+        widthConstraint.replaceWithConstraint(constraint);
         widthConstraint = constraint;
         widthConstraint.setValue(this.width);
         widthConstraint.notifyValueChange(true);
@@ -159,7 +159,7 @@ public class OutlineRect implements Rect {
     }
 
     public void setHeight(Constraint<Integer> constraint) {
-        heightConstraint.updateConstraint(constraint);
+        heightConstraint.replaceWithConstraint(constraint);
         heightConstraint = constraint;
         heightConstraint.setValue(this.height);
         heightConstraint.notifyValueChange(true);
@@ -189,7 +189,7 @@ public class OutlineRect implements Rect {
     }
 
     public void setColor(Constraint<Color> constraint) {
-        colorConstraint.updateConstraint(constraint);
+        colorConstraint.replaceWithConstraint(constraint);
         colorConstraint = constraint;
         colorConstraint.setValue(this.color);
         colorConstraint.notifyValueChange(true);
@@ -219,7 +219,7 @@ public class OutlineRect implements Rect {
     }
 
     public void setLineThickness(Constraint<Integer> constraint) {
-        lineThicknessConstraint.updateConstraint(constraint);
+        lineThicknessConstraint.replaceWithConstraint(constraint);
         lineThicknessConstraint = constraint;
         lineThicknessConstraint.setValue(this.lineThickness);
         lineThicknessConstraint.notifyValueChange(true);

@@ -49,7 +49,7 @@ public class SelectableIcon extends Icon implements SelectableGraphicalObject {
     }
 
     public void setInterimSelected(Constraint<Boolean> constraint) {
-        interimSelectedConstraint.updateConstraint(constraint);
+        interimSelectedConstraint.replaceWithConstraint(constraint);
         interimSelectedConstraint = constraint;
         interimSelectedConstraint.setValue(this.interimSelected);
         interimSelectedConstraint.notifyValueChange(true);
@@ -79,7 +79,7 @@ public class SelectableIcon extends Icon implements SelectableGraphicalObject {
     }
 
     public void setSelected(Constraint<Boolean> constraint) {
-        selectedConstraint.updateConstraint(constraint);
+        selectedConstraint.replaceWithConstraint(constraint);
         selectedConstraint = constraint;
         selectedConstraint.setValue(this.selected);
         selectedConstraint.notifyValueChange(true);

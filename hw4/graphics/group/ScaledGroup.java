@@ -75,7 +75,7 @@ public class ScaledGroup implements Group {
 
     public void setX(Constraint<Integer> constraint) {
         // update dependency graph for the new constraint
-        xConstraint.updateConstraint(constraint);
+        xConstraint.replaceWithConstraint(constraint);
         xConstraint = constraint;
         xConstraint.setValue(this.x);
         xConstraint.notifyValueChange(true);
@@ -105,7 +105,7 @@ public class ScaledGroup implements Group {
     }
 
     public void setY(Constraint<Integer> constraint) {
-        yConstraint.updateConstraint(constraint);
+        yConstraint.replaceWithConstraint(constraint);
         yConstraint = constraint;
         yConstraint.setValue(this.y);
         yConstraint.notifyValueChange(true);
@@ -135,7 +135,7 @@ public class ScaledGroup implements Group {
     }
 
     public void setWidth(Constraint<Integer> constraint) {
-        widthConstraint.updateConstraint(constraint);
+        widthConstraint.replaceWithConstraint(constraint);
         widthConstraint = constraint;
         widthConstraint.setValue(this.width);
         widthConstraint.notifyValueChange(true);
@@ -165,7 +165,7 @@ public class ScaledGroup implements Group {
     }
 
     public void setHeight(Constraint<Integer> constraint) {
-        heightConstraint.updateConstraint(constraint);
+        heightConstraint.replaceWithConstraint(constraint);
         heightConstraint = constraint;
         heightConstraint.setValue(this.height);
         heightConstraint.notifyValueChange(true);
@@ -195,7 +195,7 @@ public class ScaledGroup implements Group {
     }
 
     public void setScaleX(Constraint<Double> constraint) {
-        scaleXConstraint.updateConstraint(constraint);
+        scaleXConstraint.replaceWithConstraint(constraint);
         scaleXConstraint = constraint;
         scaleXConstraint.setValue(this.scaleX);
         scaleXConstraint.notifyValueChange(true);
@@ -225,7 +225,7 @@ public class ScaledGroup implements Group {
     }
 
     public void setScaleY(Constraint<Double> constraint) {
-        scaleYConstraint.updateConstraint(constraint);
+        scaleYConstraint.replaceWithConstraint(constraint);
         scaleYConstraint = constraint;
         scaleYConstraint.setValue(this.scaleY);
         scaleYConstraint.notifyValueChange(true);

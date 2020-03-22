@@ -87,7 +87,7 @@ public class Dependency<T> {
      * 
      * @param newConstraint
      */
-    public void updateConstraint(Dependency<T> newConstraint) {
+    public void replaceWithConstraint(Dependency<T> newConstraint) {
         // remove previous outgoing edges
         for (Edge outEdge: this.outEdges) {
             Dependency<?> target = outEdge.getEnd();

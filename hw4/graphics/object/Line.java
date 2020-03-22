@@ -69,7 +69,7 @@ public class Line implements GraphicalObject {
 
     public void setX1(Constraint<Integer> constraint) {
         // update dependency graph for the new constraint
-        x1Constraint.updateConstraint(constraint);
+        x1Constraint.replaceWithConstraint(constraint);
         x1Constraint = constraint;
         x1Constraint.setValue(this.x1);
         x1Constraint.notifyValueChange(true);
@@ -99,7 +99,7 @@ public class Line implements GraphicalObject {
     }
 
     public void setY1(Constraint<Integer> constraint) {
-        y1Constraint.updateConstraint(constraint);
+        y1Constraint.replaceWithConstraint(constraint);
         y1Constraint = constraint;
         y1Constraint.setValue(this.y1);
         y1Constraint.notifyValueChange(true);
@@ -132,7 +132,7 @@ public class Line implements GraphicalObject {
 
     public void setX2(Constraint<Integer> constraint) {
         // update dependency graph for the new constraint
-        x2Constraint.updateConstraint(constraint);
+        x2Constraint.replaceWithConstraint(constraint);
         x2Constraint = constraint;
         x2Constraint.setValue(this.x2);
         x2Constraint.notifyValueChange(true);
@@ -162,7 +162,7 @@ public class Line implements GraphicalObject {
     }
 
     public void setY2(Constraint<Integer> constraint) {
-        y2Constraint.updateConstraint(constraint);
+        y2Constraint.replaceWithConstraint(constraint);
         y2Constraint = constraint;
         y2Constraint.setValue(this.y2);
         y2Constraint.notifyValueChange(true);
@@ -192,7 +192,7 @@ public class Line implements GraphicalObject {
     }
 
     public void setColor(Constraint<Color> constraint) {
-        colorConstraint.updateConstraint(constraint);
+        colorConstraint.replaceWithConstraint(constraint);
         colorConstraint = constraint;
         colorConstraint.setValue(this.color);
         colorConstraint.notifyValueChange(true);
@@ -222,7 +222,7 @@ public class Line implements GraphicalObject {
     }
 
     public void setLineThickness(Constraint<Integer> constraint) {
-        lineThicknessConstraint.updateConstraint(constraint);
+        lineThicknessConstraint.replaceWithConstraint(constraint);
         lineThicknessConstraint = constraint;
         lineThicknessConstraint.setValue(this.lineThickness);
         lineThicknessConstraint.notifyValueChange(true);

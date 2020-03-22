@@ -96,7 +96,7 @@ public class LayoutGroup implements Group {
 
     public void setX(Constraint<Integer> constraint) {
         // update dependency graph for the new constraint
-        xConstraint.updateConstraint(constraint);
+        xConstraint.replaceWithConstraint(constraint);
         xConstraint = constraint;
         xConstraint.setValue(this.x);
         xConstraint.notifyValueChange(true);
@@ -126,7 +126,7 @@ public class LayoutGroup implements Group {
     }
 
     public void setY(Constraint<Integer> constraint) {
-        yConstraint.updateConstraint(constraint);
+        yConstraint.replaceWithConstraint(constraint);
         yConstraint = constraint;
         yConstraint.setValue(this.y);
         yConstraint.notifyValueChange(true);
@@ -156,7 +156,7 @@ public class LayoutGroup implements Group {
     }
 
     public void setWidth(Constraint<Integer> constraint) {
-        widthConstraint.updateConstraint(constraint);
+        widthConstraint.replaceWithConstraint(constraint);
         widthConstraint = constraint;
         widthConstraint.setValue(this.width);
         widthConstraint.notifyValueChange(true);
@@ -186,7 +186,7 @@ public class LayoutGroup implements Group {
     }
 
     public void setHeight(Constraint<Integer> constraint) {
-        heightConstraint.updateConstraint(constraint);
+        heightConstraint.replaceWithConstraint(constraint);
         heightConstraint = constraint;
         heightConstraint.setValue(this.height);
         heightConstraint.notifyValueChange(true);
@@ -217,7 +217,7 @@ public class LayoutGroup implements Group {
     }
 
     public void setLayout(Constraint<Integer> constraint) {
-        layoutConstraint.updateConstraint(constraint);
+        layoutConstraint.replaceWithConstraint(constraint);
         layoutConstraint = constraint;
         layoutConstraint.setValue(this.layout);
         layoutConstraint.notifyValueChange(true);
@@ -247,7 +247,7 @@ public class LayoutGroup implements Group {
     }
 
     public void setOffset(Constraint<Integer> constraint) {
-        offsetConstraint.updateConstraint(constraint);
+        offsetConstraint.replaceWithConstraint(constraint);
         offsetConstraint = constraint;
         offsetConstraint.setValue(this.offset);
         offsetConstraint.notifyValueChange(true);
@@ -277,7 +277,7 @@ public class LayoutGroup implements Group {
     }
 
     public void setNRows(Constraint<Integer> constraint) {
-        nRowsConstraint.updateConstraint(constraint);
+        nRowsConstraint.replaceWithConstraint(constraint);
         nRowsConstraint = constraint;
         nRowsConstraint.setValue(this.nRows);
         nRowsConstraint.notifyValueChange(true);
@@ -307,7 +307,7 @@ public class LayoutGroup implements Group {
     }
 
     public void setNColumns(Constraint<Integer> constraint) {
-        nColumnsConstraint.updateConstraint(constraint);
+        nColumnsConstraint.replaceWithConstraint(constraint);
         nColumnsConstraint = constraint;
         nColumnsConstraint.setValue(this.nColumns);
         nColumnsConstraint.notifyValueChange(true);

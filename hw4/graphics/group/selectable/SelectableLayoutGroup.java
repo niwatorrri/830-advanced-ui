@@ -55,7 +55,7 @@ public class SelectableLayoutGroup extends LayoutGroup implements SelectableGrou
     }
 
     public void setInterimSelected(Constraint<Boolean> constraint) {
-        interimSelectedConstraint.updateConstraint(constraint);
+        interimSelectedConstraint.replaceWithConstraint(constraint);
         interimSelectedConstraint = constraint;
         interimSelectedConstraint.setValue(this.interimSelected);
         interimSelectedConstraint.notifyValueChange(true);
@@ -85,7 +85,7 @@ public class SelectableLayoutGroup extends LayoutGroup implements SelectableGrou
     }
 
     public void setSelected(Constraint<Boolean> constraint) {
-        selectedConstraint.updateConstraint(constraint);
+        selectedConstraint.replaceWithConstraint(constraint);
         selectedConstraint = constraint;
         selectedConstraint.setValue(this.selected);
         selectedConstraint.notifyValueChange(true);

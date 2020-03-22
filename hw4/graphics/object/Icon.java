@@ -61,7 +61,7 @@ public class Icon implements GraphicalObject {
 
     public void setX(Constraint<Integer> constraint) {
         // update dependency graph for the new constraint
-        xConstraint.updateConstraint(constraint);
+        xConstraint.replaceWithConstraint(constraint);
         xConstraint = constraint;
         xConstraint.setValue(this.x);
         xConstraint.notifyValueChange(true);
@@ -91,7 +91,7 @@ public class Icon implements GraphicalObject {
     }
 
     public void setY(Constraint<Integer> constraint) {
-        yConstraint.updateConstraint(constraint);
+        yConstraint.replaceWithConstraint(constraint);
         yConstraint = constraint;
         yConstraint.setValue(this.y);
         yConstraint.notifyValueChange(true);
@@ -121,7 +121,7 @@ public class Icon implements GraphicalObject {
     }
 
     public void setImage(Constraint<Image> constraint) {
-        imageConstraint.updateConstraint(constraint);
+        imageConstraint.replaceWithConstraint(constraint);
         imageConstraint = constraint;
         imageConstraint.setValue(this.image);
         imageConstraint.notifyValueChange(true);
