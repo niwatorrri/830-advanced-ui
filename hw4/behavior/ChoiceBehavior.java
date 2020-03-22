@@ -15,10 +15,10 @@ public class ChoiceBehavior implements Behavior {
     private Group group = null;
     private int state = IDLE;
 
-    private int type;  // control selected in stop
+    private int type;           // control selected in stop
     private boolean firstOnly;  // control interimSelected in running
     private SelectableGraphicalObject firstObject;
-    private List<SelectableGraphicalObject> selection = new ArrayList<>();
+    private List<GraphicalObject> selection = new ArrayList<>();
 
     // Static constants for selection type
     public static final int SINGLE = 0;
@@ -98,8 +98,8 @@ public class ChoiceBehavior implements Behavior {
 
     // De-select all the selected objects
     private void clearSelection() {
-        for (SelectableGraphicalObject selectedObject : selection) {
-            selectedObject.setSelected(false);
+        for (GraphicalObject selectedObject : selection) {
+            ((SelectableGraphicalObject) selectedObject).setSelected(false);
         }
         selection.clear();
     }

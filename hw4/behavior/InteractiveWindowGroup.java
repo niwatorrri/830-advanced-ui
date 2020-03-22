@@ -93,7 +93,7 @@ public class InteractiveWindowGroup extends JFrame implements Group {
             handleBehaviorEvent(getBehaviorEvent(event, id));
         }
 
-        // convert an awt MouseEvent to our BehaviorEvent
+        // Convert an awt MouseEvent to our BehaviorEvent
         private BehaviorEvent getBehaviorEvent(MouseEvent event, int id) {
             return new BehaviorEvent(
                 getModifiers(event),
@@ -198,7 +198,7 @@ public class InteractiveWindowGroup extends JFrame implements Group {
     /**
      * Methods defined in the Group and GraphicalObject interfaces
      */
-    public void addChild(GraphicalObject child) {
+    public Group addChild(GraphicalObject child) {
         if (!children.isEmpty()) {
             String message = "top level window only supports one child";
             throw new IllegalArgumentException(message);
@@ -207,17 +207,21 @@ public class InteractiveWindowGroup extends JFrame implements Group {
             child.setGroup(this);
             redraw(child);
         }
+        return this;
     }
 
-    public void removeChild(GraphicalObject child) {
+    public Group removeChild(GraphicalObject child) {
         children.remove(child);
         child.setGroup(null);
+        return this;
     }
 
-    public void bringChildToFront(GraphicalObject child) {
+    public Group bringChildToFront(GraphicalObject child) {
+        return this;
     }
 
-    public void resizeToChildren() {
+    public Group resizeToChildren() {
+        return this;
     }
 
     public List<GraphicalObject> getChildren() {

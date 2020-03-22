@@ -220,7 +220,7 @@ public class SimpleGroup implements Group {
     /**
      * Methods defined in the Group interface
      */
-    public void addChild(GraphicalObject child) {
+    public Group addChild(GraphicalObject child) {
         Group childGroup = child.getGroup();
         if (childGroup != null) {
             throw new AlreadyHasGroupRunTimeException();
@@ -228,22 +228,25 @@ public class SimpleGroup implements Group {
             children.add(child);
             child.setGroup(this);
         }
+        return this;
     }
 
-    public void removeChild(GraphicalObject child) {
+    public Group removeChild(GraphicalObject child) {
         children.remove(child);
         child.setGroup(null);
+        return this;
     }
 
-    public void bringChildToFront(GraphicalObject child) {
+    public Group bringChildToFront(GraphicalObject child) {
         if (children.remove(child)) {
             children.add(child);
         } else {
             throw new RuntimeException("Object is not in the group");
         }
+        return this;
     }
 
-    public void resizeToChildren() {
+    public Group resizeToChildren() {
         int newWidth = 0, newHeight = 0;
         for (GraphicalObject child : children) {
             BoundaryRectangle box = child.getBoundingBox();
@@ -252,6 +255,7 @@ public class SimpleGroup implements Group {
         }
         this.setWidth(newWidth);
         this.setHeight(newHeight);
+        return this;
     }
 
     public List<GraphicalObject> getChildren() {
