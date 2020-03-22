@@ -184,8 +184,7 @@ public class Dependency<T> {
                         if (this.evaluated) {
                             // if cycle, report cyclic dependency conflict
                             System.err.println(
-                                "ERROR: Conflict found " + 
-                                "when evaluating constraint " + this
+                                "ERROR: Conflict found when evaluating constraint " + this
                             );
                         } else {
                             // if no cycles, update value and set pending edges

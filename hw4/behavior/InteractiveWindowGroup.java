@@ -2,6 +2,7 @@ package behavior;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.ArrayList;
 import javax.swing.JComponent;
@@ -14,7 +15,7 @@ import graphics.object.GraphicalObject;
 public class InteractiveWindowGroup extends JFrame implements Group {
     private static final long serialVersionUID = 1L;
 
-    protected Image buffer;
+    protected BufferedImage buffer;
     private JComponent canvas;
     private Insets insets;
 
@@ -168,10 +169,11 @@ public class InteractiveWindowGroup extends JFrame implements Group {
     }
 
     private void makeBuffer(int width, int height) {
-        buffer = createImage(width, height);
-        Graphics2D graphics = (Graphics2D) buffer.getGraphics();
+        buffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        Graphics2D graphics = buffer.createGraphics();
         graphics.setColor(canvas.getBackground());
         graphics.fillRect(0, 0, width, height);
+        graphics.dispose();
     }
     
     public InteractiveWindowGroup() {
@@ -179,11 +181,12 @@ public class InteractiveWindowGroup extends JFrame implements Group {
     }
 
     public void redraw(GraphicalObject object) {
-        Graphics2D graphics = (Graphics2D) buffer.getGraphics();
+        Graphics2D graphics = buffer.createGraphics();
         BoundaryRectangle r = new BoundaryRectangle(0, 0, getWidth(), getHeight());
         graphics.setColor(canvas.getBackground());
         graphics.fill(r);
         object.draw(graphics, r);
+        graphics.dispose();
         canvas.repaint();
     }
 

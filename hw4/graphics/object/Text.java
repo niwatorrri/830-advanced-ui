@@ -6,6 +6,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Shape;
+import java.awt.RenderingHints;
 import java.awt.geom.Rectangle2D;
 
 import graphics.group.Group;
@@ -22,7 +23,7 @@ public class Text implements GraphicalObject {
     private Color color;
     private Group group = null;
 
-    public static final Font DEFAULT_FONT = new Font(Font.MONOSPACED, Font.PLAIN, 10);
+    public static final Font DEFAULT_FONT = new Font(Font.MONOSPACED, Font.PLAIN, 12);
 
     private Constraint<String> textConstraint = new Constraint<>();
     private Constraint<Integer> xConstraint = new Constraint<>();
@@ -47,8 +48,12 @@ public class Text implements GraphicalObject {
         }
     }
 
+    public Text(String text, int x, int y) {
+        this(null, text, x, y, DEFAULT_FONT, Color.BLUE);
+    }
+
     public Text() {
-        this(null, "Text", 10, 10, DEFAULT_FONT, Color.BLACK);
+        this(null, "Text", 10, 10, DEFAULT_FONT, Color.BLUE);
     }
 
     /**
@@ -228,6 +233,12 @@ public class Text implements GraphicalObject {
         Shape oldClip = graphics.getClip();
         graphics.setClip(clipShape);
 
+        RenderingHints oldRenderingHints = graphics.getRenderingHints();
+        graphics.setRenderingHint(
+            RenderingHints.KEY_TEXT_ANTIALIASING,
+            RenderingHints.VALUE_TEXT_ANTIALIAS_ON
+        );
+
         int x = getX(), y = getY();
         Font font = getFont();
         Color color = getColor();
@@ -245,6 +256,7 @@ public class Text implements GraphicalObject {
             }
         }
         graphics.setClip(oldClip);
+        graphics.setRenderingHints(oldRenderingHints);
     }
 
     public BoundaryRectangle getBoundingBox() {

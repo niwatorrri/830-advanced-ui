@@ -24,6 +24,10 @@ public class SelectableText extends Text implements SelectableGraphicalObject {
         super(graphics, text, x, y, font, color);
     }
 
+    public SelectableText(String text, int x, int y) {
+        super(text, x, y);
+    }
+
     public SelectableText() {
         super();
     }

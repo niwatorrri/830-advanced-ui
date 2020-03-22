@@ -21,8 +21,12 @@ public class NewTextBehavior extends NewBehavior {
         this.color = color;
     }
 
+    public NewTextBehavior(String text) {
+        this(text, Text.DEFAULT_FONT, Color.BLUE);
+    }
+
     public NewTextBehavior() {
-        this("Text", Text.DEFAULT_FONT, Color.BLACK);
+        this("Text", Text.DEFAULT_FONT, Color.BLUE);
     }
     
     /**
