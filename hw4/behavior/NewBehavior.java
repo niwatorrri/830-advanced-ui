@@ -69,18 +69,13 @@ public abstract class NewBehavior implements Behavior {
         return this;
     }
 
-    // TODO: do we really need two options?
-    private Point findCoordinates(Group group, int x, int y, String option) {
-        assert (option == "inside") || (option == "beside");
-        if (option == "beside") {
-            return group.childToParent(findCoordinates(group, x, y, "inside"));
-        } else {
-            Group parentGroup = group.getGroup();
-            if (parentGroup == null) {
-                return new Point(x, y);
-            }
-            return group.parentToChild(findCoordinates(parentGroup, x, y, option));
+    // Convert event coordinates from absolute to relative to group
+    private Point findCoordinates(Group group, int x, int y) {
+        Group parentGroup = group.getGroup();
+        if (parentGroup == null) {
+            return new Point(x, y);
         }
+        return group.parentToChild(findCoordinates(parentGroup, x, y));
     }
 
     /**
@@ -96,13 +91,12 @@ public abstract class NewBehavior implements Behavior {
     public boolean start(BehaviorEvent event) {
         if (event.matches(this.startEvent) && this.state == IDLE && this.group != null) {
             int eventX = event.getX(), eventY = event.getY();
-            Point eventInGroup = findCoordinates(group, eventX, eventY, "inside");
+            Point eventInGroup = findCoordinates(group, eventX, eventY);
             Point eventBesideGroup = group.childToParent(eventInGroup);
             if (!group.contains(eventBesideGroup)) {
                 return false;
             }
 
-            System.out.println("new starts!");
             this.startX = eventInGroup.x;
             this.startY = eventInGroup.y;
             if (this.rectLike) {
@@ -127,10 +121,9 @@ public abstract class NewBehavior implements Behavior {
 
         if (this.state != IDLE && event.isMouseMoved()) {
             int eventX = event.getX(), eventY = event.getY();
-            Point eventInGroup = findCoordinates(group, eventX, eventY, "inside");
+            Point eventInGroup = findCoordinates(group, eventX, eventY);
             Point eventBesideGroup = group.childToParent(eventInGroup);
             if (!group.contains(eventBesideGroup)) {
-                System.out.println("outside!");
                 this.state = RUNNING_OUTSIDE;
                 return true;
             }

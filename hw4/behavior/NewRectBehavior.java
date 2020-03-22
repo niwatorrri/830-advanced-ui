@@ -5,6 +5,7 @@ import java.awt.Color;
 import graphics.object.GraphicalObject;
 import graphics.object.OutlineRect;
 import graphics.object.FilledRect;
+import graphics.object.Ellipse;
 import graphics.object.Rect;
 
 public class NewRectBehavior extends NewBehavior {
@@ -14,12 +15,15 @@ public class NewRectBehavior extends NewBehavior {
 
     public static final int OUTLINE_RECT = 0;
     public static final int FILLED_RECT = 1;
+    public static final int ELLIPSE = 2;
 
     public NewRectBehavior(int type, Color color, int lineThickness) {
         super(false, true);
-        if (type != OUTLINE_RECT) {
-            String message = (type == FILLED_RECT) ? "Incorrect constructor" : "Unsupported rect type";
-            throw new RuntimeException(message);
+        if (type == FILLED_RECT) {
+            throw new RuntimeException("Incorrect constructor");
+        }
+        if (type != OUTLINE_RECT && type != ELLIPSE) {
+            throw new RuntimeException("Unsupported rect type");
         }
         this.type = type;
         this.color = color;
@@ -28,9 +32,11 @@ public class NewRectBehavior extends NewBehavior {
 
     public NewRectBehavior(int type, Color color) {
         super(false, true);
+        if (type == OUTLINE_RECT || type == ELLIPSE) {
+            throw new RuntimeException("Incorrect constructor");
+        }
         if (type != FILLED_RECT) {
-            String message = (type == OUTLINE_RECT) ? "Incorrect constructor" : "Unsupported rect type";
-            throw new RuntimeException(message);
+            throw new RuntimeException("Unsupported rect type");
         }
         this.type = type;
         this.color = color;
@@ -46,8 +52,10 @@ public class NewRectBehavior extends NewBehavior {
     public GraphicalObject make(int x, int y, int width, int height) {
         if (type == OUTLINE_RECT) {
             return new OutlineRect(x, y, width, height, color, lineThickness);
-        } else {
+        } else if (type == FILLED_RECT) {
             return new FilledRect(x, y, width, height, color);
+        } else{ // ellipse
+            return new Ellipse(x, y, width, height, color, lineThickness);
         }
     }
 
