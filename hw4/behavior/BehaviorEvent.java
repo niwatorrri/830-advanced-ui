@@ -67,6 +67,7 @@ public class BehaviorEvent {
     public static final int COMMAND_MODIFIER = 0x8;
     public static final int WINDOWS_KEY_MODIFIER = 0x10;    // unsupported
     public static final int FUNCTION_KEY_MODIFIER = 0x20;   // unsupported
+    public static final int ANY_MODIFIER = -1;
     private static final int MODIFIER_MASK = 0xf;   // mask for supported modifiers only
 
     // Event keys (mouse keys)
@@ -92,7 +93,7 @@ public class BehaviorEvent {
     public static final BehaviorEvent LEFT_MOUSE_DOWN = new BehaviorEvent(
         NO_MODIFIER, LEFT_MOUSE_KEY, MOUSE_DOWN_ID);
     public static final BehaviorEvent LEFT_MOUSE_UP = new BehaviorEvent(
-        NO_MODIFIER, LEFT_MOUSE_KEY, MOUSE_UP_ID);
+        ANY_MODIFIER, LEFT_MOUSE_KEY, MOUSE_UP_ID);
     public static final BehaviorEvent ESCAPE_KEY_UP = new BehaviorEvent(
         NO_MODIFIER, KeyEvent.VK_ESCAPE, KEY_UP_ID);
     public static final BehaviorEvent DEFAULT_START_EVENT = LEFT_MOUSE_DOWN;
@@ -103,9 +104,13 @@ public class BehaviorEvent {
      * Utilities
      */
     public boolean matches(BehaviorEvent event) {
-        return (event.id == this.id)
-                && ((event.modifiers & MODIFIER_MASK) == (this.modifiers & MODIFIER_MASK))
-                && (event.key == this.key);
+        boolean modifiersMatched = false;
+        if (event.modifiers == ANY_MODIFIER || this.modifiers == ANY_MODIFIER) {
+            modifiersMatched = true;
+        } else {
+            modifiersMatched = (event.modifiers & MODIFIER_MASK) == (this.modifiers & MODIFIER_MASK);
+        }
+        return modifiersMatched && (event.id == this.id) && (event.key == this.key);
     }
 
     public boolean isMouseMoved() {
