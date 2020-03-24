@@ -249,11 +249,12 @@ public class Text implements GraphicalObject {
         graphics.setColor(color);
 
         if (internalGraphics == null) { // steal your graphics
-            internalGraphics = graphics;
+            internalGraphics = (Graphics2D) graphics.create();
         }
         int textHeight = internalGraphics.getFontMetrics().getHeight();
         for (String line : text.split("\n")) {  // deal with newlines
-            graphics.drawString(line, x, y += textHeight);
+            graphics.drawString(line, x, y);
+            y += textHeight;
         }
         graphics.setClip(oldClip);
         graphics.setRenderingHints(oldRenderingHints);
@@ -270,8 +271,10 @@ public class Text implements GraphicalObject {
 
         // Coordinates were relative to the reference point
         int x = getX(), y = getY();
-        box.setRect(x + box.getX(), y + box.getY(), box.getWidth(), box.getHeight());
-        return new BoundaryRectangle(box);
+        return new BoundaryRectangle(
+            x + box.getX(), y + box.getY(),
+            box.getWidth(), box.getHeight()
+        );
     }
 
     public void moveTo(int x, int y) {
