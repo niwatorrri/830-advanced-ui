@@ -2,7 +2,7 @@ package behavior;
 
 import graphics.group.Group;
 
-public interface Behavior {
+public interface Behavior extends Comparable<Behavior> {
     /**
      * Behavior interface
      */
@@ -13,6 +13,10 @@ public interface Behavior {
     public static final int IDLE = 0;
     public static final int RUNNING_INSIDE = 1;
     public static final int RUNNING_OUTSIDE = 2;
+
+    public int getPriority();
+    public Behavior setPriority(int priority);
+    public int compareTo(Behavior behavior);
 
     public BehaviorEvent getStartEvent();
     public Behavior setStartEvent(BehaviorEvent startEvent);

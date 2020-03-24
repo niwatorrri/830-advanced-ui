@@ -12,6 +12,7 @@ public abstract class NewBehavior implements Behavior {
      */
     private Group group = null;
     private int state = IDLE;
+    private int priority = -1;
 
     private boolean rectLike;
     private int startX, startY;  // where the behavior starts (wrt group)
@@ -43,6 +44,15 @@ public abstract class NewBehavior implements Behavior {
         return this.state;
     }
 
+    public int getPriority() {
+        return this.priority;
+    }
+
+    public Behavior setPriority(int priority) {
+        this.priority = priority;
+        return this;
+    }
+
     public BehaviorEvent getStartEvent() {
         return this.startEvent;
     }
@@ -68,6 +78,11 @@ public abstract class NewBehavior implements Behavior {
     public Behavior setCancelEvent(BehaviorEvent cancelEvent) {
         this.cancelEvent = cancelEvent;
         return this;
+    }
+
+    // Compare behavior based on their priorities
+    public int compareTo(Behavior behavior) {
+        return this.getPriority() - behavior.getPriority();
     }
 
     // Convert event coordinates from absolute to relative to group

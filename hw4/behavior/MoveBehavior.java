@@ -13,6 +13,7 @@ public class MoveBehavior implements Behavior {
      */
     private Group group = null;
     private int state = IDLE;
+    private int priority = -1;
 
     private int gridSize = 1;
 
@@ -49,6 +50,15 @@ public class MoveBehavior implements Behavior {
         return this.state;
     }
 
+    public int getPriority() {
+        return this.priority;
+    }
+
+    public Behavior setPriority(int priority) {
+        this.priority = priority;
+        return this;
+    }
+
     public BehaviorEvent getStartEvent() {
         return this.startEvent;
     }
@@ -76,7 +86,12 @@ public class MoveBehavior implements Behavior {
         return this;
     }
 
-    // fix new position to grid coordinates
+    // Compare behavior based on their priorities
+    public int compareTo(Behavior behavior) {
+        return this.getPriority() - behavior.getPriority();
+    }
+
+    // Fix new position to grid coordinates
     private int fixToGrid(int now, int start) {
         int fixedNow = start + (now - start) / gridSize * gridSize;
         int diffInGrid = (now - start) % gridSize;
@@ -107,7 +122,6 @@ public class MoveBehavior implements Behavior {
             if (!group.contains(eventBesideGroup)) {
                 return false;
             }
-
             // find the object to be moved
             List<GraphicalObject> children = group.getChildren();
             for (int idx = children.size() - 1; idx >= 0; --idx) { // front to back

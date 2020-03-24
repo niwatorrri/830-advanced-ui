@@ -76,25 +76,25 @@ public class NewRectBehavior extends NewBehavior {
     public GraphicalObject make(int x, int y, int width, int height, SetupConstraint<?> constraint) {
         switch (type) {
             case OUTLINE_RECT: {
-                SelectableOutlineRect rect = new SelectableOutlineRect(x, y, width, height, color, lineThickness);
+                SelectableOutlineRect r = new SelectableOutlineRect(x, y, width, height, color, lineThickness);
                 if (constraint != null) {
-                    ((SetupConstraint<? super SelectableOutlineRect>) constraint).setup(rect);
+                    ((SetupConstraint<? super SelectableOutlineRect>) constraint).setup(r);
                 }
-                return rect;
+                return r;
             }
             case FILLED_RECT: {
-                SelectableFilledRect rect = new SelectableFilledRect(x, y, width, height, color);
+                SelectableFilledRect r = new SelectableFilledRect(x, y, width, height, color);
                 if (constraint != null) {
-                    ((SetupConstraint<? super SelectableFilledRect>) constraint).setup(rect);
+                    ((SetupConstraint<? super SelectableFilledRect>) constraint).setup(r);
                 }
-                return rect;
+                return r;
             }
             case ELLIPSE: {
-                SelectableEllipse ellipse = new SelectableEllipse(x, y, width, height, color, lineThickness);
+                SelectableEllipse r = new SelectableEllipse(x, y, width, height, color, lineThickness);
                 if (constraint != null) {
-                    ((SetupConstraint<? super SelectableEllipse>) constraint).setup(ellipse);
+                    ((SetupConstraint<? super SelectableEllipse>) constraint).setup(r);
                 }
-                return ellipse;
+                return r;
             }
             default: {
                 throw new RuntimeException("Unsupported rect type");

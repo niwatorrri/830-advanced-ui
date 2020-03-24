@@ -14,6 +14,7 @@ public class ChoiceBehavior implements Behavior {
      */
     private Group group = null;
     private int state = IDLE;
+    private int priority = -1;
 
     private int type;           // control selected in stop
     private boolean firstOnly;  // control interimSelected in running
@@ -57,6 +58,15 @@ public class ChoiceBehavior implements Behavior {
         return this.state;
     }
 
+    public int getPriority() {
+        return this.priority;
+    }
+
+    public Behavior setPriority(int priority) {
+        this.priority = priority;
+        return this;
+    }
+
     public BehaviorEvent getStartEvent() {
         return this.startEvent;
     }
@@ -86,6 +96,11 @@ public class ChoiceBehavior implements Behavior {
 
     public List<GraphicalObject> getSelection() {
         return new ArrayList<GraphicalObject>(selection);
+    }
+
+    // Compare behavior based on their priorities
+    public int compareTo(Behavior behavior) {
+        return this.getPriority() - behavior.getPriority();
     }
 
     // Convert event coordinates from absolute to relative to group
@@ -130,6 +145,10 @@ public class ChoiceBehavior implements Behavior {
                     this.state = RUNNING_INSIDE;
                     return true;
                 }
+            }
+            // clear selection if not start on any object
+            if (type == SINGLE) {
+                clearSelection();
             }
         }
         return false;
@@ -192,18 +211,11 @@ public class ChoiceBehavior implements Behavior {
             }
 
             // case 1: start outside the group
-            if (!this.startInGroup) {
-                return true;
+            // case 2: start inside the group but not on any object
+            if (!this.startInGroup || this.state == IDLE) {
+                return false;
             }
             this.startInGroup = false;
-
-            // case 2: start inside the group but not on any object
-            if (this.state == IDLE) {
-                if (this.type == SINGLE) {
-                    clearSelection();
-                }
-                return true;
-            }
 
             // case 3: start inside the group and on some object
             SelectableGraphicalObject targetObject = null;
