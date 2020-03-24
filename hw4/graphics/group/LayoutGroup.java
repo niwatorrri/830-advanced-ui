@@ -366,16 +366,16 @@ public class LayoutGroup implements Group {
                 break;
             }
             GraphicalObject child = children.get(idx);
-            BoundaryRectangle oldBoundingBox = child.getBoundingBox();
+            BoundaryRectangle box = child.getBoundingBox();
 
             switch (layout) {
                 case HORIZONTAL:
                     child.moveTo(currentXPosition, 0);
-                    currentXPosition += oldBoundingBox.width + offset;
+                    currentXPosition += box.width + offset;
                     break;
                 case VERTICAL:
                     child.moveTo(0, currentYPosition);
-                    currentYPosition += oldBoundingBox.height + offset;
+                    currentYPosition += box.height + offset;
                     break;
                 case GRID:
                     child.moveTo(currentXPosition, currentYPosition);
@@ -390,7 +390,6 @@ public class LayoutGroup implements Group {
                     throw new RuntimeException("Not supported layout type");
             }
             child.draw(graphics, childClipShape);
-            child.moveTo(oldBoundingBox.x, oldBoundingBox.y);
         }
         graphics.translate(-x, -y);
     }
@@ -438,9 +437,23 @@ public class LayoutGroup implements Group {
         return this;
     }
 
+    public Group addChildren(GraphicalObject... children) {
+        for (GraphicalObject child : children) {
+            addChild(child);
+        }
+        return this;
+    }
+
     public Group removeChild(GraphicalObject child) {
         children.remove(child);
         child.setGroup(null);
+        return this;
+    }
+
+    public Group removeChildren(GraphicalObject... children) {
+        for (GraphicalObject child : children) {
+            removeChild(child);
+        }
         return this;
     }
 

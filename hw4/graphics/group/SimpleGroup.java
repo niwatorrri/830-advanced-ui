@@ -231,9 +231,23 @@ public class SimpleGroup implements Group {
         return this;
     }
 
+    public Group addChildren(GraphicalObject... children) {
+        for (GraphicalObject child : children) {
+            addChild(child);
+        }
+        return this;
+    }
+
     public Group removeChild(GraphicalObject child) {
         children.remove(child);
         child.setGroup(null);
+        return this;
+    }
+
+    public Group removeChildren(GraphicalObject... children) {
+        for (GraphicalObject child : children) {
+            removeChild(child);
+        }
         return this;
     }
 

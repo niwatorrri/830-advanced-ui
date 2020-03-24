@@ -23,7 +23,7 @@ public class Text implements GraphicalObject {
     private Color color;
     private Group group = null;
 
-    public static final Font DEFAULT_FONT = new Font(Font.MONOSPACED, Font.PLAIN, 12);
+    public static final Font DEFAULT_FONT = new Font(Font.MONOSPACED, Font.PLAIN, 10);
 
     private Constraint<String> textConstraint = new Constraint<>();
     private Constraint<Integer> xConstraint = new Constraint<>();
@@ -247,13 +247,12 @@ public class Text implements GraphicalObject {
         graphics.setFont(font);
         graphics.setColor(color);
 
-        if (internalGraphics == null) {
-            graphics.drawString(text, x, y);
-        } else {
-            int textHeight = internalGraphics.getFontMetrics().getHeight();
-            for (String line : text.split("\n")) {  // deal with newlines
-                graphics.drawString(line, x, y += textHeight);
-            }
+        if (internalGraphics == null) { // steal your graphics
+            internalGraphics = graphics;
+        }
+        int textHeight = internalGraphics.getFontMetrics().getHeight();
+        for (String line : text.split("\n")) {  // deal with newlines
+            graphics.drawString(line, x, y += textHeight);
         }
         graphics.setClip(oldClip);
         graphics.setRenderingHints(oldRenderingHints);
@@ -270,8 +269,7 @@ public class Text implements GraphicalObject {
 
         // Coordinates were relative to the reference point
         int x = getX(), y = getY();
-        box.setRect(x + box.getX(), y + box.getY(),
-                    box.getWidth(), box.getHeight());
+        box.setRect(x + box.getX(), y + box.getY(), box.getWidth(), box.getHeight());
         return new BoundaryRectangle(box);
     }
 
