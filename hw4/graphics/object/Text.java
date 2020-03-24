@@ -11,6 +11,7 @@ import java.awt.geom.Rectangle2D;
 
 import graphics.group.Group;
 import constraint.Constraint;
+import constraint.NoConstraint;
 
 public class Text implements GraphicalObject {
     /**
@@ -25,11 +26,11 @@ public class Text implements GraphicalObject {
 
     public static final Font DEFAULT_FONT = new Font(Font.MONOSPACED, Font.PLAIN, 10);
 
-    private Constraint<String> textConstraint = new Constraint<>();
-    private Constraint<Integer> xConstraint = new Constraint<>();
-    private Constraint<Integer> yConstraint = new Constraint<>();
-    private Constraint<Font> fontConstraint = new Constraint<>();
-    private Constraint<Color> colorConstraint = new Constraint<>();
+    private Constraint<String> textConstraint = new NoConstraint<>();
+    private Constraint<Integer> xConstraint = new NoConstraint<>();
+    private Constraint<Integer> yConstraint = new NoConstraint<>();
+    private Constraint<Font> fontConstraint = new NoConstraint<>();
+    private Constraint<Color> colorConstraint = new NoConstraint<>();
 
     /**
      * Constructors

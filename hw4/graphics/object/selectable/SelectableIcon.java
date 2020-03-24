@@ -4,6 +4,7 @@ import java.awt.Image;
 
 import graphics.object.Icon;
 import constraint.Constraint;
+import constraint.NoConstraint;
 
 public class SelectableIcon extends Icon implements SelectableGraphicalObject {
     /**
@@ -12,8 +13,8 @@ public class SelectableIcon extends Icon implements SelectableGraphicalObject {
     private boolean interimSelected = false;
     private boolean selected = false;
 
-    private Constraint<Boolean> interimSelectedConstraint = new Constraint<>();
-    private Constraint<Boolean> selectedConstraint = new Constraint<>();
+    private Constraint<Boolean> interimSelectedConstraint = new NoConstraint<>();
+    private Constraint<Boolean> selectedConstraint = new NoConstraint<>();
 
     /**
      * Constructors

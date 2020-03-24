@@ -3,11 +3,11 @@ package constraint;
 import java.util.List;
 import java.util.ArrayList;
 
-public class Dependency<T> {
+public abstract class Dependency<T> {
     /**
      * Dependency class: vertices in the dependency graph
      */
-    private T value;
+    protected T value;
     private boolean outOfDate = true;
     private boolean visited = false;
     private boolean evaluated = true;
@@ -32,11 +32,10 @@ public class Dependency<T> {
     }
 
     /**
-     * This should be overridden by custom constraints
+     * Getters and some utilities
      */
-    public T getValue() {
-        return this.value;
-    }
+    // This should be overridden by custom constraints
+    public abstract T getValue();
 
     public void setValue(T value) {
         this.value = value;

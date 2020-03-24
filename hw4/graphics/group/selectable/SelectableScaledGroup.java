@@ -2,6 +2,7 @@ package graphics.group.selectable;
 
 import graphics.group.ScaledGroup;
 import constraint.Constraint;
+import constraint.NoConstraint;
 
 public class SelectableScaledGroup extends ScaledGroup implements SelectableGroup {
     /**
@@ -12,8 +13,8 @@ public class SelectableScaledGroup extends ScaledGroup implements SelectableGrou
     private boolean interimSelected;
     private boolean selected;
 
-    private Constraint<Boolean> interimSelectedConstraint = new Constraint<>();
-    private Constraint<Boolean> selectedConstraint = new Constraint<>();
+    private Constraint<Boolean> interimSelectedConstraint = new NoConstraint<>();
+    private Constraint<Boolean> selectedConstraint = new NoConstraint<>();
 
     /**
      * Constructors

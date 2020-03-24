@@ -8,6 +8,7 @@ import java.awt.Shape;
 
 import graphics.group.Group;
 import constraint.Constraint;
+import constraint.NoConstraint;
 
 public class Ellipse implements Rect {
     /**
@@ -18,12 +19,12 @@ public class Ellipse implements Rect {
     private int lineThickness;
     private Group group = null;
 
-    private Constraint<Integer> xConstraint = new Constraint<>();
-    private Constraint<Integer> yConstraint = new Constraint<>();
-    private Constraint<Integer> widthConstraint = new Constraint<>();
-    private Constraint<Integer> heightConstraint = new Constraint<>();
-    private Constraint<Color> colorConstraint = new Constraint<>();
-    private Constraint<Integer> lineThicknessConstraint = new Constraint<>();
+    private Constraint<Integer> xConstraint = new NoConstraint<>();
+    private Constraint<Integer> yConstraint = new NoConstraint<>();
+    private Constraint<Integer> widthConstraint = new NoConstraint<>();
+    private Constraint<Integer> heightConstraint = new NoConstraint<>();
+    private Constraint<Color> colorConstraint = new NoConstraint<>();
+    private Constraint<Integer> lineThicknessConstraint = new NoConstraint<>();
 
     /**
      * Constructors

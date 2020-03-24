@@ -12,6 +12,7 @@ import graphics.object.GraphicalObject;
 import graphics.object.BoundaryRectangle;
 import graphics.object.AlreadyHasGroupRunTimeException;
 import constraint.Constraint;
+import constraint.NoConstraint;
 
 public class ScaledGroup implements Group {
     /**
@@ -24,12 +25,12 @@ public class ScaledGroup implements Group {
     private Group group = null;
     private List<GraphicalObject> children = new ArrayList<>();
 
-    private Constraint<Integer> xConstraint = new Constraint<>();
-    private Constraint<Integer> yConstraint = new Constraint<>();
-    private Constraint<Integer> widthConstraint = new Constraint<>();
-    private Constraint<Integer> heightConstraint = new Constraint<>();
-    private Constraint<Double> scaleXConstraint = new Constraint<>();
-    private Constraint<Double> scaleYConstraint = new Constraint<>();
+    private Constraint<Integer> xConstraint = new NoConstraint<>();
+    private Constraint<Integer> yConstraint = new NoConstraint<>();
+    private Constraint<Integer> widthConstraint = new NoConstraint<>();
+    private Constraint<Integer> heightConstraint = new NoConstraint<>();
+    private Constraint<Double> scaleXConstraint = new NoConstraint<>();
+    private Constraint<Double> scaleYConstraint = new NoConstraint<>();
 
     /**
      * Constructors

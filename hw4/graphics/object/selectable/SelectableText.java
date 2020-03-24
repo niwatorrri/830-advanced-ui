@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 
 import graphics.object.Text;
 import constraint.Constraint;
+import constraint.NoConstraint;
 
 public class SelectableText extends Text implements SelectableGraphicalObject {
     /**
@@ -14,8 +15,8 @@ public class SelectableText extends Text implements SelectableGraphicalObject {
     private boolean interimSelected = false;
     private boolean selected = false;
 
-    private Constraint<Boolean> interimSelectedConstraint = new Constraint<>();
-    private Constraint<Boolean> selectedConstraint = new Constraint<>();
+    private Constraint<Boolean> interimSelectedConstraint = new NoConstraint<>();
+    private Constraint<Boolean> selectedConstraint = new NoConstraint<>();
 
     /**
      * Constructors

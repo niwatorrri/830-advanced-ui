@@ -1,6 +1,6 @@
 package constraint;
 
-public class Constraint<T> extends Dependency<T> {
+public abstract class Constraint<T> extends Dependency<T> {
     /**
      * Constraint class: an alias for Dependency class
      */

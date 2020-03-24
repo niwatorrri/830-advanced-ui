@@ -4,6 +4,7 @@ import java.awt.Color;
 
 import graphics.object.OutlineRect;
 import constraint.Constraint;
+import constraint.NoConstraint;
 
 public class SelectableOutlineRect extends OutlineRect implements SelectableGraphicalObject {
     /**
@@ -12,8 +13,8 @@ public class SelectableOutlineRect extends OutlineRect implements SelectableGrap
     private boolean interimSelected = false;
     private boolean selected = false;
 
-    private Constraint<Boolean> interimSelectedConstraint = new Constraint<>();
-    private Constraint<Boolean> selectedConstraint = new Constraint<>();
+    private Constraint<Boolean> interimSelectedConstraint = new NoConstraint<>();
+    private Constraint<Boolean> selectedConstraint = new NoConstraint<>();
 
     /**
      * Constructors

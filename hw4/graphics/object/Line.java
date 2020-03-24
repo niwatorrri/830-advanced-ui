@@ -8,6 +8,7 @@ import java.awt.Shape;
 
 import graphics.group.Group;
 import constraint.Constraint;
+import constraint.NoConstraint;
 
 public class Line implements GraphicalObject {
     /**
@@ -18,12 +19,12 @@ public class Line implements GraphicalObject {
     private int lineThickness;
     private Group group = null;
 
-    private Constraint<Integer> x1Constraint = new Constraint<>();
-    private Constraint<Integer> y1Constraint = new Constraint<>();
-    private Constraint<Integer> x2Constraint = new Constraint<>();
-    private Constraint<Integer> y2Constraint = new Constraint<>();
-    private Constraint<Color> colorConstraint = new Constraint<>();
-    private Constraint<Integer> lineThicknessConstraint = new Constraint<>();
+    private Constraint<Integer> x1Constraint = new NoConstraint<>();
+    private Constraint<Integer> y1Constraint = new NoConstraint<>();
+    private Constraint<Integer> x2Constraint = new NoConstraint<>();
+    private Constraint<Integer> y2Constraint = new NoConstraint<>();
+    private Constraint<Color> colorConstraint = new NoConstraint<>();
+    private Constraint<Integer> lineThicknessConstraint = new NoConstraint<>();
 
     /**
      * Constructors

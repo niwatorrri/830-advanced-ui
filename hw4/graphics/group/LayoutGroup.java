@@ -11,6 +11,7 @@ import graphics.object.GraphicalObject;
 import graphics.object.BoundaryRectangle;
 import graphics.object.AlreadyHasGroupRunTimeException;
 import constraint.Constraint;
+import constraint.NoConstraint;
 
 public class LayoutGroup implements Group {
     /**
@@ -29,14 +30,14 @@ public class LayoutGroup implements Group {
     public static final int VERTICAL = 2;
     public static final int GRID = 3;
 
-    private Constraint<Integer> xConstraint = new Constraint<>();
-    private Constraint<Integer> yConstraint = new Constraint<>();
-    private Constraint<Integer> widthConstraint = new Constraint<>();
-    private Constraint<Integer> heightConstraint = new Constraint<>();
-    private Constraint<Integer> layoutConstraint = new Constraint<>();
-    private Constraint<Integer> offsetConstraint = new Constraint<>();
-    private Constraint<Integer> nRowsConstraint = new Constraint<>();
-    private Constraint<Integer> nColumnsConstraint = new Constraint<>();
+    private Constraint<Integer> xConstraint = new NoConstraint<>();
+    private Constraint<Integer> yConstraint = new NoConstraint<>();
+    private Constraint<Integer> widthConstraint = new NoConstraint<>();
+    private Constraint<Integer> heightConstraint = new NoConstraint<>();
+    private Constraint<Integer> layoutConstraint = new NoConstraint<>();
+    private Constraint<Integer> offsetConstraint = new NoConstraint<>();
+    private Constraint<Integer> nRowsConstraint = new NoConstraint<>();
+    private Constraint<Integer> nColumnsConstraint = new NoConstraint<>();
 
     /**
      * Constructors

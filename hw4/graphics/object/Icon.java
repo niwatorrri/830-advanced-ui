@@ -7,6 +7,7 @@ import java.awt.Shape;
 
 import graphics.group.Group;
 import constraint.Constraint;
+import constraint.NoConstraint;
 
 public class Icon implements GraphicalObject {
     /**
@@ -16,9 +17,9 @@ public class Icon implements GraphicalObject {
     private int x, y;
     private Group group = null;
 
-    private Constraint<Image> imageConstraint = new Constraint<>();
-    private Constraint<Integer> xConstraint = new Constraint<>();
-    private Constraint<Integer> yConstraint = new Constraint<>();
+    private Constraint<Image> imageConstraint = new NoConstraint<>();
+    private Constraint<Integer> xConstraint = new NoConstraint<>();
+    private Constraint<Integer> yConstraint = new NoConstraint<>();
 
     /**
      * Constructors
