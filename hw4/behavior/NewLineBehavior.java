@@ -35,16 +35,18 @@ public class NewLineBehavior extends NewBehavior {
         return this.color;
     }
 
-    public void setColor(Color color) {
+    public NewLineBehavior setColor(Color color) {
         this.color = color;
+        return this;
     }
 
     public int getLineThickness() {
         return this.lineThickness;
     }
 
-    public void setLineThickness(int lineThickness) {
+    public NewLineBehavior setLineThickness(int lineThickness) {
         this.lineThickness = lineThickness;
+        return this;
     }
 
     /**
@@ -54,19 +56,19 @@ public class NewLineBehavior extends NewBehavior {
     public GraphicalObject make(int x1, int y1, int x2, int y2, SetupConstraint<?> constraint) {
         SelectableLine l = new SelectableLine(x1, y1, x2, y2, color, lineThickness);
         if (constraint != null) {
-            ((SetupConstraint<SelectableLine>) constraint).setup(l);
+            ((SetupConstraint<? super SelectableLine>) constraint).setup(l);
         }
         return l;
     }
 
     public void resize(GraphicalObject object, int x1, int y1, int x2, int y2) {
-        Line line = (Line) object;
-        line.setX2(x2);
-        line.setY2(y2);
+        Line l = (Line) object;
+        l.setX2(x2);
+        l.setY2(y2);
     }
 
     public boolean isTrivial(GraphicalObject object) {
-        Line line = (Line) object;
-        return (line.getX1() == line.getX2() && line.getY1() == line.getY2());
+        Line l = (Line) object;
+        return (l.getX1() == l.getX2() && l.getY1() == l.getY2());
     }
 }

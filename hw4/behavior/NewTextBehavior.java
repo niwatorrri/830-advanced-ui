@@ -34,7 +34,7 @@ public class NewTextBehavior extends NewBehavior {
     public NewTextBehavior() {
         this("Text", Text.DEFAULT_FONT, Color.BLUE);
     }
-    
+
     /**
      * Getters and setters
      */
@@ -42,24 +42,27 @@ public class NewTextBehavior extends NewBehavior {
         return this.text;
     }
 
-    public void setText(String text) {
+    public NewTextBehavior setText(String text) {
         this.text = text;
+        return this;
     }
 
     public Font getFont() {
         return this.font;
     }
 
-    public void setFont(Font font) {
+    public NewTextBehavior setFont(Font font) {
         this.font = font;
+        return this;
     }
 
     public Color getColor() {
         return this.color;
     }
 
-    public void setColor(Color color) {
+    public NewTextBehavior setColor(Color color) {
         this.color = color;
+        return this;
     }
 
     /**
@@ -69,15 +72,15 @@ public class NewTextBehavior extends NewBehavior {
     public GraphicalObject make(int x, int y, int uselessX, int uselessY, SetupConstraint<?> constraint) {
         SelectableText t = new SelectableText(null, text, x, y, font, color);
         if (constraint != null) {
-            ((SetupConstraint<SelectableText>) constraint).setup(t);
+            ((SetupConstraint<? super SelectableText>) constraint).setup(t);
         }
         return t;
     }
 
     public void resize(GraphicalObject object, int x, int y, int newX, int newY) {
-        Text text = (Text) object;
-        text.setX(newX);
-        text.setY(newY);
+        Text t = (Text) object;
+        t.setX(newX);
+        t.setY(newY);
     }
 
     public boolean isTrivial(GraphicalObject object) {

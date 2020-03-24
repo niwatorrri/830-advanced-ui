@@ -93,7 +93,7 @@ public class BehaviorEvent {
     public static final BehaviorEvent LEFT_MOUSE_DOWN = new BehaviorEvent(
         NO_MODIFIER, LEFT_MOUSE_KEY, MOUSE_DOWN_ID);
     public static final BehaviorEvent LEFT_MOUSE_UP = new BehaviorEvent(
-        ANY_MODIFIER, LEFT_MOUSE_KEY, MOUSE_UP_ID);
+        NO_MODIFIER, LEFT_MOUSE_KEY, MOUSE_UP_ID);
     public static final BehaviorEvent ESCAPE_KEY_UP = new BehaviorEvent(
         NO_MODIFIER, KeyEvent.VK_ESCAPE, KEY_UP_ID);
     public static final BehaviorEvent DEFAULT_START_EVENT = LEFT_MOUSE_DOWN;
@@ -104,7 +104,7 @@ public class BehaviorEvent {
      * Utilities
      */
     public boolean matches(BehaviorEvent event) {
-        boolean modifiersMatched = false;
+        boolean modifiersMatched;
         if (event.modifiers == ANY_MODIFIER || this.modifiers == ANY_MODIFIER) {
             modifiersMatched = true;
         } else {

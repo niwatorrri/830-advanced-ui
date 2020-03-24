@@ -46,24 +46,27 @@ public class NewRectBehavior extends NewBehavior {
         return this.type;
     }
 
-    public void setType(int type) {
+    public NewRectBehavior setType(int type) {
         this.type = type;
+        return this;
     }
 
     public Color getColor() {
         return this.color;
     }
 
-    public void setColor(Color color) {
+    public NewRectBehavior setColor(Color color) {
         this.color = color;
+        return this;
     }
 
     public int getLineThickness() {
         return this.lineThickness;
     }
 
-    public void setLineThickness(int lineThickness) {
+    public NewRectBehavior setLineThickness(int lineThickness) {
         this.lineThickness = lineThickness;
+        return this;
     }
 
     /**
@@ -73,25 +76,25 @@ public class NewRectBehavior extends NewBehavior {
     public GraphicalObject make(int x, int y, int width, int height, SetupConstraint<?> constraint) {
         switch (type) {
             case OUTLINE_RECT: {
-                SelectableOutlineRect r = new SelectableOutlineRect(x, y, width, height, color, lineThickness);
+                SelectableOutlineRect rect = new SelectableOutlineRect(x, y, width, height, color, lineThickness);
                 if (constraint != null) {
-                    ((SetupConstraint<SelectableOutlineRect>) constraint).setup(r);
+                    ((SetupConstraint<? super SelectableOutlineRect>) constraint).setup(rect);
                 }
-                return r;
+                return rect;
             }
             case FILLED_RECT: {
-                SelectableFilledRect r = new SelectableFilledRect(x, y, width, height, color);
+                SelectableFilledRect rect = new SelectableFilledRect(x, y, width, height, color);
                 if (constraint != null) {
-                    ((SetupConstraint<SelectableFilledRect>) constraint).setup(r);
+                    ((SetupConstraint<? super SelectableFilledRect>) constraint).setup(rect);
                 }
-                return r;
+                return rect;
             }
             case ELLIPSE: {
-                SelectableEllipse r = new SelectableEllipse(x, y, width, height, color, lineThickness);
+                SelectableEllipse ellipse = new SelectableEllipse(x, y, width, height, color, lineThickness);
                 if (constraint != null) {
-                    ((SetupConstraint<SelectableEllipse>) constraint).setup(r);
+                    ((SetupConstraint<? super SelectableEllipse>) constraint).setup(ellipse);
                 }
-                return r;
+                return ellipse;
             }
             default: {
                 throw new RuntimeException("Unsupported rect type");
