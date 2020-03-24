@@ -17,6 +17,7 @@ public class ChoiceBehavior implements Behavior {
 
     private int type;           // control selected in stop
     private boolean firstOnly;  // control interimSelected in running
+    private boolean startInGroup;
     private SelectableGraphicalObject firstObject;
     private List<GraphicalObject> selection = new ArrayList<>();
 
@@ -118,6 +119,7 @@ public class ChoiceBehavior implements Behavior {
             }
 
             // find the object on which the event occurs
+            this.startInGroup = true;
             List<GraphicalObject> children = group.getChildren();
             for (int idx = children.size() - 1; idx >= 0; --idx) { // front to back
                 GraphicalObject child = children.get(idx);
@@ -189,7 +191,13 @@ public class ChoiceBehavior implements Behavior {
                 return false;
             }
 
-            // case 1: clicked inside group but not on any object
+            // case 1: start outside the group
+            if (!this.startInGroup) {
+                return true;
+            }
+            this.startInGroup = false;
+
+            // case 2: start inside the group but not on any object
             if (this.state == IDLE) {
                 if (this.type == SINGLE) {
                     clearSelection();
@@ -197,7 +205,7 @@ public class ChoiceBehavior implements Behavior {
                 return true;
             }
 
-            // case 2: clicked inside group and started on some object
+            // case 3: start inside the group and on some object
             SelectableGraphicalObject targetObject = null;
             if (this.firstOnly) {
                 targetObject = firstObject;
@@ -213,7 +221,7 @@ public class ChoiceBehavior implements Behavior {
                         }
                     }
                 }
-                if (targetObject == null) { // did not end on a child
+                if (targetObject == null) { // not end on a child
                     this.state = IDLE;
                     return true;
                 }
@@ -252,6 +260,7 @@ public class ChoiceBehavior implements Behavior {
                     break;
                 }
             }
+            this.startInGroup = false;
             this.state = IDLE;
             return true;
         }

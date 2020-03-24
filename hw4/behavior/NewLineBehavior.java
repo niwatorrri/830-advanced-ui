@@ -2,8 +2,10 @@ package behavior;
 
 import java.awt.Color;
 
-import graphics.object.GraphicalObject;
 import graphics.object.Line;
+import graphics.object.GraphicalObject;
+import graphics.object.selectable.SelectableLine;
+import constraint.SetupConstraint;
 
 public class NewLineBehavior extends NewBehavior {
     /**
@@ -12,10 +14,14 @@ public class NewLineBehavior extends NewBehavior {
     private Color color;
     private int lineThickness;
 
-    public NewLineBehavior(Color color, int lineThickness) {
-        super(false);
+    public NewLineBehavior(Color color, int lineThickness, SetupConstraint<?> constraint) {
+        super(false, constraint);
         this.color = color;
         this.lineThickness = lineThickness;
+    }
+
+    public NewLineBehavior(Color color, int lineThickness) {
+        this(color, lineThickness, null);
     }
 
     public NewLineBehavior() {
@@ -44,8 +50,13 @@ public class NewLineBehavior extends NewBehavior {
     /**
      * Implement abstract methods in NewBehavior class
      */
-    public GraphicalObject make(int x1, int y1, int x2, int y2) {
-        return new Line(x1, y1, x2, y2, color, lineThickness);
+    @SuppressWarnings("unchecked")
+    public GraphicalObject make(int x1, int y1, int x2, int y2, SetupConstraint<?> constraint) {
+        SelectableLine l = new SelectableLine(x1, y1, x2, y2, color, lineThickness);
+        if (constraint != null) {
+            ((SetupConstraint<SelectableLine>) constraint).setup(l);
+        }
+        return l;
     }
 
     public void resize(GraphicalObject object, int x1, int y1, int x2, int y2) {

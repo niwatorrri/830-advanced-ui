@@ -203,8 +203,8 @@ public class InteractiveWindowGroup extends JFrame implements Group {
      */
     public Group addChild(GraphicalObject child) {
         if (!children.isEmpty()) {
-            String message = "top level window only supports one child";
-            throw new IllegalArgumentException(message);
+            String message = "Top level window only supports one child";
+            throw new RuntimeException(message);
         } else {
             children.add(child);
             child.setGroup(this);
@@ -213,9 +213,23 @@ public class InteractiveWindowGroup extends JFrame implements Group {
         return this;
     }
 
+    public Group addChildren(GraphicalObject... children) {
+        for (GraphicalObject child : children) {
+            addChild(child);
+        }
+        return this;
+    }
+
     public Group removeChild(GraphicalObject child) {
         children.remove(child);
         child.setGroup(null);
+        return this;
+    }
+
+    public Group removeChildren(GraphicalObject... children) {
+        for (GraphicalObject child : children) {
+            removeChild(child);
+        }
         return this;
     }
 

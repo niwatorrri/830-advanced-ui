@@ -4,6 +4,7 @@ import java.awt.Point;
 
 import graphics.group.Group;
 import graphics.object.GraphicalObject;
+import constraint.SetupConstraint;
 
 public abstract class NewBehavior implements Behavior {
     /**
@@ -15,13 +16,15 @@ public abstract class NewBehavior implements Behavior {
     private boolean rectLike;
     private int startX, startY;  // where the behavior starts (wrt group)
     private GraphicalObject newObject = null;
+    private SetupConstraint<?> constraint = null;
 
     private BehaviorEvent startEvent = BehaviorEvent.DEFAULT_START_EVENT;
     private BehaviorEvent stopEvent = BehaviorEvent.DEFAULT_STOP_EVENT;
     private BehaviorEvent cancelEvent = BehaviorEvent.DEFAULT_CANCEL_EVENT;
 
-    public NewBehavior(boolean rectLike) {
+    public NewBehavior(boolean rectLike, SetupConstraint<?> constraint) {
         this.rectLike = rectLike;
+        this.constraint = constraint;
     }
 
     /**
@@ -79,7 +82,7 @@ public abstract class NewBehavior implements Behavior {
     /**
      * Abstract classes to be implemented by subclasses
      */
-    public abstract GraphicalObject make(int a, int b, int c, int d);
+    public abstract GraphicalObject make(int a, int b, int c, int d, SetupConstraint<?> constraint);
     public abstract void resize(GraphicalObject object, int a, int b, int c, int d);
     public abstract boolean isTrivial(GraphicalObject object);
 
@@ -98,9 +101,9 @@ public abstract class NewBehavior implements Behavior {
             this.startX = eventInGroup.x;
             this.startY = eventInGroup.y;
             if (this.rectLike) {
-                newObject = make(startX, startY, 1, 1);
+                newObject = make(startX, startY, 1, 1, constraint);
             } else { // line-like or one-point
-                newObject = make(startX, startY, startX, startY);
+                newObject = make(startX, startY, startX, startY, constraint);
             }
             this.group.addChild(newObject);
             this.state = RUNNING_INSIDE;

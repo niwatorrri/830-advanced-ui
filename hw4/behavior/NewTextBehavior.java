@@ -3,8 +3,10 @@ package behavior;
 import java.awt.Color;
 import java.awt.Font;
 
-import graphics.object.GraphicalObject;
 import graphics.object.Text;
+import graphics.object.GraphicalObject;
+import graphics.object.selectable.SelectableText;
+import constraint.SetupConstraint;
 
 public class NewTextBehavior extends NewBehavior {
     /**
@@ -14,11 +16,15 @@ public class NewTextBehavior extends NewBehavior {
     private Font font;
     private Color color;
 
-    public NewTextBehavior(String text, Font font, Color color) {
-        super(false);
+    public NewTextBehavior(String text, Font font, Color color, SetupConstraint<?> constraint) {
+        super(false, constraint);
         this.text = text;
         this.font = font;
         this.color = color;
+    }
+
+    public NewTextBehavior(String text, Font font, Color color) {
+        this(text, font, color, null);
     }
 
     public NewTextBehavior(String text) {
@@ -59,8 +65,13 @@ public class NewTextBehavior extends NewBehavior {
     /**
      * Implement abstract methods in NewBehavior class
      */
-    public GraphicalObject make(int x, int y, int uselessX, int uselessY) {
-        return new Text(null, text, x, y, font, color);
+    @SuppressWarnings("unchecked")
+    public GraphicalObject make(int x, int y, int uselessX, int uselessY, SetupConstraint<?> constraint) {
+        SelectableText t = new SelectableText(null, text, x, y, font, color);
+        if (constraint != null) {
+            ((SetupConstraint<SelectableText>) constraint).setup(t);
+        }
+        return t;
     }
 
     public void resize(GraphicalObject object, int x, int y, int newX, int newY) {
