@@ -12,18 +12,18 @@ public abstract class NewBehavior implements Behavior {
      */
     private Group group = null;
     private int state = IDLE;
-    private int priority = -1;
+    private int priority = 0;
 
     private boolean rectLike;
     private int startX, startY;  // where the behavior starts (wrt group)
     private GraphicalObject newObject = null;
-    private SetupConstraint<?> constraint = null;
+    private SetupConstraint constraint = null;
 
     private BehaviorEvent startEvent = BehaviorEvent.DEFAULT_START_EVENT;
     private BehaviorEvent stopEvent = BehaviorEvent.DEFAULT_STOP_EVENT;
     private BehaviorEvent cancelEvent = BehaviorEvent.DEFAULT_CANCEL_EVENT;
 
-    public NewBehavior(boolean rectLike, SetupConstraint<?> constraint) {
+    public NewBehavior(boolean rectLike, SetupConstraint constraint) {
         this.rectLike = rectLike;
         this.constraint = constraint;
     }
@@ -97,7 +97,7 @@ public abstract class NewBehavior implements Behavior {
     /**
      * Abstract classes to be implemented by subclasses
      */
-    public abstract GraphicalObject make(int a, int b, int c, int d, SetupConstraint<?> constraint);
+    public abstract GraphicalObject make(int a, int b, int c, int d, SetupConstraint constraint);
     public abstract void resize(GraphicalObject object, int a, int b, int c, int d);
     public abstract boolean isTrivial(GraphicalObject object);
 

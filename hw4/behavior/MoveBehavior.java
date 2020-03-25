@@ -13,7 +13,7 @@ public class MoveBehavior implements Behavior {
      */
     private Group group = null;
     private int state = IDLE;
-    private int priority = -1;
+    private int priority = 0;
 
     private int gridSize = 1;
 

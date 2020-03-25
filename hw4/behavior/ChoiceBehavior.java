@@ -14,7 +14,7 @@ public class ChoiceBehavior implements Behavior {
      */
     private Group group = null;
     private int state = IDLE;
-    private int priority = -1;
+    private int priority = 0;
 
     private int type;           // control selected in stop
     private boolean firstOnly;  // control interimSelected in running
@@ -141,6 +141,9 @@ public class ChoiceBehavior implements Behavior {
                 if (child.contains(eventInGroup) && child instanceof SelectableGraphicalObject) {
                     SelectableGraphicalObject selectableChild = (SelectableGraphicalObject) child;
                     selectableChild.setInterimSelected(true);
+                    if (type == SINGLE && !selection.contains(selectableChild)) {
+                        clearSelection();
+                    }
                     this.firstObject = selectableChild;
                     this.state = RUNNING_INSIDE;
                     return true;

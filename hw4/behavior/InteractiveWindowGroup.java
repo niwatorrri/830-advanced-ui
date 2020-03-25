@@ -5,7 +5,7 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.PriorityQueue;
+import java.util.Collections;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
@@ -19,10 +19,10 @@ public class InteractiveWindowGroup extends JFrame implements Group {
     protected BufferedImage buffer;
     private JComponent canvas;
     private Insets insets;
-    private int priorityCount = 0;
 
     private List<GraphicalObject> children = new ArrayList<>();
-    private PriorityQueue<Behavior> behaviors = new PriorityQueue<>();
+    private List<Behavior> behaviors = new ArrayList<>();
+    private boolean behaviorsSorted = false;
 
     /**
      * Constructor: make a top-level window with specified title, width and height
@@ -56,7 +56,15 @@ public class InteractiveWindowGroup extends JFrame implements Group {
     }
 
     private void handleBehaviorEvent(BehaviorEvent behaviorEvent) {
-        Behavior lastBehavior = behaviors.peek();
+        if (behaviors.isEmpty()) {
+            return;
+        }
+        if (!behaviorsSorted) {
+            Collections.sort(behaviors);
+            behaviorsSorted = true;
+        }
+
+        Behavior lastBehavior = behaviors.get(0);
         boolean eventConsumed = false;
         for (Behavior behavior : behaviors) {
             if (eventConsumed && behavior.compareTo(lastBehavior) > 0) {
@@ -198,12 +206,8 @@ public class InteractiveWindowGroup extends JFrame implements Group {
     }
 
     public InteractiveWindowGroup addBehavior(Behavior behavior) {
-        if (behavior.getPriority() < 0) {
-            behavior.setPriority(priorityCount++);
-        } else {
-            priorityCount = Math.max(priorityCount, behavior.getPriority()) + 1;
-        }
-        behaviors.add(behavior);
+        this.behaviors.add(behavior);
+        behaviorsSorted = false;
         return this;
     }
 
@@ -215,7 +219,7 @@ public class InteractiveWindowGroup extends JFrame implements Group {
     }
 
     public InteractiveWindowGroup removeBehavior(Behavior behavior) {
-        behaviors.remove(behavior);
+        this.behaviors.remove(behavior);
         return this;
     }
 
