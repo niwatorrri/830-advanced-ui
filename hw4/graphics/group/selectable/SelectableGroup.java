@@ -1,7 +1,7 @@
 package graphics.group.selectable;
 
 import graphics.group.Group;
-import graphics.object.selectable.Selectable;
+import graphics.object.selectable.SelectableGraphicalObject;
 
-public interface SelectableGroup extends Group, Selectable {
+public interface SelectableGroup extends Group, SelectableGraphicalObject {
 }
