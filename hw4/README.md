@@ -170,7 +170,7 @@ This section records some changes that I made either to implementations in previ
     - NewBehavior has an abstract method named `isTrivial(object)` to tell if the new object is zero-sized when the behavior stops. If yes, it will be removed from the group.
     - NewBehavior by default makes selectable objects so that it can be cast to any of their super-types.
     - NewRectBehavior supports three types of objects: OutlineRect, FilledRect and Ellipse
-- BehaviorEvent classes
+- BehaviorEvent class
     - Constructor changed to `BehaviorEvent(modifiers, key, id)` as it reads more natural to me
     - Constructor accepts char (e.g., 'A', case-insensitive) as key code for KeyEvents
     - Event ID supports mouse move and mouse drag
@@ -178,7 +178,7 @@ This section records some changes that I made either to implementations in previ
     - Windows key modifier and Function key modifier are not supported, as I cannot find them in java.awt.event.InputEvent. They seem to be considered as normal keys instead of modifiers since they, (to be specific, Windows, F1, F2, F3, etc.,) can only be found in java.awt.event.KeyEvent.
 - InteractiveWindowGroup class
     - Added a fluent API for addBehavior and removeBehavior method in InteractiveWindowGroup class, as well as addBehaviors and removeBehaviors methods for lazy people.
-    - Behaviors can have priorities, and multiple behaviors that share the same priority can simultaneously react on one input event. (Haven't fully tested, might be messy.)
+    - Behaviors can have priorities. Multiple behaviors that share the same priority can simultaneously react on one input event. (Haven't fully tested, might be messy.)
     - When a keyboard event occurs, the x and y parameters in the resulting BehaviorEvent object is the current mouse position. The `start()` method in Behavior will consider this position as well.
 - Constraints
     - Declared Constraint and Dependency as abstract classes and force user to implement `getValue()`. NoConstraint class can be instantiated for a default initializer.
