@@ -166,7 +166,9 @@ public class Text implements GraphicalObject {
     public Font getFont() {
         if (fontConstraint.isConstrained()) {
             this.font = fontConstraint.evaluate();
-            internalGraphics.setFont(this.font);
+            if (internalGraphics != null) {
+                internalGraphics.setFont(this.font);
+            }
         }
         return this.font;
     }
@@ -175,7 +177,9 @@ public class Text implements GraphicalObject {
         if (this.font != font) {
             if (!fontConstraint.isConstrained()) {
                 this.font = font;
-                internalGraphics.setFont(this.font);
+                if (internalGraphics != null) {
+                    internalGraphics.setFont(this.font);
+                }
                 fontConstraint.notifyValueChange(false);
             } else if (fontConstraint.hasCycle()) {
                 fontConstraint.setValue(font);
@@ -198,7 +202,9 @@ public class Text implements GraphicalObject {
     public Color getColor() {
         if (colorConstraint.isConstrained()) {
             this.color = colorConstraint.evaluate();
-            internalGraphics.setColor(this.color);
+            if (internalGraphics != null) {
+                internalGraphics.setColor(this.color);
+            }
         }
         return this.color;
     }
@@ -207,7 +213,9 @@ public class Text implements GraphicalObject {
         if (this.color != color) {
             if (!colorConstraint.isConstrained()) {
                 this.color = color;
-                internalGraphics.setColor(this.color);
+                if (internalGraphics != null) {
+                    internalGraphics.setColor(this.color);
+                }
                 colorConstraint.notifyValueChange(false);
             } else if (colorConstraint.hasCycle()) {
                 colorConstraint.setValue(color);

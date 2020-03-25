@@ -296,8 +296,27 @@ public class Line implements GraphicalObject {
         this.group = group;
     }
 
+    private double normSquared(Point p) {
+        return p.x * p.x + p.y * p.y;
+    }
+
     public boolean contains(int x, int y) {
-        return getBoundingBox().contains(x, y);
+        // Too lazy to compute by myself. Formula reference:
+        // https://math.stackexchange.com/questions/62633/orthogonal-projection-of-a-point-onto-a-line
+        int tolerance = Math.max(lineThickness, 15);
+        Point v = new Point(x2 - x1, y2 - y1);
+        Point p0 = new Point(x1, y1);
+        double vTv = normSquared(v); // v^Tv
+        double vTpp0 = v.x * (x - p0.x) + v.y * (y - p0.y); // v^T(p-p0)
+        Point projection = new Point(
+            (int) (vTpp0 * v.x / vTv + p0.x),
+            (int) (vTpp0 * v.y / vTv + p0.y)
+        );
+        double distance = Math.sqrt(normSquared(
+            new Point(x - projection.x, y - projection.y)
+        ));
+        return ((projection.x - x1) * (projection.x - x2) <= 0)
+                && (distance < tolerance / 2);
     }
     
     public boolean contains(Point pt) {
