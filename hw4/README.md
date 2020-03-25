@@ -26,7 +26,7 @@ hw4
  |___ MyInteractiveWindow.java (will introduce later)
 ```
 
-Implementations for graphical objects and constraints mostly remain unchanged. Behavior classes implementation is basically independent of graphical objects and constraints. For the choice behavior to work, each graphical object class (e.g., OutlineRect) has a corresponding selectable subclass (e.g., SelectableOutlineRect) that implements the Selectable interface. The behavior.InteractiveWindowGroup class is the main entry point that listens for mouse and keyboard input, upon which the window converts it to a BehaviorEvent and checks if any Behavior needs to change state on this event. After states are determined, the window will call redraw to change the appearance of the graphical objects if any, whose attributes may be subject to constraints that users have defined, and whose values are then solved with the constraint solver.
+Implementations for graphical objects and constraints mostly remain unchanged. Behavior classes implementation is basically independent of graphical objects and constraints. For the choice behavior to work, each graphical object class (e.g., OutlineRect) has a corresponding selectable subclass (e.g., SelectableOutlineRect) that implements the Selectable interface. The `behavior.InteractiveWindowGroup` class is the main entry point that listens for mouse and keyboard input, upon which the window converts it to a BehaviorEvent and checks if any Behavior needs to change state on this event. After states are determined, the window will call redraw to change the appearance of the graphical objects if any, whose attributes may be subject to constraints that users have defined, and whose values are then solved with the constraint solver.
 
 ## Programming Guide
 
