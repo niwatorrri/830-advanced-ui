@@ -5,6 +5,7 @@ import java.awt.Color;
 import graphics.object.GraphicalObject;
 import graphics.object.selectable.SelectableOutlineRect;
 import graphics.object.selectable.SelectableFilledRect;
+import graphics.object.selectable.SelectableGraphicalObject;
 import graphics.object.selectable.SelectableEllipse;
 import graphics.object.Rect;
 import constraint.SetupConstraint;
@@ -21,7 +22,7 @@ public class NewRectBehavior extends NewBehavior {
     public static final int FILLED_RECT = 1;
     public static final int ELLIPSE = 2;
 
-    public NewRectBehavior(int type, Color color, int lineThickness, SetupConstraint<?> constraint) {
+    public NewRectBehavior(int type, Color color, int lineThickness, SetupConstraint constraint) {
         super(true, constraint);
         if (type != OUTLINE_RECT && type != FILLED_RECT && type != ELLIPSE) {
             throw new RuntimeException("Unsupported rect type");
@@ -72,34 +73,29 @@ public class NewRectBehavior extends NewBehavior {
     /**
      * Implement abstract methods in NewBehavior class
      */
-    @SuppressWarnings("unchecked")
-    public GraphicalObject make(int x, int y, int width, int height, SetupConstraint<?> constraint) {
+    public GraphicalObject make(int x, int y, int width, int height, SetupConstraint constraint) {
+        SelectableGraphicalObject o = null;
         switch (type) {
             case OUTLINE_RECT: {
-                SelectableOutlineRect r = new SelectableOutlineRect(x, y, width, height, color, lineThickness);
-                if (constraint != null) {
-                    ((SetupConstraint<? super SelectableOutlineRect>) constraint).setup(r);
-                }
-                return r;
+                o = new SelectableOutlineRect(x, y, width, height, color, lineThickness);
+                break;
             }
             case FILLED_RECT: {
-                SelectableFilledRect r = new SelectableFilledRect(x, y, width, height, color);
-                if (constraint != null) {
-                    ((SetupConstraint<? super SelectableFilledRect>) constraint).setup(r);
-                }
-                return r;
+                o = new SelectableFilledRect(x, y, width, height, color);
+                break;
             }
             case ELLIPSE: {
-                SelectableEllipse r = new SelectableEllipse(x, y, width, height, color, lineThickness);
-                if (constraint != null) {
-                    ((SetupConstraint<? super SelectableEllipse>) constraint).setup(r);
-                }
-                return r;
+                o = new SelectableEllipse(x, y, width, height, color, lineThickness);
+                break;
             }
             default: {
                 throw new RuntimeException("Unsupported rect type");
             }
         }
+        if (constraint != null) {
+            constraint.setup(o);
+        }
+        return o;
     }
 
     public void resize(GraphicalObject object, int x1, int y1, int x2, int y2) {

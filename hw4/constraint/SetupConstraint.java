@@ -3,6 +3,6 @@ package constraint;
 import graphics.object.GraphicalObject;
 
 @FunctionalInterface
-public interface SetupConstraint<T extends GraphicalObject> {
-    public void setup(T object);
+public interface SetupConstraint {
+    public void setup(GraphicalObject... dependencies);
 }

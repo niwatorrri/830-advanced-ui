@@ -16,7 +16,7 @@ public class NewTextBehavior extends NewBehavior {
     private Font font;
     private Color color;
 
-    public NewTextBehavior(String text, Font font, Color color, SetupConstraint<?> constraint) {
+    public NewTextBehavior(String text, Font font, Color color, SetupConstraint constraint) {
         super(false, constraint);
         this.text = text;
         this.font = font;
@@ -68,11 +68,10 @@ public class NewTextBehavior extends NewBehavior {
     /**
      * Implement abstract methods in NewBehavior class
      */
-    @SuppressWarnings("unchecked")
-    public GraphicalObject make(int x, int y, int uselessX, int uselessY, SetupConstraint<?> constraint) {
+    public GraphicalObject make(int x, int y, int uselessX, int uselessY, SetupConstraint constraint) {
         SelectableText t = new SelectableText(null, text, x, y, font, color);
         if (constraint != null) {
-            ((SetupConstraint<? super SelectableText>) constraint).setup(t);
+            constraint.setup(t);
         }
         return t;
     }

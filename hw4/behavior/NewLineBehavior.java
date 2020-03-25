@@ -14,7 +14,7 @@ public class NewLineBehavior extends NewBehavior {
     private Color color;
     private int lineThickness;
 
-    public NewLineBehavior(Color color, int lineThickness, SetupConstraint<?> constraint) {
+    public NewLineBehavior(Color color, int lineThickness, SetupConstraint constraint) {
         super(false, constraint);
         this.color = color;
         this.lineThickness = lineThickness;
@@ -52,11 +52,10 @@ public class NewLineBehavior extends NewBehavior {
     /**
      * Implement abstract methods in NewBehavior class
      */
-    @SuppressWarnings("unchecked")
-    public GraphicalObject make(int x1, int y1, int x2, int y2, SetupConstraint<?> constraint) {
+    public GraphicalObject make(int x1, int y1, int x2, int y2, SetupConstraint constraint) {
         SelectableLine l = new SelectableLine(x1, y1, x2, y2, color, lineThickness);
         if (constraint != null) {
-            ((SetupConstraint<? super SelectableLine>) constraint).setup(l);
+            constraint.setup(l);
         }
         return l;
     }
