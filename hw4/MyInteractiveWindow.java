@@ -2,7 +2,6 @@ import java.awt.*;
 
 import graphics.group.Group;
 import graphics.group.SimpleGroup;
-import graphics.object.GraphicalObject;
 import graphics.object.selectable.SelectableOutlineRect;
 
 import constraint.Constraint;
@@ -39,7 +38,8 @@ public class MyInteractiveWindow extends InteractiveWindowGroup {
         Group g = new SimpleGroup(0, 0, 400, 400);
         topGroup.addChild(g);
 
-        SetupConstraint<SelectableOutlineRect> rectColorConstraint = o -> {
+        SetupConstraint rectColorConstraint = dependencies -> {
+            SelectableOutlineRect o = (SelectableOutlineRect) dependencies[0];
             o.setColor(new Constraint<Color>(o.useSelected(), o.useInterimSelected()) {
                 public Color getValue() {
                     if (o.isSelected()) {
@@ -50,15 +50,12 @@ public class MyInteractiveWindow extends InteractiveWindowGroup {
                 }
             });
         };
-        for (GraphicalObject o : g.getChildren()) {
-            rectColorConstraint.setup((SelectableOutlineRect) o);
-        }
 
         addBehaviors(
-            new MoveBehavior().setGroup(g).setPriority(0),
-            new ChoiceBehavior(ChoiceBehavior.SINGLE, true).setGroup(g).setPriority(0),
-            new NewRectBehavior(
-                NewRectBehavior.OUTLINE_RECT, Color.BLACK, 2, rectColorConstraint).setGroup(g)    
+            new MoveBehavior().setGroup(g),
+            new ChoiceBehavior(ChoiceBehavior.SINGLE, true).setGroup(g),
+            new NewRectBehavior(NewRectBehavior.OUTLINE_RECT, Color.BLACK, 2, rectColorConstraint)
+                .setGroup(g).setPriority(1) 
         );
     }
 }

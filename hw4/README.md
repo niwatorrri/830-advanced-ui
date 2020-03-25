@@ -91,7 +91,8 @@ Now let's try a `ChoiceBehavior` attached to some selectable graphical objects, 
     topGroup.addChild(choiceGroup);
 
     // Use SetupConstraint interface to setup constraint for every object
-    SetupConstraint<SelectableOutlineRect> rectColorConstraint = o -> {
+    SetupConstraint rectColorConstraint = dependencies -> {
+        SelectableOutlineRect o = (SelectableOutlineRect) dependencies[0];
         o.setColor(new Constraint<Color>(o.useSelected(), o.useInterimSelected()) {
             public Color getValue() {
                 if (o.isSelected()) {
@@ -103,14 +104,14 @@ Now let's try a `ChoiceBehavior` attached to some selectable graphical objects, 
         });
     };
     for (GraphicalObject o : choiceGroup.getChildren()) {
-        rectColorConstraint.setup((SelectableOutlineRect) o);
+        rectColorConstraint.setup(o);
     }
 
     // Attach a choice behavior to the group
     addBehavior(new ChoiceBehavior(ChoiceBehavior.MULTIPLE, false).setGroup(choiceGroup));
 ```
 
-The `SetupConstraint` is a functional interface newly introduced in this homework's constraint implementation. It allows setup constraint for dynamically created objects, which cannot be done with previous implementation, and also it helps with passing constraint setup as a parameter. The snippet above attaches a multiple choice behavior to the group, and the rectangles will change their color according to the constraint. We finally show an example of `NewBehavior` attached to a group.
+The `SetupConstraint` is a functional interface newly introduced in this homework's constraint package. It allows setup constraint for dynamically created objects, which cannot be done with previous implementation, and also it helps with passing constraint setup as a parameter. The snippet above attaches a multiple choice behavior to the group, and the rectangles will change their color according to the constraint. We finally show an example of `NewBehavior` attached to a group.
 
 ```java
     Group newRectGroup = new SimpleGroup(0, 0, 300, 300);
@@ -121,7 +122,7 @@ The `SetupConstraint` is a functional interface newly introduced in this homewor
     );
 ```
 
-The `NewBehavior` constructor takes an optional parameter of type `SetupConstraint<?>`, so that some constraint(s) can be set up for the new objects upon creation. A usage example is given in the next subsection.
+The `NewBehavior` constructor takes an optional parameter of type `SetupConstraint`, so that some constraint(s) can be set up for the new objects upon creation. A usage example is given in the next subsection.
 
 ### A Complete Example with Advanced Features
 
@@ -131,7 +132,8 @@ In this subsection, we provide a complete example, where users are allowed to ma
     Group g = new SimpleGroup(0, 0, 400, 400);
     topGroup.addChild(g);
 
-    SetupConstraint<SelectableOutlineRect> rectColorConstraint = o -> {
+    SetupConstraint rectColorConstraint = dependencies -> {
+        SelectableOutlineRect o = (SelectableOutlineRect) dependencies[0];
         o.setColor(new Constraint<Color>(o.useSelected(), o.useInterimSelected()) {
             public Color getValue() {
                 if (o.isSelected()) {
@@ -142,21 +144,18 @@ In this subsection, we provide a complete example, where users are allowed to ma
             }
         });
     };
-    for (GraphicalObject o : g.getChildren()) {
-        rectColorConstraint.setup((SelectableOutlineRect) o);
-    }
 
     addBehaviors(
-        new MoveBehavior().setGroup(g).setPriority(0),
-        new ChoiceBehavior(ChoiceBehavior.SINGLE, true).setGroup(g).setPriority(0),
-        new NewRectBehavior(
-            NewRectBehavior.OUTLINE_RECT, Color.BLACK, 2, rectColorConstraint).setGroup(g)    
+        new MoveBehavior().setGroup(g),
+        new ChoiceBehavior(ChoiceBehavior.SINGLE, true).setGroup(g),
+        new NewRectBehavior(NewRectBehavior.OUTLINE_RECT, Color.BLACK, 2, rectColorConstraint)
+            .setGroup(g).setPriority(1) 
     );
 ```
 
-The first feature here is the additional parameter that `NewBehavior` takes. A `SetupConstraint<?>` type variable is passed to `NewRectBehavior` constructor, so that the constraint will be set up when the behavior starts and call the make method.
+The first feature here is the additional parameter that `NewBehavior` takes. A `SetupConstraint` type variable is passed to `NewRectBehavior` constructor, so that the constraint will be set up when the behavior starts and calls the make method.
 
-The second feature here is behavior priority. Every behavior can be assigned a priority, a non-negative integer. If not explicitly set, they will be assigned when the behaviors are added to the window, with the value of 0, 1, 2, ..., respectively. The lower the value, the higher the priority. Behaviors that share the same priority can simultaneously react to one input event. If the event is consumed by a behavior of higher priority, it cannot be consumed by a behavior of lower priority any more. The example above sets the priority of move and choice behavior both to 0, and the new rect behavior will have priority 1 when added. This allows users to both move and select at the same time, and new rects won't be created when the mouse is moving an existing rect.
+The second feature here is behavior priority. Every behavior can be assigned a priority, a non-negative integer. The priority is set to 0 by default. The lower the value, the higher the priority. Behaviors that share the same priority can simultaneously react to one input event. If the event is consumed by a behavior of higher priority, it cannot be consumed by a behavior of lower priority any more. The example above sets the priority of move and choice behavior both to 0, and the new rect behavior will have priority 1 (lower). This allows users to both move and select at the same time, and new rects won't be created when the mouse is moving an existing rect.
 
 ## Change Log
 
@@ -187,6 +186,7 @@ This section records some changes that I made either to implementations in previ
 - Graphical objects
     - Added SelectableGraphicalObject and SelectableGroup interfaces as publicly available types.
     - Added a fluent API for addChild and removeChild method in Group interface, as well as addChildren and removeChildren methods for lazy people. Maybe also add for GraphicalObject later.
+    - Implemented a more rigorous contains() method for Line class.
     - Enabled text anti-aliasing in Text class, always.
     - Fixed bugs in Text class so that: 1) text are drawn at correct positions when there is a newline `\n` character; and 2) sometimes it is okay not to pass a Graphics2D object (or pass a null) to the constructor.
     - Fixed a bug in grid layout of LayoutGroup that children are moved back to original position after being drawn.
