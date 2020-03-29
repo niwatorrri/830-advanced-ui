@@ -14,6 +14,13 @@ public class NewLineBehavior extends NewBehavior {
     private Color color;
     private int lineThickness;
 
+    /**
+     * NewLineBehavior constructor
+     * 
+     * @param color         color of the new lines
+     * @param lineThickness line thickness of the new lines
+     * @param constraint    optional, constraint for the new lines
+     */
     public NewLineBehavior(Color color, int lineThickness, SetupConstraint constraint) {
         super(false, constraint);
         this.color = color;

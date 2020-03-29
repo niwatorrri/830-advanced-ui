@@ -17,14 +17,19 @@ public class MoveBehavior implements Behavior {
 
     private int gridSize = 1;
 
-    private int startX, startY;     // location of start event (wrt window)
-    private int prevX, prevY;       // location of previous move (wrt window)
+    private int startX, startY; // location of start event (wrt window)
+    private int prevX, prevY;   // location of previous move (wrt window)
     private GraphicalObject movingObject;
 
     private BehaviorEvent startEvent = BehaviorEvent.DEFAULT_START_EVENT;
     private BehaviorEvent stopEvent = BehaviorEvent.DEFAULT_STOP_EVENT;
     private BehaviorEvent cancelEvent = BehaviorEvent.DEFAULT_CANCEL_EVENT;
 
+    /**
+     * MoveBehavior constructor
+     * 
+     * @param gridSize optional, specifies the size each step an object can take
+     */
     public MoveBehavior() {}
 
     public MoveBehavior(int gridSize) {

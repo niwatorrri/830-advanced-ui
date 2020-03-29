@@ -30,6 +30,13 @@ public class ChoiceBehavior implements Behavior {
     private BehaviorEvent stopEvent = BehaviorEvent.DEFAULT_STOP_EVENT;
     private BehaviorEvent cancelEvent = BehaviorEvent.DEFAULT_CANCEL_EVENT;
 
+    /**
+     * ChoiceBehavior constructor
+     * 
+     * @param type      selection type, either SINGLE or MULTIPLE
+     * @param firstOnly whether the selection is restricted to the first clicked
+     *                  object or it can transition to other objects as mouse moves
+     */
     public ChoiceBehavior(int type, boolean firstOnly) {
         if ((type != SINGLE) && (type != MULTIPLE)) {
             throw new RuntimeException("Unsupported choice behavior type");

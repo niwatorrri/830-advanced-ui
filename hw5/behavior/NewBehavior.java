@@ -23,6 +23,12 @@ public abstract class NewBehavior implements Behavior {
     private BehaviorEvent stopEvent = BehaviorEvent.DEFAULT_STOP_EVENT;
     private BehaviorEvent cancelEvent = BehaviorEvent.DEFAULT_CANCEL_EVENT;
 
+    /**
+     * NewBehavior constructor
+     * 
+     * @param rectLike   whether the new objects will be rect-like
+     * @param constraint the constraint to set up for the new objects
+     */
     public NewBehavior(boolean rectLike, SetupConstraint constraint) {
         this.rectLike = rectLike;
         this.constraint = constraint;

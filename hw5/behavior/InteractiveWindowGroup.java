@@ -25,7 +25,12 @@ public class InteractiveWindowGroup extends JFrame implements Group {
     private boolean behaviorsSorted = false;
 
     /**
-     * Constructor: make a top-level window with specified title, width and height
+     * InteractiveWindowGroup constructor
+     * Make a top-level window with specified title, width and height
+     * 
+     * @param title  the title of the window
+     * @param width  the width of the window
+     * @param height the height of the window
      */
     public InteractiveWindowGroup(String title, int width, int height) {
         super(title);
@@ -70,7 +75,7 @@ public class InteractiveWindowGroup extends JFrame implements Group {
             if (eventConsumed && behavior.compareTo(lastBehavior) > 0) {
                 break;
             }
-            eventConsumed = behavior.check(behaviorEvent) || eventConsumed; 
+            eventConsumed = behavior.check(behaviorEvent) || eventConsumed;
         }
         if (!children.isEmpty()) {
             redraw(children.get(0));
@@ -190,7 +195,7 @@ public class InteractiveWindowGroup extends JFrame implements Group {
         graphics.fillRect(0, 0, width, height);
         graphics.dispose();
     }
-    
+
     public InteractiveWindowGroup() {
         this("Interactive Window", 400, 400);
     }

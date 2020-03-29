@@ -3,47 +3,47 @@ package behavior;
 import java.awt.Color;
 
 import graphics.object.GraphicalObject;
-import graphics.object.selectable.SelectableOutlineRect;
-import graphics.object.selectable.SelectableFilledRect;
 import graphics.object.selectable.SelectableGraphicalObject;
+import graphics.object.selectable.SelectableEllipse;
+import graphics.object.selectable.SelectableFilledEllipse;
 import graphics.object.Rect;
 import constraint.SetupConstraint;
 
-public class NewRectBehavior extends NewBehavior {
+public class NewEllipseBehavior extends NewBehavior {
     /**
-     * NewRectBehavior: create new rectangles in the group
+     * NewEllipseBehavior: create new ellipses in the group
      */
     private int type;
     private Color color;
     private int lineThickness;
 
-    public static final int OUTLINE_RECT = 0;
-    public static final int FILLED_RECT = 1;
+    public static final int ELLIPSE = 0;
+    public static final int FILLED_ELLIPSE = 1;
 
     /**
-     * NewRectBehavior constructor
+     * NewEllipseBehavior constructor
      * 
-     * @param type          type of the new rect, either OUTLINE_RECT or FILLED_RECT
-     * @param color         color of the new rect
-     * @param lineThickness line thickness of the new rect (only for OUTLINE_RECT)
-     * @param constraint    optional, constraint for the new rect
+     * @param type          type of the new ellipse, either ELLIPSE or FILLED_ELLIPSE
+     * @param color         color of the new ellipse
+     * @param lineThickness line thickness of the new ellipse (only for ELLIPSE)
+     * @param constraint    optional, constraint for the new ellipse
      */
-    public NewRectBehavior(int type, Color color, int lineThickness, SetupConstraint constraint) {
+    public NewEllipseBehavior(int type, Color color, int lineThickness, SetupConstraint constraint) {
         super(true, constraint);
-        if (type != OUTLINE_RECT && type != FILLED_RECT) {
-            throw new RuntimeException("Unsupported rect type");
+        if (type != ELLIPSE && type != FILLED_ELLIPSE) {
+            throw new RuntimeException("Unsupported ellipse type");
         }
         this.type = type;
         this.color = color;
         this.lineThickness = lineThickness;
     }
 
-    public NewRectBehavior(int type, Color color, int lineThickness) {
+    public NewEllipseBehavior(int type, Color color, int lineThickness) {
         this(type, color, lineThickness, null);
     }
 
-    public NewRectBehavior() {
-        this(OUTLINE_RECT, Color.BLACK, 1, null);
+    public NewEllipseBehavior() {
+        this(ELLIPSE, Color.BLACK, 1, null);
     }
 
     /**
@@ -53,7 +53,7 @@ public class NewRectBehavior extends NewBehavior {
         return this.type;
     }
 
-    public NewRectBehavior setType(int type) {
+    public NewEllipseBehavior setType(int type) {
         this.type = type;
         return this;
     }
@@ -62,7 +62,7 @@ public class NewRectBehavior extends NewBehavior {
         return this.color;
     }
 
-    public NewRectBehavior setColor(Color color) {
+    public NewEllipseBehavior setColor(Color color) {
         this.color = color;
         return this;
     }
@@ -71,7 +71,7 @@ public class NewRectBehavior extends NewBehavior {
         return this.lineThickness;
     }
 
-    public NewRectBehavior setLineThickness(int lineThickness) {
+    public NewEllipseBehavior setLineThickness(int lineThickness) {
         this.lineThickness = lineThickness;
         return this;
     }
@@ -80,14 +80,14 @@ public class NewRectBehavior extends NewBehavior {
      * Implement abstract methods in NewBehavior class
      */
     public GraphicalObject make(int x, int y, int width, int height, SetupConstraint constraint) {
-        // create a new rectangle
+        // create a new ellipse
         SelectableGraphicalObject o = null;
-        if (type == OUTLINE_RECT) {
-            o = new SelectableOutlineRect(x, y, width, height, color, lineThickness);
-        } else if (type == FILLED_RECT) {
-            o = new SelectableFilledRect(x, y, width, height, color);
+        if (type == ELLIPSE) {
+            o = new SelectableEllipse(x, y, width, height, color, lineThickness);
+        } else if (type == FILLED_ELLIPSE) {
+            o = new SelectableFilledEllipse(x, y, width, height, color);
         } else {
-            throw new RuntimeException("Unsupported rect type");
+            throw new RuntimeException("Unsupported ellipse type");
         }
         if (constraint != null) {
             constraint.setup(o);
