@@ -195,6 +195,9 @@ public class InteractiveWindowGroup extends JFrame implements Group {
         this("Interactive Window", 400, 400);
     }
 
+    /**
+     * Utilities
+     */
     public void redraw(GraphicalObject object) {
         Graphics2D graphics = buffer.createGraphics();
         BoundaryRectangle r = new BoundaryRectangle(0, 0, getWidth(), getHeight());

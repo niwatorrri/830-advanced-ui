@@ -77,6 +77,7 @@ public abstract class Dependency<T> {
         return (this.inEdges.size() > 0);
     }
 
+    @Override
     public String toString() {
         return (this.name != null) ? this.name : super.toString();
     }
@@ -245,8 +246,9 @@ class Edge {
         return outOfDate ? "out of date" : "up to date";
     }
 
+    @Override
     public String toString() {
-        return String.format("%s (%s) -> %s (%s): %s", 
+        return String.format("Edge[%s (%s) -> %s (%s): %s]", 
             start.toString(), outOfDateToString(start.isOutOfDate()),
             end.toString(), outOfDateToString(end.isOutOfDate()),
             isPending ? "pending" : "up to date"

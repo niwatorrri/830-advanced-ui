@@ -4,5 +4,5 @@ import graphics.object.GraphicalObject;
 
 @FunctionalInterface
 public interface SetupConstraint {
-    public void setup(GraphicalObject... dependencies);
+    public void setup(GraphicalObject... objects);
 }

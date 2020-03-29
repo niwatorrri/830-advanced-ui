@@ -9,7 +9,6 @@ public class BoundaryRectangle extends Rectangle {
      */
     private static final long serialVersionUID = 1L;
 
-    // Different constructors
     public BoundaryRectangle(BoundaryRectangle r) {
         super(r);
     }
@@ -26,9 +25,9 @@ public class BoundaryRectangle extends Rectangle {
         super();
     }
 
-    // For easier print
+    @Override
     public String toString() {
-        return String.format("x=%d, y=%d, width=%d, height=%d",
-            x, y, width, height);
+        return String.format("BoundaryRectangle[x=%d, y=%d, width=%d, height=%d]",
+                x, y, width, height);
     }
 }
