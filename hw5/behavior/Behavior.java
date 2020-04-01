@@ -16,7 +16,7 @@ public interface Behavior extends Comparable<Behavior> {
 
     public int getPriority();
     public Behavior setPriority(int priority);
-    public int compareTo(Behavior behavior);
+    public int compareTo(Behavior behavior); // compare based on priority
 
     public BehaviorEvent getStartEvent();
     public Behavior setStartEvent(BehaviorEvent startEvent);

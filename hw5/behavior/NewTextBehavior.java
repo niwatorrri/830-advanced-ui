@@ -69,7 +69,7 @@ public class NewTextBehavior extends NewBehavior {
      * Implement abstract methods in NewBehavior class
      */
     public GraphicalObject make(int x, int y, int uselessX, int uselessY, SetupConstraint constraint) {
-        SelectableText t = new SelectableText(null, text, x, y, font, color);
+        SelectableText t = new SelectableText(text, x, y, font, color);
         if (constraint != null) {
             constraint.setup(t);
         }

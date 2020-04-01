@@ -148,17 +148,10 @@ public class ChoiceBehavior implements Behavior {
                 if (child.contains(eventInGroup) && child instanceof SelectableGraphicalObject) {
                     SelectableGraphicalObject selectableChild = (SelectableGraphicalObject) child;
                     selectableChild.setInterimSelected(true);
-                    if (type == SINGLE && !selection.contains(selectableChild)) {
-                        clearSelection();
-                    }
                     this.firstObject = selectableChild;
                     this.state = RUNNING_INSIDE;
                     return true;
                 }
-            }
-            // clear selection if not start on any object
-            if (type == SINGLE) {
-                clearSelection();
             }
         }
         return false;
@@ -221,11 +214,20 @@ public class ChoiceBehavior implements Behavior {
             }
 
             // case 1: start outside the group
-            // case 2: start inside the group but not on any object
-            if (!this.startInGroup || this.state == IDLE) {
+            if (!this.startInGroup) {
                 return false;
             }
             this.startInGroup = false;
+
+            // case 2: start inside the group but not on any object
+            if (this.state == IDLE) {
+                if (this.type == SINGLE) {
+                    if (!selection.isEmpty() && !selection.get(0).contains(eventInGroup)) {
+                        clearSelection();
+                    }
+                }
+                return false;
+            }
 
             // case 3: start inside the group and on some object
             SelectableGraphicalObject targetObject = null;
@@ -279,7 +281,6 @@ public class ChoiceBehavior implements Behavior {
             for (GraphicalObject child : group.getChildren()) {
                 if (child instanceof SelectableGraphicalObject) {
                     ((SelectableGraphicalObject) child).setInterimSelected(false);
-                    break;
                 }
             }
             this.startInGroup = false;
