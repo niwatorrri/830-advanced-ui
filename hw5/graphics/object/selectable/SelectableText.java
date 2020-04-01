@@ -2,7 +2,6 @@ package graphics.object.selectable;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Graphics2D;
 
 import graphics.object.Text;
 import constraint.Constraint;
@@ -21,12 +20,16 @@ public class SelectableText extends Text implements SelectableGraphicalObject {
     /**
      * Constructors
      */
-    public SelectableText(Graphics2D graphics, String text, int x, int y, Font font, Color color) {
-        super(graphics, text, x, y, font, color);
+    public SelectableText(String text, int x, int y, Font font, Color color) {
+        super(text, x, y, font, color);
     }
 
     public SelectableText(String text, int x, int y) {
         super(text, x, y);
+    }
+
+    public SelectableText(String text) {
+        super(text);
     }
 
     public SelectableText() {

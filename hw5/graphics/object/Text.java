@@ -2,11 +2,12 @@ package graphics.object;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Shape;
 import java.awt.RenderingHints;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 
 import graphics.group.Group;
@@ -17,14 +18,14 @@ public class Text implements GraphicalObject {
     /**
      * Text class: texts
      */
-    private Graphics2D internalGraphics = null; // only for calculating bounding box
     private String text;
     private int x, y;
     private Font font;
     private Color color;
+    private AffineTransform transform = null;
     private Group group = null;
 
-    public static final Font DEFAULT_FONT = new Font(Font.MONOSPACED, Font.PLAIN, 10);
+    public static final Font DEFAULT_FONT = new Font(Font.MONOSPACED, Font.PLAIN, 12);
 
     private Constraint<String> textConstraint = new NoConstraint<>();
     private Constraint<Integer> xConstraint = new NoConstraint<>();
@@ -35,41 +36,31 @@ public class Text implements GraphicalObject {
     /**
      * Constructors
      */
-    public Text(Graphics2D graphics, String text, int x, int y, Font font, Color color) {
+    public Text(String text, int x, int y, Font font, Color color) {
         this.text = text;
         this.x = x;
         this.y = y;
         this.font = font;
         this.color = color;
-
-        if (graphics != null) {
-            this.internalGraphics = (Graphics2D) graphics.create();
-            this.internalGraphics.setFont(font);
-            this.internalGraphics.setColor(color);
-        }
     }
 
     public Text(String text, int x, int y) {
-        this(null, text, x, y, DEFAULT_FONT, Color.BLUE);
+        this(text, x, y, DEFAULT_FONT, Color.BLACK);
+    }
+
+    public Text(String text) {
+        this(text, 0, 0);
     }
 
     public Text() {
-        this(null, "Text", 10, 10, DEFAULT_FONT, Color.BLUE);
+        this("Text");
     }
 
     /**
      * Getters, setters and "users"
      * 
      * Note: user (e.g. useX) returns the constraint on the variable (X)
-     */
-    public Graphics2D getGraphics() {
-        return this.internalGraphics;
-    }
-
-    public void setGraphics(Graphics2D graphics) {
-        this.internalGraphics = graphics;
-    }
-    
+     */    
     public int getX() {
         if (xConstraint.isConstrained()) {
             this.x = xConstraint.evaluate();
@@ -166,9 +157,6 @@ public class Text implements GraphicalObject {
     public Font getFont() {
         if (fontConstraint.isConstrained()) {
             this.font = fontConstraint.evaluate();
-            if (internalGraphics != null) {
-                internalGraphics.setFont(this.font);
-            }
         }
         return this.font;
     }
@@ -177,9 +165,6 @@ public class Text implements GraphicalObject {
         if (this.font != font) {
             if (!fontConstraint.isConstrained()) {
                 this.font = font;
-                if (internalGraphics != null) {
-                    internalGraphics.setFont(this.font);
-                }
                 fontConstraint.notifyValueChange(false);
             } else if (fontConstraint.hasCycle()) {
                 fontConstraint.setValue(font);
@@ -202,9 +187,6 @@ public class Text implements GraphicalObject {
     public Color getColor() {
         if (colorConstraint.isConstrained()) {
             this.color = colorConstraint.evaluate();
-            if (internalGraphics != null) {
-                internalGraphics.setColor(this.color);
-            }
         }
         return this.color;
     }
@@ -213,9 +195,6 @@ public class Text implements GraphicalObject {
         if (this.color != color) {
             if (!colorConstraint.isConstrained()) {
                 this.color = color;
-                if (internalGraphics != null) {
-                    internalGraphics.setColor(this.color);
-                }
                 colorConstraint.notifyValueChange(false);
             } else if (colorConstraint.hasCycle()) {
                 colorConstraint.setValue(color);
@@ -256,10 +235,9 @@ public class Text implements GraphicalObject {
         graphics.setFont(font);
         graphics.setColor(color);
 
-        if (internalGraphics == null) { // steal your graphics
-            internalGraphics = (Graphics2D) graphics.create();
-        }
-        int textHeight = internalGraphics.getFontMetrics().getHeight();
+        transform = graphics.getTransform();
+        FontRenderContext context = new FontRenderContext(transform, true, false);
+        int textHeight = (int) font.getLineMetrics("", context).getHeight();
         for (String line : text.split("\n")) {  // deal with newlines
             graphics.drawString(line, x, y);
             y += textHeight;
@@ -269,19 +247,24 @@ public class Text implements GraphicalObject {
     }
 
     public BoundaryRectangle getBoundingBox() {
-        if (internalGraphics == null) {
-            return new BoundaryRectangle(x, y, -1, -1);
-        }
         // The bounding box includes leading
         String text = getText();
-        FontMetrics metrics = internalGraphics.getFontMetrics();
-        Rectangle2D box = metrics.getStringBounds(text, internalGraphics);
+        Font font = getFont();
+        FontRenderContext context = new FontRenderContext(transform, true, false);
+
+        double totalWidth = 0, totalHeight = 0;
+        Rectangle2D box = null;
+        for (String line : text.split("\n")) { // deal with newlines
+            box = font.getStringBounds(line, context);
+            totalWidth = Math.max(totalWidth, box.getWidth());
+            totalHeight += box.getHeight();
+        }
 
         // Coordinates were relative to the reference point
         int x = getX(), y = getY();
         return new BoundaryRectangle(
             x + box.getX(), y + box.getY(),
-            box.getWidth(), box.getHeight()
+            totalWidth, totalHeight
         );
     }
 
