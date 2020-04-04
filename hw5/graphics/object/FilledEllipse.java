@@ -233,8 +233,17 @@ public class FilledEllipse implements Rect {
         this.group = group;
     }
 
+    private double square(double x) {
+        return x * x;
+    }
+
     public boolean contains(int x, int y) {
-        return getBoundingBox().contains(x, y);
+        double axisX = width / 2.0;
+        double axisY = height / 2.0;
+        double centerX = this.x + axisX;
+        double centerY = this.y + axisY;
+        return square(x - centerX) / square(axisX)
+                + square(y - centerY) / square(axisY) <= 1.0;
     }
     
     public boolean contains(Point pt) {
