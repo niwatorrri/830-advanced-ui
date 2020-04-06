@@ -1,15 +1,28 @@
 package behavior;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Shape;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 import java.awt.image.BufferedImage;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
 import graphics.group.Group;
+import graphics.group.SimpleGroup;
 import graphics.object.BoundaryRectangle;
 import graphics.object.GraphicalObject;
 
@@ -20,7 +33,7 @@ public class InteractiveWindowGroup extends JFrame implements Group {
     private JComponent canvas;
     private Insets insets;
 
-    private List<GraphicalObject> children = new ArrayList<>();
+    private Group topGroup = null;
     private List<Behavior> behaviors = new ArrayList<>();
     private boolean behaviorsSorted = false;
 
@@ -35,6 +48,7 @@ public class InteractiveWindowGroup extends JFrame implements Group {
     public InteractiveWindowGroup(String title, int width, int height) {
         super(title);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.topGroup = new SimpleGroup(0, 0, width, height);
 
         WindowMouseListener mouseListener = new WindowMouseListener();
         this.addMouseListener(mouseListener);
@@ -77,8 +91,8 @@ public class InteractiveWindowGroup extends JFrame implements Group {
             }
             eventConsumed = behavior.check(behaviorEvent) || eventConsumed;
         }
-        if (!children.isEmpty()) {
-            redraw(children.get(0));
+        if (topGroup != null) {
+            redraw(topGroup);
         }
     }
 
@@ -238,38 +252,38 @@ public class InteractiveWindowGroup extends JFrame implements Group {
         return this;
     }
 
+    public List<Behavior> getBehaviors() {
+        return new ArrayList<Behavior>(behaviors);
+    }
+
     /**
      * Methods defined in the Group and GraphicalObject interfaces
      */
     public Group addChild(GraphicalObject child) {
-        if (!children.isEmpty()) {
-            String message = "Top level window only supports one child";
-            throw new RuntimeException(message);
-        } else {
-            children.add(child);
-            child.setGroup(this);
-            redraw(child);
-        }
+        topGroup.addChild(child);
+        redraw(topGroup);
         return this;
     }
 
     public Group addChildren(GraphicalObject... children) {
         for (GraphicalObject child : children) {
-            addChild(child);
+            topGroup.addChild(child);
         }
+        redraw(topGroup);
         return this;
     }
 
     public Group removeChild(GraphicalObject child) {
-        children.remove(child);
-        child.setGroup(null);
+        topGroup.removeChild(child);
+        redraw(topGroup);
         return this;
     }
 
     public Group removeChildren(GraphicalObject... children) {
         for (GraphicalObject child : children) {
-            removeChild(child);
+            topGroup.removeChild(child);
         }
+        redraw(topGroup);
         return this;
     }
 
@@ -282,7 +296,9 @@ public class InteractiveWindowGroup extends JFrame implements Group {
     }
 
     public List<GraphicalObject> getChildren() {
-        return new ArrayList<GraphicalObject>(children);
+        List<GraphicalObject> children = new ArrayList<>();
+        children.add(topGroup);
+        return children;
     }
 
     public Point parentToChild(Point pt) {
