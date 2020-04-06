@@ -127,6 +127,7 @@ public class MoveBehavior implements Behavior {
             if (!group.contains(eventBesideGroup)) {
                 return false;
             }
+
             // find the object to be moved
             List<GraphicalObject> children = group.getChildren();
             for (int idx = children.size() - 1; idx >= 0; --idx) { // front to back

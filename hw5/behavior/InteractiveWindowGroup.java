@@ -21,6 +21,7 @@ import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
+import constraint.Constraint;
 import graphics.group.Group;
 import graphics.group.SimpleGroup;
 import graphics.object.BoundaryRectangle;
@@ -215,7 +216,7 @@ public class InteractiveWindowGroup extends JFrame implements Group {
     }
 
     /**
-     * Utilities
+     * Redraw: automatically called after adding children
      */
     public void redraw(GraphicalObject object) {
         Graphics2D graphics = buffer.createGraphics();
@@ -227,8 +228,53 @@ public class InteractiveWindowGroup extends JFrame implements Group {
         canvas.repaint();
     }
 
+    public void setX(Constraint<Integer> constraint) {
+
+    }
+
+    public void setY(Constraint<Integer> constraint) {
+
+    }
+
+    /**
+     * Methods defined in the Group and GraphicalObject interfaces
+     */
+    public Group addChild(GraphicalObject child) {
+        topGroup.addChild(child);
+        addBehaviors(topGroup.getBehaviorsToAdd());
+        removeBehaviors(topGroup.getBehaviorsToRemove());
+        topGroup.clearBehaviorsToAdd().clearBehaviorsToRemove();
+        redraw(topGroup);
+        return this;
+    }
+
+    public Group addChildren(GraphicalObject... children) {
+        for (GraphicalObject child : children) {
+            addChild(child);
+        }
+        return this;
+    }
+
+    public Group removeChild(GraphicalObject child) {
+        topGroup.removeChild(child);
+        if (child instanceof Group) {
+            for (Behavior behavior : ((Group) child).getBehaviors()) {
+                removeBehavior(behavior);
+            }
+        }
+        redraw(topGroup);
+        return this;
+    }
+
+    public Group removeChildren(GraphicalObject... children) {
+        for (GraphicalObject child : children) {
+            removeChild(child);
+        }
+        return this;
+    }
+
     public InteractiveWindowGroup addBehavior(Behavior behavior) {
-        this.behaviors.add(behavior);
+        behaviors.add(behavior);
         behaviorsSorted = false;
         return this;
     }
@@ -241,7 +287,7 @@ public class InteractiveWindowGroup extends JFrame implements Group {
     }
 
     public InteractiveWindowGroup removeBehavior(Behavior behavior) {
-        this.behaviors.remove(behavior);
+        behaviors.remove(behavior);
         return this;
     }
 
@@ -256,35 +302,22 @@ public class InteractiveWindowGroup extends JFrame implements Group {
         return new ArrayList<Behavior>(behaviors);
     }
 
-    /**
-     * Methods defined in the Group and GraphicalObject interfaces
-     */
-    public Group addChild(GraphicalObject child) {
-        topGroup.addChild(child);
-        redraw(topGroup);
-        return this;
+    /* The following are useless methods */
+
+    public Behavior[] getBehaviorsToAdd() {
+        return null;
     }
 
-    public Group addChildren(GraphicalObject... children) {
-        for (GraphicalObject child : children) {
-            topGroup.addChild(child);
-        }
-        redraw(topGroup);
-        return this;
+    public Behavior[] getBehaviorsToRemove() {
+        return null;
     }
 
-    public Group removeChild(GraphicalObject child) {
-        topGroup.removeChild(child);
-        redraw(topGroup);
-        return this;
+    public Group clearBehaviorsToAdd() {
+        return null;
     }
 
-    public Group removeChildren(GraphicalObject... children) {
-        for (GraphicalObject child : children) {
-            topGroup.removeChild(child);
-        }
-        redraw(topGroup);
-        return this;
+    public Group clearBehaviorsToRemove() {
+        return null;
     }
 
     public Group bringChildToFront(GraphicalObject child) {

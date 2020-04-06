@@ -5,14 +5,15 @@ import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
-import graphics.object.GraphicalObject;
-import graphics.object.BoundaryRectangle;
-import graphics.object.AlreadyHasGroupRunTimeException;
+import behavior.Behavior;
 import constraint.Constraint;
 import constraint.NoConstraint;
+import graphics.object.AlreadyHasGroupRunTimeException;
+import graphics.object.BoundaryRectangle;
+import graphics.object.GraphicalObject;
 
 public class ScaledGroup implements Group {
     /**
@@ -24,6 +25,10 @@ public class ScaledGroup implements Group {
     private double scaleX, scaleY;
     private Group group = null;
     private List<GraphicalObject> children = new ArrayList<>();
+
+    private List<Behavior> behaviors = new ArrayList<>();
+    private List<Behavior> behaviorsToAdd = new ArrayList<>();
+    private List<Behavior> behaviorsToRemove = new ArrayList<>();
 
     private Constraint<Integer> xConstraint = new NoConstraint<>();
     private Constraint<Integer> yConstraint = new NoConstraint<>();
@@ -314,6 +319,12 @@ public class ScaledGroup implements Group {
         } else {
             children.add(child);
             child.setGroup(this);
+            if (child instanceof Group) {
+                Group groupChild = (Group) child;
+                addBehaviors(groupChild.getBehaviorsToAdd());
+                removeBehaviors(groupChild.getBehaviorsToRemove());
+                groupChild.clearBehaviorsToAdd().clearBehaviorsToRemove();
+            }
         }
         return this;
     }
@@ -328,6 +339,11 @@ public class ScaledGroup implements Group {
     public Group removeChild(GraphicalObject child) {
         children.remove(child);
         child.setGroup(null);
+        if (child instanceof Group) {
+            for (Behavior behavior : ((Group) child).getBehaviors()) {
+                removeBehavior(behavior);
+            }
+        }
         return this;
     }
 
@@ -335,6 +351,65 @@ public class ScaledGroup implements Group {
         for (GraphicalObject child : children) {
             removeChild(child);
         }
+        return this;
+    }
+
+    public Group addBehavior(Behavior behavior) {
+        if (behavior.getGroup() == null) {
+            behavior.setGroup(this);
+            behaviors.add(behavior);
+        }
+        if (group != null) {
+            group.addBehavior(behavior);
+        } else {
+            behaviorsToAdd.add(behavior);
+        }
+        return this;
+    }
+
+    public Group addBehaviors(Behavior... behaviors) {
+        for (Behavior behavior : behaviors) {
+            addBehavior(behavior);
+        }
+        return this;
+    }
+
+    public Group removeBehavior(Behavior behavior) {
+        if (group != null) {
+            group.removeBehavior(behavior);
+        } else {
+            behavior.setGroup(null);
+            behaviorsToRemove.add(behavior);
+        }
+        return this;
+    }
+
+    public Group removeBehaviors(Behavior... behaviors) {
+        for (Behavior behavior : behaviors) {
+            removeBehavior(behavior);
+        }
+        return this;
+    }
+
+    public List<Behavior> getBehaviors() {
+        return new ArrayList<Behavior>(behaviors);
+    }
+
+    public Behavior[] getBehaviorsToAdd() {
+        return behaviorsToAdd.stream().toArray(Behavior[]::new);
+    }
+
+    public Behavior[] getBehaviorsToRemove() {
+        return behaviorsToRemove.stream().toArray(Behavior[]::new);
+    }
+
+    public Group clearBehaviorsToAdd() {
+        behaviorsToAdd.clear();
+        return this;
+    }
+
+    public Group clearBehaviorsToRemove() {
+        behaviorsToRemove.clear();
         return this;
     }
 
