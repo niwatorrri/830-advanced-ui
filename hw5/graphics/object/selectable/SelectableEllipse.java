@@ -2,9 +2,9 @@ package graphics.object.selectable;
 
 import java.awt.Color;
 
-import graphics.object.Ellipse;
 import constraint.Constraint;
 import constraint.NoConstraint;
+import graphics.object.Ellipse;
 
 public class SelectableEllipse extends Ellipse implements SelectableGraphicalObject {
     /**

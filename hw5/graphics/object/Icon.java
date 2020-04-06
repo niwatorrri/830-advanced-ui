@@ -5,9 +5,9 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Shape;
 
-import graphics.group.Group;
 import constraint.Constraint;
 import constraint.NoConstraint;
+import graphics.group.Group;
 
 public class Icon implements GraphicalObject {
     /**

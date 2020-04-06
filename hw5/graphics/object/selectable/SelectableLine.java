@@ -2,9 +2,9 @@ package graphics.object.selectable;
 
 import java.awt.Color;
 
-import graphics.object.Line;
 import constraint.Constraint;
 import constraint.NoConstraint;
+import graphics.object.Line;
 
 public class SelectableLine extends Line implements SelectableGraphicalObject {
     /**

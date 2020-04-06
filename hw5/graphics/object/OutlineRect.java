@@ -6,9 +6,9 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Shape;
 
-import graphics.group.Group;
 import constraint.Constraint;
 import constraint.NoConstraint;
+import graphics.group.Group;
 
 public class OutlineRect implements Rect {
     /**

@@ -3,10 +3,10 @@ package behavior;
 import java.awt.Color;
 import java.awt.Font;
 
-import graphics.object.Text;
-import graphics.object.GraphicalObject;
-import graphics.object.selectable.SelectableText;
 import constraint.SetupConstraint;
+import graphics.object.GraphicalObject;
+import graphics.object.Text;
+import graphics.object.selectable.SelectableText;
 
 public class NewTextBehavior extends NewBehavior {
     /**

@@ -2,10 +2,10 @@ package behavior;
 
 import java.awt.Color;
 
-import graphics.object.Line;
-import graphics.object.GraphicalObject;
-import graphics.object.selectable.SelectableLine;
 import constraint.SetupConstraint;
+import graphics.object.GraphicalObject;
+import graphics.object.Line;
+import graphics.object.selectable.SelectableLine;
 
 public class NewLineBehavior extends NewBehavior {
     /**

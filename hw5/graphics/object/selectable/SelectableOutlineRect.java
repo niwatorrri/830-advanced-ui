@@ -2,9 +2,9 @@ package graphics.object.selectable;
 
 import java.awt.Color;
 
-import graphics.object.OutlineRect;
 import constraint.Constraint;
 import constraint.NoConstraint;
+import graphics.object.OutlineRect;
 
 public class SelectableOutlineRect extends OutlineRect implements SelectableGraphicalObject {
     /**

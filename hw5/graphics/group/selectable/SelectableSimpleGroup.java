@@ -1,8 +1,8 @@
 package graphics.group.selectable;
 
-import graphics.group.SimpleGroup;
 import constraint.Constraint;
 import constraint.NoConstraint;
+import graphics.group.SimpleGroup;
 
 public class SelectableSimpleGroup extends SimpleGroup implements SelectableGroup {
     /**

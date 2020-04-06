@@ -235,9 +235,6 @@ public class SimpleGroup implements Group {
             child.setGroup(this);
             if (child instanceof Group) {
                 Group groupChild = (Group) child;
-                for (Behavior b : groupChild.getBehaviorsToAdd()) {
-                    System.out.println(b);
-                }
                 addBehaviors(groupChild.getBehaviorsToAdd());
                 removeBehaviors(groupChild.getBehaviorsToRemove());
                 groupChild.clearBehaviorsToAdd().clearBehaviorsToRemove();

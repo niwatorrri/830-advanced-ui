@@ -1,8 +1,8 @@
 package graphics.group.selectable;
 
-import graphics.group.LayoutGroup;
 import constraint.Constraint;
 import constraint.NoConstraint;
+import graphics.group.LayoutGroup;
 
 public class SelectableLayoutGroup extends LayoutGroup implements SelectableGroup {
     /**

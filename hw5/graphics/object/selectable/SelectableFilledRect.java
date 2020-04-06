@@ -2,9 +2,9 @@ package graphics.object.selectable;
 
 import java.awt.Color;
 
-import graphics.object.FilledRect;
 import constraint.Constraint;
 import constraint.NoConstraint;
+import graphics.object.FilledRect;
 
 public class SelectableFilledRect extends FilledRect implements SelectableGraphicalObject {
     /**

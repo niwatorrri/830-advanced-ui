@@ -2,12 +2,12 @@ package behavior;
 
 import java.awt.Color;
 
+import constraint.SetupConstraint;
 import graphics.object.GraphicalObject;
-import graphics.object.selectable.SelectableOutlineRect;
+import graphics.object.Rect;
 import graphics.object.selectable.SelectableFilledRect;
 import graphics.object.selectable.SelectableGraphicalObject;
-import graphics.object.Rect;
-import constraint.SetupConstraint;
+import graphics.object.selectable.SelectableOutlineRect;
 
 public class NewRectBehavior extends NewBehavior {
     /**

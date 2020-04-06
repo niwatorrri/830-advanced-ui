@@ -2,9 +2,9 @@ package behavior;
 
 import java.awt.Point;
 
+import constraint.SetupConstraint;
 import graphics.group.Group;
 import graphics.object.GraphicalObject;
-import constraint.SetupConstraint;
 
 public abstract class NewBehavior implements Behavior {
     /**

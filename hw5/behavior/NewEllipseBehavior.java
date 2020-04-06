@@ -2,12 +2,12 @@ package behavior;
 
 import java.awt.Color;
 
+import constraint.SetupConstraint;
 import graphics.object.GraphicalObject;
-import graphics.object.selectable.SelectableGraphicalObject;
+import graphics.object.Rect;
 import graphics.object.selectable.SelectableEllipse;
 import graphics.object.selectable.SelectableFilledEllipse;
-import graphics.object.Rect;
-import constraint.SetupConstraint;
+import graphics.object.selectable.SelectableGraphicalObject;
 
 public class NewEllipseBehavior extends NewBehavior {
     /**

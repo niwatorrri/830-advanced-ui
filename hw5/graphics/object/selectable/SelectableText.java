@@ -3,9 +3,9 @@ package graphics.object.selectable;
 import java.awt.Color;
 import java.awt.Font;
 
-import graphics.object.Text;
 import constraint.Constraint;
 import constraint.NoConstraint;
+import graphics.object.Text;
 
 public class SelectableText extends Text implements SelectableGraphicalObject {
     /**

@@ -2,9 +2,9 @@ package graphics.object.selectable;
 
 import java.awt.Image;
 
-import graphics.object.Icon;
 import constraint.Constraint;
 import constraint.NoConstraint;
+import graphics.object.Icon;
 
 public class SelectableIcon extends Icon implements SelectableGraphicalObject {
     /**

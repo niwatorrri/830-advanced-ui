@@ -303,7 +303,6 @@ public class InteractiveWindowGroup extends JFrame implements Group {
     }
 
     /* The following are useless methods */
-
     public Behavior[] getBehaviorsToAdd() {
         return null;
     }
