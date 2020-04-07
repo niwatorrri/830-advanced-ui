@@ -1,7 +1,7 @@
 package constraint;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Dependency<T> {
     /**
@@ -172,7 +172,7 @@ public abstract class Dependency<T> {
             // check if there are any pending incoming edges
             boolean anyPending = false;
             for (Edge inEdge: this.inEdges) {
-                anyPending = anyPending || inEdge.isPending();
+                anyPending = anyPending || inEdge.isPending() || inEdge.getStart().isOutOfDate();
                 inEdge.setPending(false);
             }
 
