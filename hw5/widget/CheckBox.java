@@ -16,8 +16,8 @@ public class CheckBox extends SelectableOutlineRect {
     private Text indicator;
     private GraphicalObject label;
 
-    public CheckBox(GraphicalObject label) {
-        super();
+    public CheckBox(int x, int y, GraphicalObject label) {
+        super(x, y, 0, 0, Color.BLACK, 1);
         this.label = label;
 
         int boxSize = 14;
@@ -26,6 +26,10 @@ public class CheckBox extends SelectableOutlineRect {
         indicator = new Text("✔");
         indicator.setColor(Color.WHITE);
         setupAlignment(this, indicator, label);
+    }
+
+    public CheckBox(GraphicalObject label) {
+        this(0, 0, label);
     }
 
     public CheckBox(String label) {

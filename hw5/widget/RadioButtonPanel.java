@@ -1,7 +1,9 @@
 package widget;
 
 import java.awt.Color;
+import java.util.List;
 
+import behavior.BehaviorEvent;
 import behavior.ChoiceBehavior;
 import constraint.Constraint;
 import graphics.group.LayoutGroup;
@@ -9,16 +11,40 @@ import graphics.group.SimpleGroup;
 import graphics.object.FilledEllipse;
 import graphics.object.GraphicalObject;
 import graphics.object.selectable.SelectableEllipse;
+import graphics.object.selectable.SelectableGraphicalObject;
 
 public class RadioButtonPanel extends Widget<RadioButton> {
+    private ChoiceBehavior choiceBehavior;
 
+    /**
+     * RadioButtonPanel constructor
+     * 
+     * @param x
+     * @param y
+     * @param layout
+     * @param offset
+     */
     public RadioButtonPanel(int x, int y, int layout, int offset) {
         if (layout == NO_LAYOUT) {
             this.widget = new SimpleGroup(x, y, 0, 0);
         } else {
             this.widget = new LayoutGroup(x, y, 0, 0, layout, offset);
         }
-        this.widget.addBehavior(new ChoiceBehavior(ChoiceBehavior.SINGLE, true));
+        this.widget.addBehavior(
+            choiceBehavior = new ChoiceBehavior(ChoiceBehavior.SINGLE, true) {
+                @Override
+                public boolean stop(BehaviorEvent event) {
+                    boolean eventConsumed = super.stop(event);
+                    List<SelectableGraphicalObject> selection = getSelection();
+                    RadioButton selected = selection.isEmpty() ? null : (RadioButton) selection.get(0);
+                    if (value != selected) {
+                        setValue(selected);
+                        callback.update(selected);
+                    }
+                    return eventConsumed;
+                }
+            }
+        );
     }
 
     public RadioButtonPanel(int x, int y) {
@@ -29,6 +55,19 @@ public class RadioButtonPanel extends Widget<RadioButton> {
         this(0, 0);
     }
 
+    /**
+     * Callbacks: methods to call when value changes
+     */
+    public Callback<RadioButton> callback = v -> {};
+
+    public RadioButtonPanel setCallback(Callback<RadioButton> callback) {
+        this.callback = callback;
+        return this;
+    }
+
+    /**
+     * Override addChild to add constraints
+     */
     @Override
     public Widget<RadioButton> addChild(GraphicalObject child) {
         super.addChild(child);
@@ -44,6 +83,19 @@ public class RadioButtonPanel extends Widget<RadioButton> {
                 }
             }
         });
+        return this;
+    }
+
+    @Override
+    public RadioButtonPanel addChildren(GraphicalObject... children) {
+        for (GraphicalObject child : children) {
+            addChild(child);
+        }
+        return this;
+    }
+
+    public RadioButtonPanel setDefaultSelection() {
+        choiceBehavior.setDefaultSelection();
         return this;
     }
 }

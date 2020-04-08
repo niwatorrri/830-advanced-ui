@@ -20,6 +20,16 @@ public class NumberSlider extends Widget<Integer> {
     private SelectableFilledEllipse incrementButton, decrementButton;
     private Text valueDisplay;
 
+    /**
+     * NumberSlider constructor
+     * 
+     * @param x
+     * @param y
+     * @param minValue
+     * @param maxValue
+     * @param increment
+     * @param layout
+     */
     public NumberSlider(int x, int y, int minValue, int maxValue, int increment, int layout) {
         this.value = (minValue + maxValue) / 2;
 
@@ -64,7 +74,10 @@ public class NumberSlider extends Widget<Integer> {
                                 int sign = (buttonInvolved == incrementButton) ? 1 : -1;
                                 int newValue = getValue() + sign * increment;
                                 newValue = Math.min(maxValue, Math.max(minValue, newValue));
-                                setValue(newValue);
+                                if (newValue != getValue()) {
+                                    setValue(newValue);
+                                    callback.update(newValue);
+                                }
                             }
                         }
                         return eventConsumed;
@@ -150,6 +163,16 @@ public class NumberSlider extends Widget<Integer> {
     }
 
     private NumberSlider getThis() {
+        return this;
+    }
+
+    /**
+     * Callbacks: methods to call when value changes
+     */
+    public Callback<Integer> callback = v -> {};
+
+    public NumberSlider setCallback(Callback<Integer> callback) {
+        this.callback = callback;
         return this;
     }
 

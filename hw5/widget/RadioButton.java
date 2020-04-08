@@ -17,8 +17,8 @@ public class RadioButton extends SelectableEllipse {
     private FilledEllipse indicator;
     private GraphicalObject label;
 
-    public RadioButton(GraphicalObject label) {
-        super();
+    public RadioButton(int x, int y, GraphicalObject label) {
+        super(x, y, 0, 0, Color.BLACK, 1);
         this.label = label;
 
         int buttonSize = 14;
@@ -27,6 +27,10 @@ public class RadioButton extends SelectableEllipse {
         this.setHeight(buttonSize);
         indicator = new FilledEllipse(0, 0, indicatorSize, indicatorSize, Color.WHITE);
         setupAlignment(this, indicator, label);
+    }
+
+    public RadioButton(GraphicalObject label) {
+        this(0, 0, label);
     }
 
     public RadioButton(String label) {

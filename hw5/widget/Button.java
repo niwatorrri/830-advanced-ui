@@ -15,8 +15,8 @@ import graphics.object.selectable.SelectableFilledRect;
 public class Button extends SelectableFilledRect {
     private GraphicalObject label;
 
-    public Button(GraphicalObject label) {
-        super();
+    public Button(int x, int y, GraphicalObject label) {
+        super(x, y, 0, 0, null);
         this.label = label;
 
         BoundaryRectangle r = label.getBoundingBox();
@@ -24,6 +24,10 @@ public class Button extends SelectableFilledRect {
         this.setHeight((int) (1.5 * r.height));
         this.setColor(Color.LIGHT_GRAY);
         setupAlignment(this, label);
+    }
+
+    public Button(GraphicalObject label) {
+        this(0, 0, label);
     }
 
     public Button(String label) {

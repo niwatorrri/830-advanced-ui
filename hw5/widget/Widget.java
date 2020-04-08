@@ -16,7 +16,7 @@ import graphics.object.GraphicalObject;
 public abstract class Widget<T> implements Group {
     protected Group widget;
 
-    protected T value;
+    protected T value = null;
     protected Constraint<T> valueConstraint = new NoConstraint<>();
 
     public static final int NO_LAYOUT = -1;
@@ -24,7 +24,7 @@ public abstract class Widget<T> implements Group {
     public static final int VERTICAL_LAYOUT = LayoutGroup.VERTICAL;
     public static final int GRID_LAYOUT = LayoutGroup.GRID;
 
-    // public abstract void update(T newValue);
+    public abstract Widget<T> setCallback(Callback<T> callback);
 
     /**
      * Getter, setter and "user" for value
@@ -37,7 +37,9 @@ public abstract class Widget<T> implements Group {
     }
 
     public void setValue(T value) {
-        if (!this.value.equals(value)) {
+        boolean valuesEqual = (this.value == null || value == null) ?
+                (this.value == value) : (this.value.equals(value));
+        if (!valuesEqual) {
             if (!valueConstraint.isConstrained()) {
                 this.value = value;
                 valueConstraint.notifyValueChange(false);
@@ -103,6 +105,13 @@ public abstract class Widget<T> implements Group {
 
     public Widget<T> removeBehaviors(Behavior... behaviors) {
         widget.removeBehaviors(behaviors);
+        return this;
+    }
+
+    public Widget<T> clearBehavior() {
+        for (Behavior behavior : widget.getBehaviors()) {
+            widget.removeBehavior(behavior);
+        }
         return this;
     }
 

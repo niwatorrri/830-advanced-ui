@@ -1,8 +1,10 @@
 package widget;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.List;
 
+import behavior.BehaviorEvent;
 import behavior.ChoiceBehavior;
 import constraint.Constraint;
 import graphics.group.LayoutGroup;
@@ -16,13 +18,39 @@ public class ButtonPanel extends Widget<List<Button>> {
     public static final int SINGLE = ChoiceBehavior.SINGLE;
     public static final int MULTIPLE = ChoiceBehavior.MULTIPLE;
 
+    /**
+     * ButtonPanel constructor
+     * 
+     * @param x
+     * @param y
+     * @param finalFeedback
+     * @param selectionType
+     * @param layout
+     * @param offset
+     */
     public ButtonPanel(int x, int y, boolean finalFeedback, int selectionType, int layout, int offset) {
         if (layout == NO_LAYOUT) {
             this.widget = new SimpleGroup(x, y, 0, 0);
         } else {
             this.widget = new LayoutGroup(x, y, 0, 0, layout, offset);
         }
-        this.widget.addBehavior(new ChoiceBehavior(selectionType, false));
+
+        this.value = new ArrayList<Button>();
+        this.widget.addBehavior(
+            new ChoiceBehavior(selectionType, false) {
+                @Override
+                @SuppressWarnings("unchecked")
+                public boolean stop(BehaviorEvent event) {
+                    boolean eventConsumed = super.stop(event);
+                    List<Button> selection = (List<Button>)(List<?>) getSelection();
+                    if (!selection.equals(value)) {
+                        setValue(selection);
+                        callback.update(selection);
+                    }
+                    return eventConsumed;
+                }
+            }
+        );
         this.finalFeedback = finalFeedback;
     }
 
@@ -34,6 +62,19 @@ public class ButtonPanel extends Widget<List<Button>> {
         this(0, 0, true, SINGLE);
     }
 
+    /**
+     * Callbacks: methods to call when value changes
+     */
+    public Callback<List<Button>> callback = v -> {};
+
+    public ButtonPanel setCallback(Callback<List<Button>> callback) {
+        this.callback = callback;
+        return this;
+    }
+
+    /**
+     * Override addChild to add constraints
+     */
     @Override
     public Widget<List<Button>> addChild(GraphicalObject child) {
         super.addChild(child);
@@ -48,6 +89,10 @@ public class ButtonPanel extends Widget<List<Button>> {
                 }
             }
         });
+        return this;
+    }
+
+    public ButtonPanel setDefaultSelection() {
         return this;
     }
 }
