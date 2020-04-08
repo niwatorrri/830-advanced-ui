@@ -1,4 +1,4 @@
-# Implement Widgets and Build a Node Editor
+# Widgets and My Node Editor
 
 ## Programming Guide
 

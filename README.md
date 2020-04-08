@@ -5,4 +5,4 @@
 - HW2: Implement a Retained Object Graphics System
 - HW3: Implement a Constraint System for the Graphics System
 - HW4: Implement an Input Model for the Graphics System
-- HW5: Build some widgets and an editor out of the implemented System
+- HW5: Implement some widgets and build an editor out of the system
