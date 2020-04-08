@@ -32,6 +32,10 @@ public class CheckBox extends SelectableOutlineRect {
         this(new Text(label));
     }
 
+    public CheckBox() {
+        this("Label");
+    }
+
     private void setupAlignment(SelectableOutlineRect option, Text indicator, GraphicalObject label) {
         indicator.setX(new Constraint<Integer>(option.useX()) {
             public Integer getValue() {

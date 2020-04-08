@@ -33,6 +33,10 @@ public class RadioButton extends SelectableEllipse {
         this(new Text(label));
     }
 
+    public RadioButton() {
+        this("Label");
+    }
+
     private void setupAlignment(SelectableEllipse option, FilledEllipse indicator, GraphicalObject label) {
         indicator.setX(new Constraint<Integer>(option.useX()) {
             public Integer getValue() {

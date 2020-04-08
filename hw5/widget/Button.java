@@ -30,6 +30,10 @@ public class Button extends SelectableFilledRect {
         this(new Text(label));
     }
 
+    public Button() {
+        this("Label");
+    }
+
     private void setupAlignment(SelectableFilledRect box, GraphicalObject label) {
         String labelType = label.getClass().getSimpleName();
 

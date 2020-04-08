@@ -37,7 +37,7 @@ public abstract class Widget<T> implements Group {
     }
 
     public void setValue(T value) {
-        if (this.value != value) {
+        if (!this.value.equals(value)) {
             if (!valueConstraint.isConstrained()) {
                 this.value = value;
                 valueConstraint.notifyValueChange(false);

@@ -1,7 +1,6 @@
 package widget;
 
 import java.awt.Color;
-import java.util.List;
 
 import behavior.ChoiceBehavior;
 import constraint.Constraint;
@@ -11,7 +10,7 @@ import graphics.object.FilledEllipse;
 import graphics.object.GraphicalObject;
 import graphics.object.selectable.SelectableEllipse;
 
-public class RadioButtonPanel extends Widget<List<RadioButton>> {
+public class RadioButtonPanel extends Widget<RadioButton> {
 
     public RadioButtonPanel(int x, int y, int layout, int offset) {
         if (layout == NO_LAYOUT) {
@@ -31,7 +30,7 @@ public class RadioButtonPanel extends Widget<List<RadioButton>> {
     }
 
     @Override
-    public Widget<List<RadioButton>> addChild(GraphicalObject child) {
+    public Widget<RadioButton> addChild(GraphicalObject child) {
         super.addChild(child);
 
         SelectableEllipse o = ((RadioButton) child).getOption();
