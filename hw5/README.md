@@ -1,8 +1,10 @@
 # Widgets and My Node Editor
 
+[TOC]
+
 ## Programming Guide
 
-In the `widget` package, the basic widgets available include `ButtonPanel`, `CheckBoxPanel`, `RadioButtonPanel` and `NumberSlider`. They all extend a `Widget<T>` class that implements `Group` interface, where T is the type of the widget value. For the first three widgets, there are also three basic components, `Button`, `CheckBox` and `RadioButton`.
+In the `widget` package, the basic widgets available include `ButtonPanel`, `CheckBoxPanel`, `RadioButtonPanel` and `NumberSlider`. They all extend a `Widget<T>` class that implements `Group` interface, where T is the type of the widget value. For the first three widgets, there are also three corresponding basic components, `Button`, `CheckBox` and `RadioButton`.
 
 Let's start with `ButtonPanel` in detail. An example:
 
@@ -19,7 +21,7 @@ Let's start with `ButtonPanel` in detail. An example:
             });
 ```
 
-The constructor `ButtonPanel(x, y, finalFeedback, selectionType, layout, offset)` takes six parameters in total, first two being the position, the third for whether the button selection state is persistent, the fourth for whether multiple selection is allowed, the last two specifying the widget layout. Setting `finalFeedback=false` is suitable for one-time actions, e.g., delete. If set `finalFeedback=true`, single choice is suitable for mutually exclusive options, e.g., spinning clockwise or counter-clockwise, while multiple choice is more appropriate for options that can co-exist, e.g., a list of to-do items.
+The constructor `ButtonPanel(x, y, finalFeedback, selectionType, layout, offset)` takes six parameters in total, first two being the position, the third for whether the button selection state is persistent, the fourth for whether multiple selection is allowed, the last two specifying the widget layout. Setting `finalFeedback=false` is suitable for one-time actions, e.g., delete. If `finalFeedback=true` is set, single choice is suitable for mutually exclusive options, e.g., spinning clockwise or counter-clockwise, while multiple choice is more appropriate for options that can co-exist, e.g., a list of to-do items.
 
 The `ButtonPanel` class can only accept `Button` instances as its children. `Button` can take a string or a `GraphicalObject` for the constructor. These will serve as labels for buttons and be automatically placed in a box. Both sub-components are available through getters. If you are unhappy with the auto-alignment, you can use `Button.setAlignment` method to setup your custom alignment constraints.
 
