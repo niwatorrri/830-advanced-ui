@@ -20,7 +20,6 @@ public class ChoiceBehavior implements Behavior {
     private boolean firstOnly;  // control interimSelected in running
     private boolean startInGroup;
     private SelectableGraphicalObject firstObject;
-    private List<SelectableGraphicalObject> selection = new ArrayList<>();
 
     // Static constants for selection type
     public static final int SINGLE = 0;
@@ -101,8 +100,20 @@ public class ChoiceBehavior implements Behavior {
         return this;
     }
 
+    /**
+     * Utilities
+     */
     public List<SelectableGraphicalObject> getSelection() {
-        return new ArrayList<SelectableGraphicalObject>(selection);
+        ArrayList<SelectableGraphicalObject> selection = new ArrayList<>();
+        for (GraphicalObject child : group.getChildren()) {
+            if (child instanceof SelectableGraphicalObject) {
+                SelectableGraphicalObject sc = (SelectableGraphicalObject) child;
+                if (sc.isSelected()) {
+                    selection.add(sc);
+                }
+            }
+        }
+        return selection;
     }
 
     // Compare behavior based on their priorities
@@ -112,11 +123,10 @@ public class ChoiceBehavior implements Behavior {
 
     // Select an arbitrary child
     public void setDefaultSelection() {
-        if (group != null && selection.isEmpty()) {
+        if (group != null) {
             for (GraphicalObject child : group.getChildren()) {
                 if (child instanceof SelectableGraphicalObject) {
                     SelectableGraphicalObject selectableChild = (SelectableGraphicalObject) child;
-                    selection.add(selectableChild);
                     selectableChild.setSelected(true);
                     break;
                 }
@@ -131,7 +141,6 @@ public class ChoiceBehavior implements Behavior {
                 ((SelectableGraphicalObject) child).setSelected(false);
             }
         }
-        selection.clear();
     }
 
     // Convert event coordinates from absolute to relative to group
@@ -238,9 +247,7 @@ public class ChoiceBehavior implements Behavior {
             // case 2: start inside the group but not on any object
             if (this.state == IDLE) {
                 if (this.type == SINGLE) {
-                    if (!selection.isEmpty() && !selection.get(0).contains(eventInGroup)) {
-                        clearSelection();
-                    }
+                    clearSelection();
                 }
                 return false;
             }
@@ -275,11 +282,9 @@ public class ChoiceBehavior implements Behavior {
                         clearSelection();
                     }
                     targetObject.setSelected(true);
-                    selection.add(targetObject);
                 } else { // if selected for a second time
                     if (this.type == MULTIPLE) {
                         targetObject.setSelected(false);
-                        selection.remove(targetObject);
                     }
                 }
             }

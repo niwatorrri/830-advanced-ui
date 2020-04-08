@@ -19,6 +19,7 @@ public class NewRectBehavior extends NewBehavior {
     private Color color;
     private int lineThickness;
 
+    private Constraint<Integer> typeConstraint = new NoConstraint<>();
     private Constraint<Color> colorConstraint = new NoConstraint<>();
     private Constraint<Integer> lineThicknessConstraint = new NoConstraint<>();
 
@@ -86,6 +87,38 @@ public class NewRectBehavior extends NewBehavior {
     /**
      * Getters and setters
      */
+    public int getType() {
+        if (typeConstraint.isConstrained()) {
+            this.type = typeConstraint.evaluate();
+        }
+        return this.type;
+    }
+
+    public NewRectBehavior setType(int type) {
+        if (this.type != type) {
+            if (!typeConstraint.isConstrained()) {
+                this.type = type;
+                typeConstraint.notifyValueChange(false);
+            } else if (typeConstraint.hasCycle()) {
+                typeConstraint.setValue(type);
+                typeConstraint.notifyValueChange(false);
+            }
+        }
+        return this;
+    }
+
+    public NewRectBehavior setType(Constraint<Integer> constraint) {
+        typeConstraint.replaceWithConstraint(constraint);
+        typeConstraint = constraint;
+        typeConstraint.setValue(this.type);
+        typeConstraint.notifyValueChange(true);
+        return this;
+    }
+
+    public Constraint<Integer> useType() {
+        return this.typeConstraint;
+    }
+
     public Color getColor() {
         if (colorConstraint.isConstrained()) {
             this.color = colorConstraint.evaluate();
