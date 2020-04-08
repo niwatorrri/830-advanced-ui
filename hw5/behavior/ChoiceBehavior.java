@@ -126,8 +126,10 @@ public class ChoiceBehavior implements Behavior {
 
     // De-select all the selected objects
     public void clearSelection() {
-        for (SelectableGraphicalObject selectedObject : selection) {
-            selectedObject.setSelected(false);
+        for (GraphicalObject child : group.getChildren()) {
+            if (child instanceof SelectableGraphicalObject) {
+                ((SelectableGraphicalObject) child).setSelected(false);
+            }
         }
         selection.clear();
     }
@@ -269,10 +271,10 @@ public class ChoiceBehavior implements Behavior {
             targetObject.setInterimSelected(false);
             if (targetObject.contains(eventInGroup)) {
                 if (!targetObject.isSelected()) { // if selected for the first time
-                    targetObject.setSelected(true);
                     if (this.type == SINGLE) {
                         clearSelection();
                     }
+                    targetObject.setSelected(true);
                     selection.add(targetObject);
                 } else { // if selected for a second time
                     if (this.type == MULTIPLE) {
