@@ -1,16 +1,10 @@
-import java.awt.*;
+import java.awt.Color;
 
-import graphics.group.Group;
-import graphics.group.SimpleGroup;
-import graphics.object.selectable.SelectableOutlineRect;
-
-import constraint.Constraint;
-import constraint.SetupConstraint;
-
-import behavior.MoveBehavior;
-import behavior.ChoiceBehavior;
-import behavior.NewRectBehavior;
-import behavior.InteractiveWindowGroup;
+import behavior.*;
+import constraint.*;
+import graphics.group.*;
+import graphics.object.*;
+import widget.*;
 
 public class MyNodeEditor extends InteractiveWindowGroup {
     /**
@@ -19,8 +13,10 @@ public class MyNodeEditor extends InteractiveWindowGroup {
      */
     private static final long serialVersionUID = 1L;
 
-    private static final int WINDOW_WIDTH = 400;
+    private static final int WINDOW_WIDTH = 600;
     private static final int WINDOW_HEIGHT = 400;
+    private static final int SEPARATION_LEFT = 150;
+    private static final int SEPARATION_RIGHT = WINDOW_WIDTH - SEPARATION_LEFT;
 
     public static void main(String[] args) {
         new MyNodeEditor();
@@ -28,34 +24,95 @@ public class MyNodeEditor extends InteractiveWindowGroup {
 
     public MyNodeEditor() {
         super("My Node Editor", WINDOW_WIDTH, WINDOW_HEIGHT);
-        Group topGroup = new SimpleGroup(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-        addChild(topGroup);
-        writeMyInteractions(topGroup);
-        redraw(topGroup);
-    }
 
-    public void writeMyInteractions(Group topGroup) {
-        Group g = new SimpleGroup(0, 0, 400, 400);
-        topGroup.addChild(g);
-
-        SetupConstraint rectColorConstraint = dependencies -> {
-            SelectableOutlineRect o = (SelectableOutlineRect) dependencies[0];
-            o.setColor(new Constraint<Color>(o.useSelected(), o.useInterimSelected()) {
+        SetupConstraint selectionConstraint = o -> {
+            Box r = (Box) o[0];
+            r.getFill().setColor(new Constraint<Color>(r.useSelected()) {
                 public Color getValue() {
-                    if (o.isSelected()) {
-                        return o.isInterimSelected() ? Color.BLUE : Color.GREEN;
-                    } else {
-                        return o.isInterimSelected() ? Color.YELLOW : Color.BLACK;
-                    }
+                    return r.isSelected() ? Color.GREEN.brighter() : Color.WHITE;
                 }
             });
         };
 
-        addBehaviors(
-            new MoveBehavior().setGroup(g),
-            new ChoiceBehavior(ChoiceBehavior.SINGLE, true).setGroup(g),
-            new NewRectBehavior(NewRectBehavior.OUTLINE_RECT, Color.BLACK, 2, rectColorConstraint)
-                .setGroup(g).setPriority(1) 
+        Widget<RadioButton> lineStyles =
+            new RadioButtonPanel(30, 50)
+                .addChildren(
+                    new RadioButton(new Line(0, 10, 40, 10, Color.BLACK, 1)),
+                    new RadioButton(new Line(0, 10, 40, 10, Color.BLACK, 2)),
+                    new RadioButton(new Line(0, 10, 40, 10, Color.BLACK, 3)),
+                    new RadioButton(new Line(0, 10, 40, 10, Color.BLACK, 4))
+                )
+                .setDefaultSelection();
+
+        Line separationLine = new Line(
+            SEPARATION_LEFT, 0, SEPARATION_LEFT, WINDOW_HEIGHT, Color.BLACK, 2
+        );
+
+        Group drawingPanel =
+            new SimpleGroup(SEPARATION_LEFT, 0, SEPARATION_RIGHT, WINDOW_HEIGHT)
+                .addBehaviors(
+                    new MoveBehavior(),
+                    new ChoiceBehavior(ChoiceBehavior.SINGLE, false) {
+                        @Override
+                        public boolean stop(BehaviorEvent event) {
+                            boolean eventConsumed = super.stop(event);
+                            if (eventConsumed) {
+                                int lt = ((Box) getSelection().get(0)).getLineThickness();
+                                for (GraphicalObject o : lineStyles.getChildren()) {
+                                    RadioButton rb = (RadioButton) o;
+                                    rb.setSelected(((Line) rb.getLabel()).getLineThickness() == lt);
+                                }
+                            }
+                            return eventConsumed;
+                        }
+                    },
+                    new NewBoxBehavior(
+                            NewBoxBehavior.OUTLINE_RECT, Color.BLACK, 1,
+                            selectionConstraint
+                        )
+                        .setLineThickness(new Constraint<Integer>(lineStyles.useValue()) {
+                            public Integer getValue() {
+                                return ((Line) lineStyles.getValue().getLabel()).getLineThickness();
+                            }
+                        })
+                        .setPriority(1)
+                );
+
+        Widget<?> deleteButton =
+            new ButtonPanel(30, 200, false, ButtonPanel.MULTIPLE)
+                .addChild(new Button("Delete"))
+                .setCallback(o -> {
+                    for (GraphicalObject child : drawingPanel.getChildren()) {
+                        if (((Box) child).isSelected()) {
+                            drawingPanel.removeChild(child);
+                        }
+                    }
+                });
+
+        Group selectionPanel =
+            new SimpleGroup(0, 0, SEPARATION_LEFT, WINDOW_HEIGHT)
+                .addChildren(lineStyles, deleteButton);
+        
+        addChildren(selectionPanel, separationLine, drawingPanel);
+    }
+
+    public void testWidgets() {
+        addChildren(
+            new ButtonPanel().addChildren(
+                new Button(new Ellipse()),
+                new Button("Test"),
+                new Button("What???\nthe fuck???"),
+                new Button(new FilledRect())
+            ),
+            new NumberSlider(200, 50),
+            new RadioButtonPanel(200, 200).addChildren(
+                new RadioButton("Test"),
+                new RadioButton(new Ellipse())
+            ),
+            new CheckBoxPanel(100, 200).addChildren(
+                new CheckBox("test"),
+                new CheckBox(new FilledRect(0, 0, 20, 30, Color.GREEN))
+            )
         );
     }
 }
