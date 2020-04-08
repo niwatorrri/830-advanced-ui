@@ -30,6 +30,7 @@ public class RadioButtonPanel extends Widget<RadioButton> {
         } else {
             this.widget = new LayoutGroup(x, y, 0, 0, layout, offset);
         }
+
         this.widget.addBehavior(
             choiceBehavior = new ChoiceBehavior(ChoiceBehavior.SINGLE, true) {
                 @Override
@@ -84,8 +85,8 @@ public class RadioButtonPanel extends Widget<RadioButton> {
         return this;
     }
 
-    public RadioButtonPanel setDefaultSelection() {
-        choiceBehavior.setDefaultSelection();
+    public RadioButtonPanel setSelection(String type) {
+        choiceBehavior.select(type);
         return this;
     }
 }

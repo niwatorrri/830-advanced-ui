@@ -70,6 +70,12 @@ public class Button extends SelectableFilledRect {
                         return lineLabel.getY1() + lineLabel.getDy();
                     }
                 });
+                lineLabel.setY(new Constraint<Integer>(box.useY()) {
+                    public Integer getValue() {
+                        return box.getY() + lineLabel.getLineThickness();
+                    }
+                });
+                break;
             }
             default: {
                 label.setY(new Constraint<Integer>(box.useY()) {

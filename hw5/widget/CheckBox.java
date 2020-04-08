@@ -84,6 +84,11 @@ public class CheckBox extends SelectableOutlineRect {
                         return lineLabel.getY1() + lineLabel.getDy();
                     }
                 });
+                lineLabel.setY(new Constraint<Integer>(option.useY()) {
+                    public Integer getValue() {
+                        return option.getY() + lineLabel.getLineThickness();
+                    }
+                });
             }
             default: {
                 label.setY(new Constraint<Integer>(option.useY()) {

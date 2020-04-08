@@ -14,6 +14,8 @@ import graphics.object.Text;
 import graphics.object.selectable.SelectableOutlineRect;
 
 public class CheckBoxPanel extends Widget<List<CheckBox>> {
+    private ChoiceBehavior choiceBehavior;
+
     /**
      * CheckBoxPanel constructor
      * 
@@ -31,7 +33,7 @@ public class CheckBoxPanel extends Widget<List<CheckBox>> {
 
         this.value = new ArrayList<CheckBox>();
         this.widget.addBehavior(
-            new ChoiceBehavior(ChoiceBehavior.MULTIPLE, true) {
+            choiceBehavior = new ChoiceBehavior(ChoiceBehavior.MULTIPLE, true) {
                 @Override
                 @SuppressWarnings("unchecked")
                 public boolean stop(BehaviorEvent event) {
@@ -76,7 +78,16 @@ public class CheckBoxPanel extends Widget<List<CheckBox>> {
         return this;
     }
 
-    public CheckBoxPanel setDefaultSelection() {
+    @Override
+    public CheckBoxPanel addChildren(GraphicalObject... children) {
+        for (GraphicalObject child : children) {
+            addChild(child);
+        }
+        return this;
+    }
+
+    public CheckBoxPanel setSelection(String type) {
+        choiceBehavior.select(type);
         return this;
     }
 }

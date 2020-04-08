@@ -13,7 +13,7 @@ import graphics.group.LayoutGroup;
 import graphics.object.BoundaryRectangle;
 import graphics.object.GraphicalObject;
 
-public abstract class Widget<T> implements Group {
+public class Widget<T> implements Group {
     protected Group widget;
 
     protected T value = null;

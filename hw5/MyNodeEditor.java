@@ -8,14 +8,13 @@ import widget.*;
 
 public class MyNodeEditor extends InteractiveWindowGroup {
     /**
-     * An example interactive window that allows users to make new rectangles,
-     * move them by click and drag, and choose them with a single choice behavior
+     * Re-implementing the node editor using our own toolkit
      */
     private static final long serialVersionUID = 1L;
 
-    private static final int WINDOW_WIDTH = 600;
+    private static final int WINDOW_WIDTH = 800;
     private static final int WINDOW_HEIGHT = 400;
-    private static final int SEPARATION_LEFT = 150;
+    private static final int SEPARATION_LEFT = 200;
     private static final int SEPARATION_RIGHT = WINDOW_WIDTH - SEPARATION_LEFT;
 
     public static void main(String[] args) {
@@ -25,28 +24,42 @@ public class MyNodeEditor extends InteractiveWindowGroup {
     public MyNodeEditor() {
         super("My Node Editor", WINDOW_WIDTH, WINDOW_HEIGHT);
 
+        Text lineColorText = new Text("Choose a line color");
+        RadioButtonPanel lineColors =
+            new RadioButtonPanel()
+                .addChildren(
+                    new RadioButton(new Line(0, 10, 40, 10, Color.BLACK, 3)),
+                    new RadioButton(new Line(0, 10, 40, 10, Color.BLUE, 3)),
+                    new RadioButton(new Line(0, 10, 40, 10, Color.MAGENTA, 3)),
+                    new RadioButton(new Line(0, 10, 40, 10, Color.CYAN, 3))
+                )
+                .setSelection("one");
+
+        Text boxStyleText = new Text("Choose box style");
+        CheckBoxPanel boxStyles =
+            new CheckBoxPanel()
+                .addChildren(
+                    new CheckBox("Outline box"),
+                    new CheckBox("Filled box")
+                )
+                .setSelection("all");
+
+        Text lineThicknessText = new Text("Choose line thickness");
+        NumberSlider lineThicknessSlider =
+            new NumberSlider(0, 0, 1, 9, 1, NumberSlider.HORIZONTAL_LAYOUT);
+            
+        Line separationLine = new Line(
+            SEPARATION_LEFT, 0, SEPARATION_LEFT, WINDOW_HEIGHT, Color.BLACK, 2
+        );
+
         SetupConstraint selectionConstraint = o -> {
             Box r = (Box) o[0];
             r.getFill().setColor(new Constraint<Color>(r.useSelected()) {
                 public Color getValue() {
-                    return r.isSelected() ? Color.GREEN.brighter() : Color.WHITE;
+                    return r.isSelected() ? Color.LIGHT_GRAY : Color.WHITE;
                 }
             });
         };
-
-        Widget<RadioButton> lineStyles =
-            new RadioButtonPanel(30, 50)
-                .addChildren(
-                    new RadioButton(new Line(0, 10, 40, 10, Color.BLACK, 1)),
-                    new RadioButton(new Line(0, 10, 40, 10, Color.BLACK, 2)),
-                    new RadioButton(new Line(0, 10, 40, 10, Color.BLACK, 3)),
-                    new RadioButton(new Line(0, 10, 40, 10, Color.BLACK, 4))
-                )
-                .setDefaultSelection();
-
-        Line separationLine = new Line(
-            SEPARATION_LEFT, 0, SEPARATION_LEFT, WINDOW_HEIGHT, Color.BLACK, 2
-        );
 
         Group drawingPanel =
             new SimpleGroup(SEPARATION_LEFT, 0, SEPARATION_RIGHT, WINDOW_HEIGHT)
@@ -57,10 +70,11 @@ public class MyNodeEditor extends InteractiveWindowGroup {
                         public boolean stop(BehaviorEvent event) {
                             boolean eventConsumed = super.stop(event);
                             if (eventConsumed) {
-                                int lt = ((Box) getSelection().get(0)).getLineThickness();
-                                for (GraphicalObject o : lineStyles.getChildren()) {
+                                Box b = (Box) getSelection().get(0);
+                                lineThicknessSlider.setValue(b.getLineThickness());
+                                for (GraphicalObject o : lineColors.getChildren()) {
                                     RadioButton rb = (RadioButton) o;
-                                    rb.setSelected(((Line) rb.getLabel()).getLineThickness() == lt);
+                                    rb.setSelected(((Line) rb.getLabel()).getColor().equals(b.getColor()));
                                 }
                             }
                             return eventConsumed;
@@ -70,16 +84,29 @@ public class MyNodeEditor extends InteractiveWindowGroup {
                             NewBoxBehavior.OUTLINE_RECT, Color.BLACK, 1,
                             selectionConstraint
                         )
-                        .setLineThickness(new Constraint<Integer>(lineStyles.useValue()) {
+                        .setLineThickness(new Constraint<Integer>(lineThicknessSlider.useValue()) {
                             public Integer getValue() {
-                                return ((Line) lineStyles.getValue().getLabel()).getLineThickness();
+                                return lineThicknessSlider.getValue();
+                            }
+                        })
+                        .setColor(new Constraint<Color>(lineColors.useValue()) {
+                            public Color getValue() {
+                                return ((Line) lineColors.getValue().getLabel()).getColor();
+                            }
+                        })
+                        .setType(new Constraint<Integer>(boxStyles.useValue()) {
+                            public Integer getValue() {
+                                int outline = ((CheckBox) boxStyles.getChildren().get(0)).isSelected() ? Box.OUTLINE : 0;
+                                int filled = ((CheckBox) boxStyles.getChildren().get(1)).isSelected() ? Box.FILLED : 0;
+                                return outline + filled;
                             }
                         })
                         .setPriority(1)
                 );
 
+        Text deleteText = new Text("Delete a selected box");
         Widget<?> deleteButton =
-            new ButtonPanel(30, 200, false, ButtonPanel.MULTIPLE)
+            new ButtonPanel(0, 0, false, ButtonPanel.MULTIPLE)
                 .addChild(new Button("Delete"))
                 .setCallback(o -> {
                     for (GraphicalObject child : drawingPanel.getChildren()) {
@@ -90,29 +117,13 @@ public class MyNodeEditor extends InteractiveWindowGroup {
                 });
 
         Group selectionPanel =
-            new SimpleGroup(0, 0, SEPARATION_LEFT, WINDOW_HEIGHT)
-                .addChildren(lineStyles, deleteButton);
+            new LayoutGroup(20, 20, SEPARATION_LEFT, WINDOW_HEIGHT, 
+                        LayoutGroup.VERTICAL, 20)
+                .addChildren(
+                    lineColorText, lineColors, boxStyleText, boxStyles,
+                    lineThicknessText, lineThicknessSlider, deleteText, deleteButton
+                );
         
         addChildren(selectionPanel, separationLine, drawingPanel);
-    }
-
-    public void testWidgets() {
-        addChildren(
-            new ButtonPanel().addChildren(
-                new Button(new Ellipse()),
-                new Button("Test"),
-                new Button("What???\nthe fuck???"),
-                new Button(new FilledRect())
-            ),
-            new NumberSlider(200, 50),
-            new RadioButtonPanel(200, 200).addChildren(
-                new RadioButton("Test"),
-                new RadioButton(new Ellipse())
-            ),
-            new CheckBoxPanel(100, 200).addChildren(
-                new CheckBox("test"),
-                new CheckBox(new FilledRect(0, 0, 20, 30, Color.GREEN))
-            )
-        );
     }
 }

@@ -13,6 +13,8 @@ import graphics.object.GraphicalObject;
 import graphics.object.selectable.SelectableFilledRect;
 
 public class ButtonPanel extends Widget<List<Button>> {
+    private ChoiceBehavior choiceBehavior;
+
     private boolean finalFeedback;
 
     public static final int SINGLE = ChoiceBehavior.SINGLE;
@@ -37,7 +39,7 @@ public class ButtonPanel extends Widget<List<Button>> {
 
         this.value = new ArrayList<Button>();
         this.widget.addBehavior(
-            new ChoiceBehavior(selectionType, false) {
+            choiceBehavior = new ChoiceBehavior(selectionType, false) {
                 @Override
                 @SuppressWarnings("unchecked")
                 public boolean stop(BehaviorEvent event) {
@@ -82,7 +84,16 @@ public class ButtonPanel extends Widget<List<Button>> {
         return this;
     }
 
-    public ButtonPanel setDefaultSelection() {
+    @Override
+    public ButtonPanel addChildren(GraphicalObject... children) {
+        for (GraphicalObject child : children) {
+            addChild(child);
+        }
+        return this;
+    }
+
+    public ButtonPanel setSelection(String type) {
+        choiceBehavior.select(type);
         return this;
     }
 }

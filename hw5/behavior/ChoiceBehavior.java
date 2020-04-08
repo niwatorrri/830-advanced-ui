@@ -121,14 +121,17 @@ public class ChoiceBehavior implements Behavior {
         return this.getPriority() - behavior.getPriority();
     }
 
-    // Select an arbitrary child
-    public void setDefaultSelection() {
+    // Select an arbitrary child or all children
+    public void select(String type) {
+        assert type.equals("one") || type.equals("all");
         if (group != null) {
             for (GraphicalObject child : group.getChildren()) {
                 if (child instanceof SelectableGraphicalObject) {
                     SelectableGraphicalObject selectableChild = (SelectableGraphicalObject) child;
                     selectableChild.setSelected(true);
-                    break;
+                    if (type.equals("one")) {
+                        break;
+                    }
                 }
             }
         }
