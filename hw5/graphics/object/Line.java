@@ -19,6 +19,9 @@ public class Line implements GraphicalObject {
     private int lineThickness;
     private Group group = null;
 
+    private int dx, dy;
+    private boolean invariant = false;
+
     private Constraint<Integer> x1Constraint = new NoConstraint<>();
     private Constraint<Integer> y1Constraint = new NoConstraint<>();
     private Constraint<Integer> x2Constraint = new NoConstraint<>();
@@ -34,6 +37,8 @@ public class Line implements GraphicalObject {
         this.y1 = y1;
         this.x2 = x2;
         this.y2 = y2;
+        this.dx = x2 - x1;
+        this.dy = y2 - y1;
         this.color = color;
         this.lineThickness = lineThickness;
     }
@@ -239,6 +244,21 @@ public class Line implements GraphicalObject {
 
     public void setY(Constraint<Integer> constraint) {
         setY1(constraint);
+    }
+
+    /**
+     * Utilities for widget layouts
+     */
+    public void setInvariant(boolean invariant) {
+        this.invariant = invariant;
+    }
+
+    public int getDx() {
+        return this.invariant ? this.dx : getX2() - getX1();
+    }
+
+    public int getDy() {
+        return this.invariant ? this.dy : getY2() - getY1();
     }
 
     /**
