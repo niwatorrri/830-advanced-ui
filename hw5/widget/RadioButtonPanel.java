@@ -5,16 +5,13 @@ import java.util.List;
 
 import behavior.ChoiceBehavior;
 import constraint.Constraint;
-import constraint.NoConstraint;
 import graphics.group.LayoutGroup;
 import graphics.group.SimpleGroup;
 import graphics.object.FilledEllipse;
 import graphics.object.GraphicalObject;
 import graphics.object.selectable.SelectableEllipse;
 
-public class RadioButtonPanel extends Widget {
-    private List<RadioButton> value;
-    private Constraint<List<RadioButton>> valueConstraint = new NoConstraint<>();
+public class RadioButtonPanel extends Widget<List<RadioButton>> {
 
     public RadioButtonPanel(int x, int y, int layout, int offset) {
         if (layout == NO_LAYOUT) {
@@ -34,7 +31,7 @@ public class RadioButtonPanel extends Widget {
     }
 
     @Override
-    public Widget addChild(GraphicalObject child) {
+    public Widget<List<RadioButton>> addChild(GraphicalObject child) {
         super.addChild(child);
 
         SelectableEllipse o = ((RadioButton) child).getOption();
@@ -49,38 +46,5 @@ public class RadioButtonPanel extends Widget {
             }
         });
         return this;
-    }
-
-    /**
-     * Getter, setter and "user" for value
-     */
-    public List<RadioButton> getValue() {
-        if (valueConstraint.isConstrained()) {
-            this.value = valueConstraint.evaluate();
-        }
-        return this.value;
-    }
-
-    public void setValue(List<RadioButton> value) {
-        if (this.value != value) {
-            if (!valueConstraint.isConstrained()) {
-                this.value = value;
-                valueConstraint.notifyValueChange(false);
-            } else if (valueConstraint.hasCycle()) {
-                valueConstraint.setValue(value);
-                valueConstraint.notifyValueChange(false);
-            }
-        }
-    }
-
-    public void setValue(Constraint<List<RadioButton>> constraint) {
-        valueConstraint.replaceWithConstraint(constraint);
-        valueConstraint = constraint;
-        valueConstraint.setValue(this.value);
-        valueConstraint.notifyValueChange(true);
-    }
-
-    public Constraint<List<RadioButton>> useValue() {
-        return this.valueConstraint;
     }
 }

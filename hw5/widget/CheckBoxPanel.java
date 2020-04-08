@@ -5,16 +5,13 @@ import java.util.List;
 
 import behavior.ChoiceBehavior;
 import constraint.Constraint;
-import constraint.NoConstraint;
 import graphics.group.LayoutGroup;
 import graphics.group.SimpleGroup;
 import graphics.object.GraphicalObject;
 import graphics.object.Text;
 import graphics.object.selectable.SelectableOutlineRect;
 
-public class CheckBoxPanel extends Widget {
-    private List<CheckBox> value;
-    private Constraint<List<CheckBox>> valueConstraint = new NoConstraint<>();
+public class CheckBoxPanel extends Widget<List<CheckBox>> {
 
     public CheckBoxPanel(int x, int y, int layout, int offset) {
         if (layout == NO_LAYOUT) {
@@ -34,7 +31,7 @@ public class CheckBoxPanel extends Widget {
     }
 
     @Override
-    public Widget addChild(GraphicalObject child) {
+    public Widget<List<CheckBox>> addChild(GraphicalObject child) {
         super.addChild(child);
 
         SelectableOutlineRect o = ((CheckBox) child).getOption();
@@ -49,38 +46,5 @@ public class CheckBoxPanel extends Widget {
             }
         });
         return this;
-    }
-
-    /**
-     * Getter, setter and "user" for value
-     */
-    public List<CheckBox> getValue() {
-        if (valueConstraint.isConstrained()) {
-            this.value = valueConstraint.evaluate();
-        }
-        return this.value;
-    }
-
-    public void setValue(List<CheckBox> value) {
-        if (this.value != value) {
-            if (!valueConstraint.isConstrained()) {
-                this.value = value;
-                valueConstraint.notifyValueChange(false);
-            } else if (valueConstraint.hasCycle()) {
-                valueConstraint.setValue(value);
-                valueConstraint.notifyValueChange(false);
-            }
-        }
-    }
-
-    public void setValue(Constraint<List<CheckBox>> constraint) {
-        valueConstraint.replaceWithConstraint(constraint);
-        valueConstraint = constraint;
-        valueConstraint.setValue(this.value);
-        valueConstraint.notifyValueChange(true);
-    }
-
-    public Constraint<List<CheckBox>> useValue() {
-        return this.valueConstraint;
     }
 }

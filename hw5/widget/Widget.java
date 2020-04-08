@@ -7,13 +7,17 @@ import java.util.List;
 
 import behavior.Behavior;
 import constraint.Constraint;
+import constraint.NoConstraint;
 import graphics.group.Group;
 import graphics.group.LayoutGroup;
 import graphics.object.BoundaryRectangle;
 import graphics.object.GraphicalObject;
 
-public class Widget implements Group {
+public abstract class Widget<T> implements Group {
     protected Group widget;
+
+    protected T value;
+    protected Constraint<T> valueConstraint = new NoConstraint<>();
 
     public static final int NO_LAYOUT = -1;
     public static final int HORIZONTAL_LAYOUT = LayoutGroup.HORIZONTAL;
@@ -23,48 +27,81 @@ public class Widget implements Group {
     // public abstract void update(T newValue);
 
     /**
+     * Getter, setter and "user" for value
+     */
+    public T getValue() {
+        if (valueConstraint.isConstrained()) {
+            this.value = valueConstraint.evaluate();
+        }
+        return this.value;
+    }
+
+    public void setValue(T value) {
+        if (this.value != value) {
+            if (!valueConstraint.isConstrained()) {
+                this.value = value;
+                valueConstraint.notifyValueChange(false);
+            } else if (valueConstraint.hasCycle()) {
+                valueConstraint.setValue(value);
+                valueConstraint.notifyValueChange(false);
+            }
+        }
+    }
+
+    public void setValue(Constraint<T> constraint) {
+        valueConstraint.replaceWithConstraint(constraint);
+        valueConstraint = constraint;
+        valueConstraint.setValue(this.value);
+        valueConstraint.notifyValueChange(true);
+    }
+
+    public Constraint<T> useValue() {
+        return this.valueConstraint;
+    }
+
+    /**
      * Methods defined in the Group interface
      */
-    public Widget addChild(GraphicalObject child) {
+    public Widget<T> addChild(GraphicalObject child) {
         widget.addChild(child).resizeToChildren();
         return this;
     }
 
-    public Widget addChildren(GraphicalObject... children) {
+    public Widget<T> addChildren(GraphicalObject... children) {
         for (GraphicalObject child : children) {
             this.addChild(child);
         }
         return this;
     }
 
-    public Widget removeChild(GraphicalObject child) {
+    public Widget<T> removeChild(GraphicalObject child) {
         widget.removeChild(child);
         return this;
     }
 
-    public Widget removeChildren(GraphicalObject... children) {
+    public Widget<T> removeChildren(GraphicalObject... children) {
         for (GraphicalObject child : children) {
             this.removeChild(child);
         }
         return this;
     }
 
-    public Widget addBehavior(Behavior behavior) {
+    public Widget<T> addBehavior(Behavior behavior) {
         widget.addBehavior(behavior);
         return this;
     }
 
-    public Widget addBehaviors(Behavior... behaviors) {
+    public Widget<T> addBehaviors(Behavior... behaviors) {
         widget.addBehaviors(behaviors);
         return this;
     }
 
-    public Widget removeBehavior(Behavior behavior) {
+    public Widget<T> removeBehavior(Behavior behavior) {
         widget.removeBehavior(behavior);
         return this;
     }
 
-    public Widget removeBehaviors(Behavior... behaviors) {
+    public Widget<T> removeBehaviors(Behavior... behaviors) {
         widget.removeBehaviors(behaviors);
         return this;
     }
@@ -73,12 +110,12 @@ public class Widget implements Group {
         return widget.getBehaviors();
     }
 
-    public Widget bringChildToFront(GraphicalObject child) {
+    public Widget<T> bringChildToFront(GraphicalObject child) {
         widget.bringChildToFront(child);
         return this;
     }
 
-    public Widget resizeToChildren() {
+    public Widget<T> resizeToChildren() {
         widget.resizeToChildren();
         return this;
     }

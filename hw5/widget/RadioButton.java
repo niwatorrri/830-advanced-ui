@@ -9,6 +9,7 @@ import constraint.SetupConstraint;
 import graphics.object.BoundaryRectangle;
 import graphics.object.FilledEllipse;
 import graphics.object.GraphicalObject;
+import graphics.object.Line;
 import graphics.object.Text;
 import graphics.object.selectable.SelectableEllipse;
 
@@ -53,19 +54,37 @@ public class RadioButton extends SelectableEllipse {
 
         String labelType = label.getClass().getSimpleName();
 
-        if (!labelType.equals("Text")) {
-            label.setY(new Constraint<Integer>(option.useY()) {
-                public Integer getValue() {
-                    return option.getY();
-                }
-            });
-        } else {
-            Text textLabel = (Text) label;
-            textLabel.setY(new Constraint<Integer>(option.useY()) {
-                public Integer getValue() {
-                    return option.getY() + textLabel.getAscent();
-                }
-            });
+        switch (labelType) {
+            case "Text": {
+                Text textLabel = (Text) label;
+                textLabel.setY(new Constraint<Integer>(option.useY()) {
+                    public Integer getValue() {
+                        return option.getY() + textLabel.getAscent();
+                    }
+                });
+                break;
+            }
+            case "Line": {
+                Line lineLabel = (Line) label;
+                lineLabel.setInvariant(true);
+                lineLabel.setX2(new Constraint<Integer>(lineLabel.useX1()) {
+                    public Integer getValue() {
+                        return lineLabel.getX1() + lineLabel.getDx();
+                    }
+                });
+                lineLabel.setY2(new Constraint<Integer>(lineLabel.useY1()) {
+                    public Integer getValue() {
+                        return lineLabel.getY1() + lineLabel.getDy();
+                    }
+                });
+            }
+            default: {
+                label.setY(new Constraint<Integer>(option.useY()) {
+                    public Integer getValue() {
+                        return option.getY();
+                    }
+                });
+            }
         }
     }
 

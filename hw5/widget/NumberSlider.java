@@ -6,7 +6,6 @@ import behavior.BehaviorEvent;
 import behavior.ChoiceBehavior;
 import behavior.MoveBehavior;
 import constraint.Constraint;
-import constraint.NoConstraint;
 import constraint.SetupConstraint;
 import graphics.group.SimpleGroup;
 import graphics.object.FilledEllipse;
@@ -15,14 +14,11 @@ import graphics.object.Text;
 import graphics.object.selectable.SelectableFilledEllipse;
 import graphics.object.selectable.SelectableGraphicalObject;
 
-public class NumberSlider extends Widget {
+public class NumberSlider extends Widget<Integer> {
     private FilledRect bar;
     private FilledEllipse slider;
     private SelectableFilledEllipse incrementButton, decrementButton;
     private Text valueDisplay;
-
-    private int value;
-    private Constraint<Integer> valueConstraint = new NoConstraint<>();
 
     public NumberSlider(int x, int y, int minValue, int maxValue, int increment, int layout) {
         this.value = (minValue + maxValue) / 2;
@@ -178,38 +174,5 @@ public class NumberSlider extends Widget {
 
     public Text getValueDisplay() {
         return this.valueDisplay;
-    }
-
-    /**
-     * Getter, setter and "user" for value
-     */
-    public int getValue() {
-        if (valueConstraint.isConstrained()) {
-            this.value = valueConstraint.evaluate();
-        }
-        return this.value;
-    }
-
-    public void setValue(int value) {
-        if (this.value != value) {
-            if (!valueConstraint.isConstrained()) {
-                this.value = value;
-                valueConstraint.notifyValueChange(false);
-            } else if (valueConstraint.hasCycle()) {
-                valueConstraint.setValue(value);
-                valueConstraint.notifyValueChange(false);
-            }
-        }
-    }
-
-    public void setValue(Constraint<Integer> constraint) {
-        valueConstraint.replaceWithConstraint(constraint);
-        valueConstraint = constraint;
-        valueConstraint.setValue(this.value);
-        valueConstraint.notifyValueChange(true);
-    }
-
-    public Constraint<Integer> useValue() {
-        return this.valueConstraint;
     }
 }
