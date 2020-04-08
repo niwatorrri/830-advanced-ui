@@ -63,16 +63,6 @@ public class ButtonPanel extends Widget<List<Button>> {
     }
 
     /**
-     * Callbacks: methods to call when value changes
-     */
-    public Callback<List<Button>> callback = v -> {};
-
-    public ButtonPanel setCallback(Callback<List<Button>> callback) {
-        this.callback = callback;
-        return this;
-    }
-
-    /**
      * Override addChild to add constraints
      */
     @Override

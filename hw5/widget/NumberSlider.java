@@ -167,16 +167,6 @@ public class NumberSlider extends Widget<Integer> {
     }
 
     /**
-     * Callbacks: methods to call when value changes
-     */
-    public Callback<Integer> callback = v -> {};
-
-    public NumberSlider setCallback(Callback<Integer> callback) {
-        this.callback = callback;
-        return this;
-    }
-
-    /**
      * Getters for components
      */
     public FilledRect getBar() {

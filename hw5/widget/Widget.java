@@ -24,7 +24,15 @@ public abstract class Widget<T> implements Group {
     public static final int VERTICAL_LAYOUT = LayoutGroup.VERTICAL;
     public static final int GRID_LAYOUT = LayoutGroup.GRID;
 
-    public abstract Widget<T> setCallback(Callback<T> callback);
+    /**
+     * Callbacks: methods to call when value changes
+     */
+    protected Callback<T> callback = v -> {};
+
+    public Widget<T> setCallback(Callback<T> callback) {
+        this.callback = callback;
+        return this;
+    }
 
     /**
      * Getter, setter and "user" for value

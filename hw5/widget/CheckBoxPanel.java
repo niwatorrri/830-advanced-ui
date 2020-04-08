@@ -56,16 +56,6 @@ public class CheckBoxPanel extends Widget<List<CheckBox>> {
     }
 
     /**
-     * Callbacks: methods to call when value changes
-     */
-    public Callback<List<CheckBox>> callback = v -> {};
-
-    public CheckBoxPanel setCallback(Callback<List<CheckBox>> callback) {
-        this.callback = callback;
-        return this;
-    }
-
-    /**
      * Override addChild to add constraints
      */
     @Override

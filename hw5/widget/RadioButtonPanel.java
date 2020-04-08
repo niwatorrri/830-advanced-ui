@@ -56,16 +56,6 @@ public class RadioButtonPanel extends Widget<RadioButton> {
     }
 
     /**
-     * Callbacks: methods to call when value changes
-     */
-    public Callback<RadioButton> callback = v -> {};
-
-    public RadioButtonPanel setCallback(Callback<RadioButton> callback) {
-        this.callback = callback;
-        return this;
-    }
-
-    /**
      * Override addChild to add constraints
      */
     @Override
