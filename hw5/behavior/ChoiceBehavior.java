@@ -110,6 +110,28 @@ public class ChoiceBehavior implements Behavior {
         return this.getPriority() - behavior.getPriority();
     }
 
+    // Select an arbitrary child
+    public void setDefaultSelection() {
+        if (group != null && selection.isEmpty()) {
+            for (GraphicalObject child : group.getChildren()) {
+                if (child instanceof SelectableGraphicalObject) {
+                    SelectableGraphicalObject selectableChild = (SelectableGraphicalObject) child;
+                    selection.add(selectableChild);
+                    selectableChild.setSelected(true);
+                    break;
+                }
+            }
+        }
+    }
+
+    // De-select all the selected objects
+    public void clearSelection() {
+        for (SelectableGraphicalObject selectedObject : selection) {
+            selectedObject.setSelected(false);
+        }
+        selection.clear();
+    }
+
     // Convert event coordinates from absolute to relative to group
     private Point findCoordinates(Group group, int x, int y) {
         Group parentGroup = group.getGroup();
@@ -117,14 +139,6 @@ public class ChoiceBehavior implements Behavior {
             return new Point(x, y);
         }
         return group.parentToChild(findCoordinates(parentGroup, x, y));
-    }
-
-    // De-select all the selected objects
-    private void clearSelection() {
-        for (SelectableGraphicalObject selectedObject : selection) {
-            selectedObject.setSelected(false);
-        }
-        selection.clear();
     }
 
     /**

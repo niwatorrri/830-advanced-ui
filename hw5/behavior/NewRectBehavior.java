@@ -2,6 +2,8 @@ package behavior;
 
 import java.awt.Color;
 
+import constraint.Constraint;
+import constraint.NoConstraint;
 import constraint.SetupConstraint;
 import graphics.object.GraphicalObject;
 import graphics.object.Rect;
@@ -16,6 +18,9 @@ public class NewRectBehavior extends NewBehavior {
     private int type;
     private Color color;
     private int lineThickness;
+
+    private Constraint<Color> colorConstraint = new NoConstraint<>();
+    private Constraint<Integer> lineThicknessConstraint = new NoConstraint<>();
 
     public static final int OUTLINE_RECT = 0;
     public static final int FILLED_RECT = 1;
@@ -44,36 +49,6 @@ public class NewRectBehavior extends NewBehavior {
 
     public NewRectBehavior() {
         this(OUTLINE_RECT, Color.BLACK, 1, null);
-    }
-
-    /**
-     * Getters and setters
-     */
-    public int getType() {
-        return this.type;
-    }
-
-    public NewRectBehavior setType(int type) {
-        this.type = type;
-        return this;
-    }
-
-    public Color getColor() {
-        return this.color;
-    }
-
-    public NewRectBehavior setColor(Color color) {
-        this.color = color;
-        return this;
-    }
-
-    public int getLineThickness() {
-        return this.lineThickness;
-    }
-
-    public NewRectBehavior setLineThickness(int lineThickness) {
-        this.lineThickness = lineThickness;
-        return this;
     }
 
     /**
@@ -106,5 +81,72 @@ public class NewRectBehavior extends NewBehavior {
     public boolean isTrivial(GraphicalObject object) {
         Rect r = (Rect) object;
         return r.getWidth() <= 1 || r.getHeight() <= 1;
+    }
+
+    /**
+     * Getters and setters
+     */
+    public Color getColor() {
+        if (colorConstraint.isConstrained()) {
+            this.color = colorConstraint.evaluate();
+        }
+        return this.color;
+    }
+
+    public NewRectBehavior setColor(Color color) {
+        if (this.color != color) {
+            if (!colorConstraint.isConstrained()) {
+                this.color = color;
+                colorConstraint.notifyValueChange(false);
+            } else if (colorConstraint.hasCycle()) {
+                colorConstraint.setValue(color);
+                colorConstraint.notifyValueChange(false);
+            }
+        }
+        return this;
+    }
+
+    public NewRectBehavior setColor(Constraint<Color> constraint) {
+        colorConstraint.replaceWithConstraint(constraint);
+        colorConstraint = constraint;
+        colorConstraint.setValue(this.color);
+        colorConstraint.notifyValueChange(true);
+        return this;
+    }
+
+    public Constraint<Color> useColor() {
+        return this.colorConstraint;
+    }
+
+    public int getLineThickness() {
+        if (lineThicknessConstraint.isConstrained()) {
+            this.lineThickness = lineThicknessConstraint.evaluate();
+        }
+        return this.lineThickness;
+    }
+
+    public NewRectBehavior setLineThickness(int lineThickness) {
+        if (this.lineThickness != lineThickness) {
+            if (!lineThicknessConstraint.isConstrained()) {
+                this.lineThickness = lineThickness;
+                lineThicknessConstraint.notifyValueChange(false);
+            } else if (lineThicknessConstraint.hasCycle()) {
+                lineThicknessConstraint.setValue(lineThickness);
+                lineThicknessConstraint.notifyValueChange(false);
+            }
+        }
+        return this;
+    }
+
+    public NewRectBehavior setLineThickness(Constraint<Integer> constraint) {
+        lineThicknessConstraint.replaceWithConstraint(constraint);
+        lineThicknessConstraint = constraint;
+        lineThicknessConstraint.setValue(this.lineThickness);
+        lineThicknessConstraint.notifyValueChange(true);
+        return this;
+    }
+
+    public Constraint<Integer> useLineThickness() {
+        return this.lineThicknessConstraint;
     }
 }

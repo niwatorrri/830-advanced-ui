@@ -122,7 +122,7 @@ public abstract class NewBehavior implements Behavior {
             this.startX = eventInGroup.x;
             this.startY = eventInGroup.y;
             if (this.rectLike) {
-                newObject = make(startX, startY, 1, 1, constraint);
+                newObject = make(startX, startY, 0, 0, constraint);
             } else { // line-like or one-point
                 newObject = make(startX, startY, startX, startY, constraint);
             }

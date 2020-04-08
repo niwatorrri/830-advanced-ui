@@ -2,6 +2,8 @@ package behavior;
 
 import java.awt.Color;
 
+import constraint.Constraint;
+import constraint.NoConstraint;
 import constraint.SetupConstraint;
 import graphics.object.GraphicalObject;
 import graphics.object.Line;
@@ -13,6 +15,9 @@ public class NewLineBehavior extends NewBehavior {
      */
     private Color color;
     private int lineThickness;
+
+    private Constraint<Color> colorConstraint = new NoConstraint<>();
+    private Constraint<Integer> lineThicknessConstraint = new NoConstraint<>();
 
     /**
      * NewLineBehavior constructor
@@ -36,27 +41,6 @@ public class NewLineBehavior extends NewBehavior {
     }
 
     /**
-     * Getters and setters
-     */
-    public Color getColor() {
-        return this.color;
-    }
-
-    public NewLineBehavior setColor(Color color) {
-        this.color = color;
-        return this;
-    }
-
-    public int getLineThickness() {
-        return this.lineThickness;
-    }
-
-    public NewLineBehavior setLineThickness(int lineThickness) {
-        this.lineThickness = lineThickness;
-        return this;
-    }
-
-    /**
      * Implement abstract methods in NewBehavior class
      */
     public GraphicalObject make(int x1, int y1, int x2, int y2, SetupConstraint constraint) {
@@ -76,5 +60,72 @@ public class NewLineBehavior extends NewBehavior {
     public boolean isTrivial(GraphicalObject object) {
         Line l = (Line) object;
         return (l.getX1() == l.getX2() && l.getY1() == l.getY2());
+    }
+
+    /**
+     * Getters and setters
+     */
+    public Color getColor() {
+        if (colorConstraint.isConstrained()) {
+            this.color = colorConstraint.evaluate();
+        }
+        return this.color;
+    }
+
+    public NewLineBehavior setColor(Color color) {
+        if (this.color != color) {
+            if (!colorConstraint.isConstrained()) {
+                this.color = color;
+                colorConstraint.notifyValueChange(false);
+            } else if (colorConstraint.hasCycle()) {
+                colorConstraint.setValue(color);
+                colorConstraint.notifyValueChange(false);
+            }
+        }
+        return this;
+    }
+
+    public NewLineBehavior setColor(Constraint<Color> constraint) {
+        colorConstraint.replaceWithConstraint(constraint);
+        colorConstraint = constraint;
+        colorConstraint.setValue(this.color);
+        colorConstraint.notifyValueChange(true);
+        return this;
+    }
+
+    public Constraint<Color> useColor() {
+        return this.colorConstraint;
+    }
+
+    public int getLineThickness() {
+        if (lineThicknessConstraint.isConstrained()) {
+            this.lineThickness = lineThicknessConstraint.evaluate();
+        }
+        return this.lineThickness;
+    }
+
+    public NewLineBehavior setLineThickness(int lineThickness) {
+        if (this.lineThickness != lineThickness) {
+            if (!lineThicknessConstraint.isConstrained()) {
+                this.lineThickness = lineThickness;
+                lineThicknessConstraint.notifyValueChange(false);
+            } else if (lineThicknessConstraint.hasCycle()) {
+                lineThicknessConstraint.setValue(lineThickness);
+                lineThicknessConstraint.notifyValueChange(false);
+            }
+        }
+        return this;
+    }
+
+    public NewLineBehavior setLineThickness(Constraint<Integer> constraint) {
+        lineThicknessConstraint.replaceWithConstraint(constraint);
+        lineThicknessConstraint = constraint;
+        lineThicknessConstraint.setValue(this.lineThickness);
+        lineThicknessConstraint.notifyValueChange(true);
+        return this;
+    }
+
+    public Constraint<Integer> useLineThickness() {
+        return this.lineThicknessConstraint;
     }
 }
