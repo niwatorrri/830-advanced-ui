@@ -20,7 +20,6 @@ public class CheckBox extends SelectableOutlineRect {
         this.label = label;
 
         int boxSize = 14;
-        int indicatorSize = 10;
         this.setWidth(boxSize);
         this.setHeight(boxSize);
         indicator = new Text("✔");

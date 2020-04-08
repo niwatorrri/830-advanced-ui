@@ -26,12 +26,14 @@ public class Widget implements Group {
      * Methods defined in the Group interface
      */
     public Widget addChild(GraphicalObject child) {
-        widget.addChild(child);
+        widget.addChild(child).resizeToChildren();
         return this;
     }
 
     public Widget addChildren(GraphicalObject... children) {
-        widget.addChildren(children);
+        for (GraphicalObject child : children) {
+            this.addChild(child);
+        }
         return this;
     }
 
@@ -41,7 +43,9 @@ public class Widget implements Group {
     }
 
     public Widget removeChildren(GraphicalObject... children) {
-        widget.removeChildren(children);
+        for (GraphicalObject child : children) {
+            this.removeChild(child);
+        }
         return this;
     }
 

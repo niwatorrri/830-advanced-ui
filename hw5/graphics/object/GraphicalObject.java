@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Shape;
 
+import constraint.Constraint;
 import graphics.group.Group;
 
 public interface GraphicalObject {
@@ -14,4 +15,8 @@ public interface GraphicalObject {
     public void setGroup(Group group);
     public boolean contains(int x, int y);
     public boolean contains(Point pt);
+
+    // Setup position constraints for widget components
+    public void setX(Constraint<Integer> constraint);
+    public void setY(Constraint<Integer> constraint);
 }

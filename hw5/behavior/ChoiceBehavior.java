@@ -20,7 +20,7 @@ public class ChoiceBehavior implements Behavior {
     private boolean firstOnly;  // control interimSelected in running
     private boolean startInGroup;
     private SelectableGraphicalObject firstObject;
-    private List<GraphicalObject> selection = new ArrayList<>();
+    private List<SelectableGraphicalObject> selection = new ArrayList<>();
 
     // Static constants for selection type
     public static final int SINGLE = 0;
@@ -101,8 +101,8 @@ public class ChoiceBehavior implements Behavior {
         return this;
     }
 
-    public List<GraphicalObject> getSelection() {
-        return new ArrayList<GraphicalObject>(selection);
+    public List<SelectableGraphicalObject> getSelection() {
+        return new ArrayList<SelectableGraphicalObject>(selection);
     }
 
     // Compare behavior based on their priorities
@@ -121,8 +121,8 @@ public class ChoiceBehavior implements Behavior {
 
     // De-select all the selected objects
     private void clearSelection() {
-        for (GraphicalObject selectedObject : selection) {
-            ((SelectableGraphicalObject) selectedObject).setSelected(false);
+        for (SelectableGraphicalObject selectedObject : selection) {
+            selectedObject.setSelected(false);
         }
         selection.clear();
     }
@@ -247,7 +247,7 @@ public class ChoiceBehavior implements Behavior {
                 }
                 if (targetObject == null) { // not end on a child
                     this.state = IDLE;
-                    return true;
+                    return false;
                 }
             }
 

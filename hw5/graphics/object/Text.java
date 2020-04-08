@@ -4,15 +4,14 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Shape;
 import java.awt.RenderingHints;
+import java.awt.Shape;
 import java.awt.font.FontRenderContext;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 
-import graphics.group.Group;
 import constraint.Constraint;
 import constraint.NoConstraint;
+import graphics.group.Group;
 
 public class Text implements GraphicalObject {
     /**
@@ -22,8 +21,9 @@ public class Text implements GraphicalObject {
     private int x, y;
     private Font font;
     private Color color;
-    private AffineTransform transform = null;
     private Group group = null;
+
+    private FontRenderContext context = new FontRenderContext(null, true, false);
 
     public static final Font DEFAULT_FONT = new Font(Font.MONOSPACED, Font.PLAIN, 12);
 
@@ -215,6 +215,29 @@ public class Text implements GraphicalObject {
     }
 
     /**
+     * Text-specific attributes
+     */
+    public int getAscent() {
+        return (int) getFont().getLineMetrics("", context).getAscent();
+    }
+
+    public int getDescent() {
+        return (int) getFont().getLineMetrics("", context).getDescent();
+    }
+
+    public int getLeading() {
+        return (int) getFont().getLineMetrics("", context).getLeading();
+    }
+
+    public int getWidth() {
+        return (int) getFont().getStringBounds(getText(), context).getWidth();
+    }
+
+    public int getHeight() {
+        return (int) getFont().getLineMetrics("", context).getHeight();
+    }
+
+    /**
      * Methods defined in the GraphicalObject interface
      */
     public void draw(Graphics2D graphics, Shape clipShape) {
@@ -235,8 +258,7 @@ public class Text implements GraphicalObject {
         graphics.setFont(font);
         graphics.setColor(color);
 
-        transform = graphics.getTransform();
-        FontRenderContext context = new FontRenderContext(transform, true, false);
+        context = graphics.getFontRenderContext();
         int textHeight = (int) font.getLineMetrics("", context).getHeight();
         for (String line : text.split("\n")) {  // deal with newlines
             graphics.drawString(line, x, y);
@@ -250,7 +272,6 @@ public class Text implements GraphicalObject {
         // The bounding box includes leading
         String text = getText();
         Font font = getFont();
-        FontRenderContext context = new FontRenderContext(transform, true, false);
 
         double totalWidth = 0, totalHeight = 0;
         Rectangle2D box = null;
@@ -292,7 +313,7 @@ public class Text implements GraphicalObject {
     public boolean contains(int x, int y) {
         return getBoundingBox().contains(x, y);
     }
-    
+
     public boolean contains(Point pt) {
         return contains(pt.x, pt.y);
     }

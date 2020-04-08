@@ -6,9 +6,9 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Shape;
 
-import graphics.group.Group;
 import constraint.Constraint;
 import constraint.NoConstraint;
+import graphics.group.Group;
 
 public class Line implements GraphicalObject {
     /**
@@ -233,6 +233,14 @@ public class Line implements GraphicalObject {
         return this.lineThicknessConstraint;
     }
 
+    public void setX(Constraint<Integer> constraint) {
+        setX1(constraint);
+    }
+
+    public void setY(Constraint<Integer> constraint) {
+        setY1(constraint);
+    }
+
     /**
      * Methods defined in the GraphicalObject interface
      */
@@ -318,7 +326,7 @@ public class Line implements GraphicalObject {
         return ((projection.x - x1) * (projection.x - x2) <= 0)
                 && (distance < tolerance / 2);
     }
-    
+
     public boolean contains(Point pt) {
         return contains(pt.x, pt.y);
     }

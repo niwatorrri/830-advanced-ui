@@ -276,7 +276,7 @@ public class OutlineRect implements Rect {
     public boolean contains(int x, int y) {
         return getBoundingBox().contains(x, y);
     }
-    
+
     public boolean contains(Point pt) {
         return contains(pt.x, pt.y);
     }

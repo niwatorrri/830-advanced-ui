@@ -38,8 +38,9 @@ public class ButtonPanel extends Widget {
         this(0, 0, true, SINGLE);
     }
 
+    @Override
     public Widget addChild(GraphicalObject child) {
-        widget.addChild(child).resizeToChildren();
+        super.addChild(child);
 
         SelectableFilledRect r = ((Button) child).getBox();
         r.setColor(new Constraint<Color>(r.useInterimSelected(), r.useSelected()) {
@@ -51,13 +52,6 @@ public class ButtonPanel extends Widget {
                 }
             }
         });
-        return this;
-    }
-
-    public Widget addChildren(GraphicalObject... children) {
-        for (GraphicalObject child : children) {
-            addChild(child);
-        }
         return this;
     }
 

@@ -26,13 +26,14 @@ public class RadioButtonPanel extends Widget {
     }
 
     public RadioButtonPanel(int x, int y) {
-        this(x, y, VERTICAL_LAYOUT, 10);
+        this(x, y, VERTICAL_LAYOUT, 5);
     }
 
     public RadioButtonPanel() {
         this(0, 0);
     }
 
+    @Override
     public Widget addChild(GraphicalObject child) {
         super.addChild(child);
 
@@ -47,13 +48,6 @@ public class RadioButtonPanel extends Widget {
                 }
             }
         });
-        return this;
-    }
-
-    public Widget addChildren(GraphicalObject... children) {
-        for (GraphicalObject child : children) {
-            addChild(child);
-        }
         return this;
     }
 

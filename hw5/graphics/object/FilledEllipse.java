@@ -245,7 +245,7 @@ public class FilledEllipse implements Rect {
         return square(x - centerX) / square(axisX)
                 + square(y - centerY) / square(axisY) <= 1.0;
     }
-    
+
     public boolean contains(Point pt) {
         return contains(pt.x, pt.y);
     }

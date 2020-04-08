@@ -228,14 +228,6 @@ public class InteractiveWindowGroup extends JFrame implements Group {
         canvas.repaint();
     }
 
-    public void setX(Constraint<Integer> constraint) {
-
-    }
-
-    public void setY(Constraint<Integer> constraint) {
-
-    }
-
     /**
      * Methods defined in the Group and GraphicalObject interfaces
      */
@@ -271,6 +263,16 @@ public class InteractiveWindowGroup extends JFrame implements Group {
             removeChild(child);
         }
         return this;
+    }
+
+    public List<GraphicalObject> getChildren() {
+        List<GraphicalObject> children = new ArrayList<>();
+        children.add(topGroup);
+        return children;
+    }
+
+    public Group getTopGroup() {
+        return topGroup;
     }
 
     public InteractiveWindowGroup addBehavior(Behavior behavior) {
@@ -327,12 +329,6 @@ public class InteractiveWindowGroup extends JFrame implements Group {
         return this;
     }
 
-    public List<GraphicalObject> getChildren() {
-        List<GraphicalObject> children = new ArrayList<>();
-        children.add(topGroup);
-        return children;
-    }
-
     public Point parentToChild(Point pt) {
         return pt;
     }
@@ -360,5 +356,11 @@ public class InteractiveWindowGroup extends JFrame implements Group {
 
     public boolean contains(int x, int y) {
         return getBoundingBox().contains(x, y);
+    }
+
+    public void setX(Constraint<Integer> constraint) {
+    }
+
+    public void setY(Constraint<Integer> constraint) {
     }
 }

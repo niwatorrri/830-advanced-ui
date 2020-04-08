@@ -132,6 +132,10 @@ public class NumberSlider extends Widget {
         this(x, y, 0, 100, 10, HORIZONTAL_LAYOUT);
     }
 
+    public NumberSlider() {
+        this(0, 0);
+    }
+
     private class LimitedFilledEllipse extends FilledEllipse {
         private int lower, upper;
 

@@ -102,4 +102,9 @@ public class RadioButton extends SelectableEllipse {
             Math.max(getHeight(), r.getHeight())
         );
     }
+
+    @Override
+    public boolean contains(int x, int y) {
+        return getBoundingBox().contains(x, y);
+    }
 }
