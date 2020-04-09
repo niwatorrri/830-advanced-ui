@@ -1,10 +1,25 @@
 import java.awt.Color;
 
-import behavior.*;
-import constraint.*;
-import graphics.group.*;
-import graphics.object.*;
-import widget.*;
+import behavior.BehaviorEvent;
+import behavior.ChoiceBehavior;
+import behavior.InteractiveWindowGroup;
+import behavior.MoveBehavior;
+import constraint.Constraint;
+import constraint.SetupConstraint;
+import graphics.group.Group;
+import graphics.group.LayoutGroup;
+import graphics.group.SimpleGroup;
+import graphics.object.GraphicalObject;
+import graphics.object.Line;
+import graphics.object.Text;
+import widget.Button;
+import widget.ButtonPanel;
+import widget.CheckBox;
+import widget.CheckBoxPanel;
+import widget.NumberSlider;
+import widget.RadioButton;
+import widget.RadioButtonPanel;
+import widget.Widget;
 
 public class MyNodeEditor extends InteractiveWindowGroup {
     /**
@@ -117,8 +132,7 @@ public class MyNodeEditor extends InteractiveWindowGroup {
                 });
 
         Group selectionPanel =
-            new LayoutGroup(20, 20, SEPARATION_LEFT, WINDOW_HEIGHT, 
-                        LayoutGroup.VERTICAL, 20)
+            new LayoutGroup(20, 20, SEPARATION_LEFT, WINDOW_HEIGHT, LayoutGroup.VERTICAL, 20)
                 .addChildren(
                     lineColorText, lineColors, boxStyleText, boxStyles,
                     lineThicknessText, lineThicknessSlider, deleteText, deleteButton

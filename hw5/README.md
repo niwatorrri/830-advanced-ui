@@ -41,7 +41,7 @@ Number sliders are more appropriate for numerical values. The `NumberSlider` cla
             new CheckBox("A Checkbox Item"),
             new CheckBox(new FilledRect(0, 0, 20, 30, Color.GREEN))
         ),
-        new NumberSlider(200, 200, 0, 100, 1, Widget.HORIZONTAL_LAYOUT)
+        new NumberSlider(200, 200, 0, 100, 1, NumberSlider.HORIZONTAL_LAYOUT)
     );
 ```
 
