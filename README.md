@@ -6,3 +6,5 @@
 - HW3: Implement a Constraint System for the Graphics System
 - HW4: Implement an Input Model for the Graphics System
 - HW5: Implement some widgets and build an editor out of the system
+
+From HW2 through HW5, each homework is built upon all previous implementations
