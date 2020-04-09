@@ -10,7 +10,7 @@ To be specific, I used a `visited` flag and adopted a depth-first search (DFS)-l
 
 ## Implementation
 
-The constraint network is represented as a dependency graph, whose nodes are represented by `Dependency` objects and edges are represented by `Edge` objects, both defined in `Constraint.java`. To avoid introducing too many terms, I wrapped around the `Dependency` class so that the `Constraint` class serves as an alias of `Dependency` that is more familiar to users. The most important members of the `Dependency` class include out-of-date mark, list of incoming edges and list of outgoing edges. An `Edge` object represents a directed edge, including its start, its end (both are `Dependency` objects), and a pending mark. The constraint solver described in the previous section is basically implemented in `Constraint.evaluate()` (and `markOutOfDate()`). A `hasCycle()` method is also implemented to help detect cycles.
+The constraint network is represented as a dependency graph, whose nodes are represented by `Dependency` objects and edges are represented by `Edge` objects, both defined in `Dependency.java`. To avoid introducing too many terms, I wrapped around the `Dependency` class so that the `Constraint` class serves as an alias of `Dependency` that is more familiar to users. The most important members of the `Dependency` class include out-of-date mark, list of incoming edges and list of outgoing edges. An `Edge` object represents a directed edge, including its start, its end (both are `Dependency` objects), and a pending mark. The constraint solver described in the previous section is basically implemented in `Constraint.evaluate()` (and `markOutOfDate()`). A `hasCycle()` method is also implemented to help detect cycles.
 
 To fit this graph structure into the retained graphics system, all classes needs to be modified. Take `OutlineRect` class as an example. Each attribute has its own constraint as a class member, e.g., `xConstraint`, `yConstraint`, `colorConstraint`, etc., which are all instantiations of some kind of `Constraint<T>`. For each attribute, there is a getter `getX()`, two setters `setX()` that takes either a value or a new constraint, and a "user" `useX()` that returns the corresponding constraint member. Whenever there is a constraint, getter will evaluate the constraint, which might report constraint conflicts in `evaluate()`, and then return the evaluation result. When setter takes a constraint, the original constraint is replaced in the graph, and this change is notified to the outgoing neighbors. When setter takes a value, this value will only be accepted if the attribute is not constrained, or the attribute is involved in a cycle in the graph. If the value change is accepted, the neighbors are notified and the out-of-date marking process begins. The "user" is mostly for convenience of maintaining list of dependencies.
 
@@ -45,7 +45,7 @@ For example:
   });
 ```
 
-This statement sets up a constraint `redRect.x = blueRect.x + 50`. Note that the dependencies MUST be accurately specified. If you pass more or fewer dependencies, the system might not work as expected. The `getValue()` method in the anonymous class can be implemented to realize arbitrary equality constraints. The solver is robust against exceptions that occur in `getValue()`. The name for the constraint is optional, but specifying an understandable name can help you see better if an error is reported from the constraint solver.
+This statement sets up a constraint `redRect.x = blueRect.x + 50`. Note that the dependencies MUST be accurately specified. If you pass fewer dependencies than needed, the system will not work as expected. The `getValue()` method in the anonymous class can be implemented to realize arbitrary equality constraints. The solver is robust against exceptions that occur in `getValue()`. The name for the constraint is optional, but specifying an understandable name can help you see better if an error is reported from the constraint solver.
 
 Another example:
 
@@ -63,7 +63,7 @@ Another example:
 
 This statement sets up a constraint `sizeText.text = 'width=<blueRect.width> height=<blueRect.height>'`. Note that the constrained variable can be of arbitrary type, including `String` . A constraint name is not specified here. This constraint involves two dependencies as specified in the constructor arguments.
 
-To express multi-way constraints, you have to specify formula for each way you want tu support. A multi-way constraint involves cycles, and it can be successfully evaluated only if the given formulas are consistent, i.e., no contradiction exists. Otherwise, an error will be output to `stderr`. Here is an example:
+To express multi-way constraints, you have to specify formula for each way you want tu support. A multi-way constraint involves cycles, and it can be successfully evaluated only if the given formulas are consistent, i.e., no contradiction exists. Otherwise, an error will be output to stderr. Here is an example:
 
 ```java
   redRect.setX(new Constraint<Integer>(
