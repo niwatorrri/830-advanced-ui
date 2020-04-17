@@ -1,9 +1,12 @@
+package ui.editor;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 
 import ui.toolkit.constraint.Constraint;
 import ui.toolkit.graphics.object.FilledRect;
+import ui.toolkit.graphics.object.Text;
 import ui.toolkit.graphics.object.selectable.SelectableOutlineRect;
 
 public class Box extends SelectableOutlineRect {
