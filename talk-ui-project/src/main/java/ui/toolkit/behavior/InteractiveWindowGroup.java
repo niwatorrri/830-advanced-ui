@@ -355,4 +355,11 @@ public class InteractiveWindowGroup extends JFrame implements Group {
 
     public void setY(Constraint<Integer> constraint) {
     }
+
+    /**
+     * @return the canvas
+     */
+    public JComponent getCanvas() {
+        return canvas;
+    }
 }

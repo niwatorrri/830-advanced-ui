@@ -40,6 +40,7 @@ public class PropertySheet extends JPanel {
                 }
             }
             this.parentFrame = parentFrame;
+            this.parentFrame.redraw();
         } catch (IntrospectionException exception) {
             exception.printStackTrace();
         }
@@ -62,6 +63,7 @@ public class PropertySheet extends JPanel {
             final Method setter = descriptor.getWriteMethod();
             if (setter == null)
                 return null;
+
             final PropertyEditor editor;
             Class editorClass = descriptor.getPropertyEditorClass();
             if (editorClass != null)
@@ -82,11 +84,14 @@ public class PropertySheet extends JPanel {
 
                         setter.invoke(bean, new Object[] { editor.getValue() });
                         parentFrame.redraw();
+
                         if (DEBUG) {
                             System.out.println("set invoked with new value " + editor.getValue());
                         }
                     } catch (IllegalAccessException exception) {
+                        exception.printStackTrace();
                     } catch (InvocationTargetException exception) {
+                        exception.printStackTrace();
                     }
                 }
             });

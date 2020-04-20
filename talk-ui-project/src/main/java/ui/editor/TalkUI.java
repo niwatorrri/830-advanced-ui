@@ -2,26 +2,18 @@ package ui.editor;
 
 import java.awt.Color;
 
-import ui.toolkit.behavior.BehaviorEvent;
-import ui.toolkit.behavior.ChoiceBehavior;
+import javax.swing.JComponent;
+import javax.swing.JScrollPane;
+
 import ui.toolkit.behavior.InteractiveWindowGroup;
-import ui.toolkit.behavior.MoveBehavior;
-import ui.toolkit.constraint.Constraint;
-import ui.toolkit.constraint.SetupConstraint;
 import ui.toolkit.graphics.group.Group;
 import ui.toolkit.graphics.group.LayoutGroup;
 import ui.toolkit.graphics.group.SimpleGroup;
-import ui.toolkit.graphics.object.GraphicalObject;
 import ui.toolkit.graphics.object.Line;
 import ui.toolkit.graphics.object.Text;
-import ui.toolkit.widget.Button;
-import ui.toolkit.widget.ButtonPanel;
-import ui.toolkit.widget.CheckBox;
-import ui.toolkit.widget.CheckBoxPanel;
-import ui.toolkit.widget.NumberSlider;
+import ui.toolkit.widget.PropertySheet;
 import ui.toolkit.widget.RadioButton;
 import ui.toolkit.widget.RadioButtonPanel;
-import ui.toolkit.widget.Widget;
 
 public class TalkUI extends InteractiveWindowGroup {
     private static final long serialVersionUID = 1L;
@@ -43,21 +35,7 @@ public class TalkUI extends InteractiveWindowGroup {
     public TalkUI() {
         super("TalkUI Editor", WINDOW_WIDTH, WINDOW_HEIGHT);
 
-        // setup groups and separation line
-        Line separationLine = new Line(SEPARATION_LEFT, 0, SEPARATION_LEFT, WINDOW_HEIGHT, Color.BLACK, 2);
-
-        Group voiceControlPlane = new LayoutGroup(0, 0, CONTROL_PLANE_WIDTH, VOICE_PLANE_HEIGHT, LayoutGroup.VERTICAL,
-                20);
-        // the (x, y) does not matter since the control plane is a LayoutGroup
-        Group propertyControlPlane = new LayoutGroup(0, VOICE_PLANE_HEIGHT, CONTROL_PLANE_WIDTH, PROPERTY_PLANE_HEIGHT,
-                LayoutGroup.VERTICAL, 20);
-        // set the offset to BORDER_GAP
-        Group controlPlane = new LayoutGroup(BORDER_GAP, BORDER_GAP, CONTROL_PLANE_WIDTH, CONTROL_PLANE_HEIGHT,
-                LayoutGroup.VERTICAL, BORDER_GAP).addChildren(voiceControlPlane, propertyControlPlane);
-
-        Group drawingPanel = new SimpleGroup(SEPARATION_LEFT, 0, SEPARATION_RIGHT, WINDOW_HEIGHT);
-
-        // add example widget
+        // create example widget
         RadioButtonPanel radioPanel = new RadioButtonPanel(50, 50)
                 .addChildren(new RadioButton(new Line(0, 10, 40, 10, Color.BLACK, 3)),
                         new RadioButton(new Line(0, 10, 40, 10, Color.BLUE, 3)),
@@ -65,15 +43,33 @@ public class TalkUI extends InteractiveWindowGroup {
                         new RadioButton(new Line(0, 10, 40, 10, Color.CYAN, 3)))
                 .setSelection("one");
 
-        drawingPanel.addChild(radioPanel);
+        // setup groups and separation line
+        Line separationLine = new Line(SEPARATION_LEFT, 0, SEPARATION_LEFT, WINDOW_HEIGHT, Color.BLACK, 2);
 
+        Group voiceControlPlane = new LayoutGroup(0, 0, CONTROL_PLANE_WIDTH, VOICE_PLANE_HEIGHT, LayoutGroup.VERTICAL,
+                20);
         // add plane texts
         Text voicePlaneText = new Text("Voice Control Plane");
-        Text propertyPlaneText = new Text("Property Change Plane");
-
         voiceControlPlane.addChild(voicePlaneText);
-        propertyControlPlane.addChild(propertyPlaneText);
+
+        // the (x, y) does not matter since the control plane is a LayoutGroup
+        // TODO: should use radioPanel.getValue() to get active value, but somehow the
+        // active value after init is null, though in the UI first radio button selected
+        PropertySheet psheet = new PropertySheet(radioPanel.getChildren().get(0), this);
+        JComponent propertyControlPlane = new JScrollPane(psheet);
+        propertyControlPlane.setBounds(BORDER_GAP, (CONTROL_PLANE_HEIGHT) / 2 + BORDER_GAP, CONTROL_PLANE_WIDTH,
+                PROPERTY_PLANE_HEIGHT);
+        getCanvas().add(propertyControlPlane);
+
+        // set the offset to BORDER_GAP
+        Group controlPlane = new LayoutGroup(BORDER_GAP, BORDER_GAP, CONTROL_PLANE_WIDTH, CONTROL_PLANE_HEIGHT,
+                LayoutGroup.VERTICAL, BORDER_GAP).addChildren(voiceControlPlane);
+
+        Group drawingPanel = new SimpleGroup(SEPARATION_LEFT, 0, SEPARATION_RIGHT, WINDOW_HEIGHT);
+
+        drawingPanel.addChild(radioPanel);
 
         addChildren(controlPlane, separationLine, drawingPanel);
+
     }
 }
