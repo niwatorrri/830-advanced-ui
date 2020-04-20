@@ -61,6 +61,10 @@ public class TalkUI extends InteractiveWindowGroup {
                 PROPERTY_PLANE_HEIGHT);
         getCanvas().add(propertyControlPlane);
 
+        // TODO: the property sheet should be updated with the active value, may need
+        // coordination with voice control part (e.g. the newly created graphical object
+        // is the active and we set the property sheet with it)
+
         // set the offset to BORDER_GAP
         Group controlPlane = new LayoutGroup(BORDER_GAP, BORDER_GAP, CONTROL_PLANE_WIDTH, CONTROL_PLANE_HEIGHT,
                 LayoutGroup.VERTICAL, BORDER_GAP).addChildren(voiceControlPlane);
