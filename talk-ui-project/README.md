@@ -21,6 +21,7 @@
 Current code organization in src/main/java:
 ```
 ui
+|__  talk (Talk UI main interface)
 |___ toolkit
 |       |___ behavior
 |       |___ constraint
@@ -29,7 +30,7 @@ ui
 |___ editor (my editor implemented out of the toolkit)
 ```
 
-Main class is specified in line 78 in pom.xml. Command `mvn exec:java` will start running the main class.
+Command `mvn exec:java` will start running the main class.
 
 READMEs for the package:
 
