@@ -75,7 +75,13 @@
           <artifactId>exec-maven-plugin</artifactId>
           <version>1.2.1</version>
           <configuration>
-              <mainClass>ui.editor.MyNodeEditor</mainClass>               
+              <mainClass>ui.talk.TalkUI</mainClass>      
+              <arguments>
+                <argument>--sessionId</argument>
+                <argument>${sessionId}</argument>
+                <argument>--projectId</argument>
+                <argument>${projectId}</argument>
+              </arguments>         
           </configuration>
         </plugin>
         <!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->

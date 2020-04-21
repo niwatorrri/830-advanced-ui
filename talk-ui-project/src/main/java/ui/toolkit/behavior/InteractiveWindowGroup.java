@@ -75,6 +75,7 @@ public class InteractiveWindowGroup extends JFrame implements Group {
         this.pack();
         this.setVisible(true);
         this.makeBuffer(width, height);
+        this.redraw(topGroup);
         this.insets = getInsets();
     }
 
