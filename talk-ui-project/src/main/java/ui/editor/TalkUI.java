@@ -15,6 +15,7 @@ import ui.toolkit.widget.PropertySheet;
 import ui.toolkit.widget.RadioButton;
 import ui.toolkit.widget.RadioButtonPanel;
 
+// TODO: integrate this into the dialogflow branch's ui folder
 public class TalkUI extends InteractiveWindowGroup {
     private static final long serialVersionUID = 1L;
 
