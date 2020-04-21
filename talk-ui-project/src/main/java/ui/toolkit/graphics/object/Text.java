@@ -49,7 +49,7 @@ public class Text implements GraphicalObject {
     }
 
     public Text(String text) {
-        this(text, 0, 0);
+        this(text, 10, 10);
     }
 
     public Text() {
