@@ -2,6 +2,8 @@
 
 ## Update Log
 
+Note that the projectID in pom.xml has been changed! Get the correct service account credentials to work.
+
 (04/21/2020) A skeleton of speech to graphics
 
 1. Added ui.talk.TalkUI and changed main class to this

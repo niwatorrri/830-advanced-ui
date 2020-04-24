@@ -14,6 +14,8 @@ import javax.sound.sampled.AudioFileFormat;
 
 public class AudioRecorder {
     /**
+     * AudioRecorder class
+     * 
      * Main reference:
      * https://www.codejava.net/coding/capture-and-record-sound-into-wav-file-with-java-sound-api
      */
@@ -22,13 +24,10 @@ public class AudioRecorder {
     private TargetDataLine line = null;
 
     // path of the wav file
-    public final String audioFilePath = "resources/recording.wav";
-    public final File audioFile = new File(audioFilePath);
+    private String audioFilePath = "resources/recording.wav";
 
-    // format of audio file
-    public final AudioFileFormat.Type fileType = AudioFileFormat.Type.WAVE;
-
-    private static final int DEFAULT_RECORD_TIME = 10;
+    // default recording time limit
+    private static final int DEFAULT_RECORD_TIME = 15;
 
     /**
      * Captures the sound and record into a WAV file
@@ -43,6 +42,9 @@ public class AudioRecorder {
             // start recording
             AudioInputStream ais = new AudioInputStream(line);
             System.out.println("Start recording...");
+
+            AudioFileFormat.Type fileType = AudioFileFormat.Type.WAVE;
+            File audioFile = new File(audioFilePath);
             AudioSystem.write(ais, fileType, audioFile);
 
         } catch (LineUnavailableException ex) {
@@ -84,6 +86,18 @@ public class AudioRecorder {
 
     public void record() {
         record(DEFAULT_RECORD_TIME);
+    }
+
+    /**
+     * Getters and setters
+     */
+    public String getAudioFilePath() {
+        return this.audioFilePath;
+    }
+
+    public AudioRecorder setAudioFilePath(String audioFilePath) {
+        this.audioFilePath = audioFilePath;
+        return this;
     }
 
     /**
