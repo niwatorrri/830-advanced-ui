@@ -15,7 +15,7 @@ import ui.toolkit.behavior.InteractiveWindowGroup;
  * A component filled with editors for all editable properties of an object.
  */
 public class PropertySheet extends JPanel {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     private InteractiveWindowGroup parentFrame;
     private Object activeBean;
 
