@@ -1,7 +1,11 @@
 package ui.editor;
 
 import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 
@@ -9,12 +13,16 @@ import ui.toolkit.behavior.InteractiveWindowGroup;
 import ui.toolkit.graphics.group.Group;
 import ui.toolkit.graphics.group.LayoutGroup;
 import ui.toolkit.graphics.group.SimpleGroup;
+import ui.toolkit.graphics.object.BoundaryRectangle;
 import ui.toolkit.graphics.object.GraphicalObject;
 import ui.toolkit.graphics.object.Line;
 import ui.toolkit.graphics.object.Text;
+import ui.toolkit.widget.Button;
+import ui.toolkit.widget.ButtonPanel;
 import ui.toolkit.widget.PropertySheet;
 import ui.toolkit.widget.RadioButton;
 import ui.toolkit.widget.RadioButtonPanel;
+import ui.toolkit.widget.Widget;
 
 // TODO: integrate this into the dialogflow branch's ui folder
 public class TalkUI extends InteractiveWindowGroup {
@@ -29,6 +37,8 @@ public class TalkUI extends InteractiveWindowGroup {
     private static final int CONTROL_PLANE_HEIGHT = WINDOW_HEIGHT - BORDER_GAP * 2;
     private static final int VOICE_PLANE_HEIGHT = (CONTROL_PLANE_HEIGHT) / 2 - BORDER_GAP;
     private static final int PROPERTY_PLANE_HEIGHT = CONTROL_PLANE_HEIGHT - VOICE_PLANE_HEIGHT - BORDER_GAP;
+
+    private Group controlPlane, drawingPanel, voiceControlPlane;
 
     public static void main(String[] args) {
         new TalkUI();
@@ -48,11 +58,28 @@ public class TalkUI extends InteractiveWindowGroup {
         // setup groups and separation line
         Line separationLine = new Line(SEPARATION_LEFT, 0, SEPARATION_LEFT, WINDOW_HEIGHT, Color.BLACK, 2);
 
-        Group voiceControlPlane = new LayoutGroup(0, 0, CONTROL_PLANE_WIDTH, VOICE_PLANE_HEIGHT, LayoutGroup.VERTICAL,
-                20);
+        voiceControlPlane = new LayoutGroup(0, 0, CONTROL_PLANE_WIDTH, VOICE_PLANE_HEIGHT, LayoutGroup.VERTICAL, 20);
         // add plane texts
         Text voicePlaneText = new Text("Voice Control Plane");
-        voiceControlPlane.addChild(voicePlaneText);
+        Widget<?> exportButton = new ButtonPanel(0, 0, false, ButtonPanel.MULTIPLE).addChild(new Button("Save"))
+                .setCallback(o -> {
+                    try {
+                        if (drawingPanel == null)
+                            return;
+                        BoundaryRectangle drawingBbox = drawingPanel.getBoundingBox();
+                        // retrieve image
+                        BufferedImage bi = getBufferedImage().getSubimage(drawingBbox.x, drawingBbox.y,
+                                drawingBbox.width, drawingBbox.height);
+
+                        File outputfile = new File("saved.png");
+                        ImageIO.write(bi, "png", outputfile);
+                        System.out.println("Canvas saved!");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+
+        voiceControlPlane.addChildren(voicePlaneText, exportButton);
 
         // the (x, y) does not matter since the control plane is a LayoutGroup
         // TODO: should use radioPanel.getValue() to get active value, but somehow the
@@ -73,10 +100,10 @@ public class TalkUI extends InteractiveWindowGroup {
         getCanvas().add(propertyControlPlane);
 
         // set the offset to BORDER_GAP
-        Group controlPlane = new LayoutGroup(BORDER_GAP, BORDER_GAP, CONTROL_PLANE_WIDTH, CONTROL_PLANE_HEIGHT,
+        controlPlane = new LayoutGroup(BORDER_GAP, BORDER_GAP, CONTROL_PLANE_WIDTH, CONTROL_PLANE_HEIGHT,
                 LayoutGroup.VERTICAL, BORDER_GAP).addChildren(voiceControlPlane);
 
-        Group drawingPanel = new SimpleGroup(SEPARATION_LEFT, 0, SEPARATION_RIGHT, WINDOW_HEIGHT);
+        drawingPanel = new SimpleGroup(SEPARATION_LEFT, 0, SEPARATION_RIGHT, WINDOW_HEIGHT);
 
         drawingPanel.addChild(radioPanel);
 

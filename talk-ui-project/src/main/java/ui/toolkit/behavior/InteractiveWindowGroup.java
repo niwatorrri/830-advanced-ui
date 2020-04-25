@@ -222,6 +222,10 @@ public class InteractiveWindowGroup extends JFrame implements Group {
         this.redraw(topGroup);
     }
 
+    public BufferedImage getBufferedImage() {
+        return buffer;
+    }
+
     /**
      * Methods defined in the Group and GraphicalObject interfaces
      */
