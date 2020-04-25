@@ -1,5 +1,6 @@
 package ui.toolkit.graphics.group;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Shape;
@@ -18,8 +19,8 @@ public class LayoutGroup implements Group {
     /**
      * LayoutGroup class
      * 
-     * Automatically places its children in a certain layout
-     * Options include horizontal, vertical and grid layouts
+     * Automatically places its children in a certain layout Options include
+     * horizontal, vertical and grid layouts
      */
     private int x, y, width, height;
     private int layout, offset;
@@ -30,6 +31,7 @@ public class LayoutGroup implements Group {
     private List<Behavior> behaviors = new ArrayList<>();
     private List<Behavior> behaviorsToAdd = new ArrayList<>();
     private List<Behavior> behaviorsToRemove = new ArrayList<>();
+    private static final boolean DEBUG = true;
 
     public static final int HORIZONTAL = 0;
     public static final int VERTICAL = 1;
@@ -57,8 +59,7 @@ public class LayoutGroup implements Group {
         checkIfSupportedLayout(layout);
     }
 
-    public LayoutGroup(int x, int y, int width, int height, int layout, int offset,
-            int nRows, int nColumns) {
+    public LayoutGroup(int x, int y, int width, int height, int layout, int offset, int nRows, int nColumns) {
         this(x, y, width, height, layout, offset);
         this.nRows = nRows;
         this.nColumns = nColumns;
@@ -398,6 +399,12 @@ public class LayoutGroup implements Group {
             child.draw(graphics, childClipShape);
         }
         graphics.translate(-x, -y);
+
+        if (DEBUG) {
+            BoundaryRectangle bbox = getBoundingBox();
+            graphics.setColor(Color.red);
+            graphics.drawRect(bbox.x, bbox.y, bbox.width, bbox.height);
+        }
     }
 
     public BoundaryRectangle getBoundingBox() {
