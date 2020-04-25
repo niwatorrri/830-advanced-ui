@@ -17,6 +17,7 @@ import ui.toolkit.behavior.InteractiveWindowGroup;
 public class PropertySheet extends JPanel {
     private static final boolean DEBUG = true;
     private InteractiveWindowGroup parentFrame;
+    private Object activeBean;
 
     /**
      * Constructs a property sheet that shows the editable properties of a given
@@ -25,6 +26,19 @@ public class PropertySheet extends JPanel {
      * @param object the object whose properties are being edited
      */
     public PropertySheet(Object bean, InteractiveWindowGroup parentFrame) {
+        this.parentFrame = parentFrame;
+        updatePropertySheet(bean);
+    }
+
+    public void updatePropertySheet(Object bean) {
+        if (activeBean == bean) {
+            if (DEBUG) {
+                System.out.println("old bean.");
+            }
+            return;
+        }
+        removeAll();
+        activeBean = bean;
         try {
             BeanInfo info = Introspector.getBeanInfo(bean.getClass());
             PropertyDescriptor[] descriptors = info.getPropertyDescriptors();
@@ -39,8 +53,9 @@ public class PropertySheet extends JPanel {
                     add(getEditorComponent(editor));
                 }
             }
-            this.parentFrame = parentFrame;
-            this.parentFrame.redraw();
+
+            parentFrame.getCanvas().updateUI();
+            parentFrame.getCanvas().repaint();
         } catch (IntrospectionException exception) {
             exception.printStackTrace();
         }
@@ -84,7 +99,6 @@ public class PropertySheet extends JPanel {
 
                         setter.invoke(bean, new Object[] { editor.getValue() });
                         parentFrame.redraw();
-
                         if (DEBUG) {
                             System.out.println("set invoked with new value " + editor.getValue());
                         }

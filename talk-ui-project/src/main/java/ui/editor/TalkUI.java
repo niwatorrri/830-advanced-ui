@@ -9,6 +9,7 @@ import ui.toolkit.behavior.InteractiveWindowGroup;
 import ui.toolkit.graphics.group.Group;
 import ui.toolkit.graphics.group.LayoutGroup;
 import ui.toolkit.graphics.group.SimpleGroup;
+import ui.toolkit.graphics.object.GraphicalObject;
 import ui.toolkit.graphics.object.Line;
 import ui.toolkit.graphics.object.Text;
 import ui.toolkit.widget.PropertySheet;
@@ -57,14 +58,19 @@ public class TalkUI extends InteractiveWindowGroup {
         // TODO: should use radioPanel.getValue() to get active value, but somehow the
         // active value after init is null, though in the UI first radio button selected
         PropertySheet psheet = new PropertySheet(radioPanel.getChildren().get(0), this);
+        radioPanel.setCallback(o -> {
+            for (GraphicalObject child : radioPanel.getChildren()) {
+                if (((RadioButton) child).isSelected()) {
+                    System.out.println("update selection...");
+                    psheet.updatePropertySheet(child);
+                }
+            }
+        });
+
         JComponent propertyControlPlane = new JScrollPane(psheet);
         propertyControlPlane.setBounds(BORDER_GAP, (CONTROL_PLANE_HEIGHT) / 2 + BORDER_GAP, CONTROL_PLANE_WIDTH,
                 PROPERTY_PLANE_HEIGHT);
         getCanvas().add(propertyControlPlane);
-
-        // TODO: the property sheet should be updated with the active value, may need
-        // coordination with voice control part (e.g. the newly created graphical object
-        // is the active and we set the property sheet with it)
 
         // set the offset to BORDER_GAP
         Group controlPlane = new LayoutGroup(BORDER_GAP, BORDER_GAP, CONTROL_PLANE_WIDTH, CONTROL_PLANE_HEIGHT,

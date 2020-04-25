@@ -5,6 +5,7 @@ import java.awt.*;
 import javax.swing.*;
 
 import ui.toolkit.behavior.InteractiveWindowGroup;
+import ui.toolkit.graphics.object.GraphicalObject;
 import ui.toolkit.graphics.object.Line;
 import ui.toolkit.widget.PropertySheet;
 import ui.toolkit.widget.RadioButton;
@@ -32,6 +33,16 @@ public class PropertySheetTest extends InteractiveWindowGroup {
 
         PropertySheet editor = new PropertySheet(radioPanel.getChildren().get(0), this);
         JComponent pane = new JScrollPane(editor);
+
+        radioPanel.setCallback(o -> {
+            for (GraphicalObject child : radioPanel.getChildren()) {
+                if (((RadioButton) child).isSelected()) {
+                    System.out.println("update selection...");
+                    editor.updatePropertySheet(child);
+                }
+            }
+        });
+
         pane.setBounds(200, 100, 400, 300);
         getCanvas().add(pane);
         redraw();

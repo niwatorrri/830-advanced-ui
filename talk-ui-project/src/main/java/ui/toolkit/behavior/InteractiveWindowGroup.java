@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 import ui.toolkit.constraint.Constraint;
 import ui.toolkit.graphics.group.Group;
@@ -57,7 +58,7 @@ public class InteractiveWindowGroup extends JFrame implements Group {
         this.addMouseWheelListener(mouseListener);
         this.addKeyListener(new WindowKeyListener());
 
-        canvas = new JComponent() {
+        canvas = new JPanel() {
             private static final long serialVersionUID = 1L;
 
             public void paintComponent(Graphics graphics) {
@@ -66,6 +67,7 @@ public class InteractiveWindowGroup extends JFrame implements Group {
                 }
             }
         };
+        canvas.setLayout(null);
         canvas.setBackground(Color.white);
         canvas.setPreferredSize(new Dimension(width, height));
 
