@@ -49,8 +49,8 @@ public class DetectIntentAudio {
    * @param sessionId Identifier of the DetectIntent session.
    * @param languageCode Language code of the query.
    */
-  public static void detectIntentAudio(String projectId, String audioFilePath, String sessionId,
-      String languageCode)
+  public static QueryResult detectIntentAudio(
+      String projectId, String audioFilePath, String sessionId, String languageCode)
       throws Exception {
     // Instantiates a client
     try (SessionsClient sessionsClient = SessionsClient.create()) {
@@ -93,6 +93,7 @@ public class DetectIntentAudio {
       System.out.format("Detected Intent: %s (confidence: %f)\n",
           queryResult.getIntent().getDisplayName(), queryResult.getIntentDetectionConfidence());
       System.out.format("Fulfillment Text: '%s'\n", queryResult.getFulfillmentText());
+      return queryResult;
     }
   }
   // [END dialogflow_detect_intent_audio]

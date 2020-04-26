@@ -25,7 +25,7 @@ public class Text implements GraphicalObject {
 
     private FontRenderContext context = new FontRenderContext(null, true, false);
 
-    public static final Font DEFAULT_FONT = new Font(Font.MONOSPACED, Font.PLAIN, 12);
+    public static final Font DEFAULT_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, 12);
 
     private Constraint<String> textConstraint = new NoConstraint<>();
     private Constraint<Integer> xConstraint = new NoConstraint<>();
@@ -49,7 +49,7 @@ public class Text implements GraphicalObject {
     }
 
     public Text(String text) {
-        this(text, 0, 0);
+        this(text, 10, 10);
     }
 
     public Text() {

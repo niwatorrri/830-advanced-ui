@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 import ui.toolkit.constraint.Constraint;
 import ui.toolkit.graphics.group.Group;
@@ -39,8 +40,8 @@ public class InteractiveWindowGroup extends JFrame implements Group {
     private boolean behaviorsSorted = false;
 
     /**
-     * InteractiveWindowGroup constructor
-     * Make a top-level window with specified title, width and height
+     * InteractiveWindowGroup constructor Make a top-level window with specified
+     * title, width and height
      * 
      * @param title  the title of the window
      * @param width  the width of the window
@@ -57,14 +58,16 @@ public class InteractiveWindowGroup extends JFrame implements Group {
         this.addMouseWheelListener(mouseListener);
         this.addKeyListener(new WindowKeyListener());
 
-        canvas = new JComponent() {
+        canvas = new JPanel() {
             private static final long serialVersionUID = 1L;
+
             public void paintComponent(Graphics graphics) {
                 if (buffer != null) {
                     graphics.drawImage(buffer, 0, 0, null);
                 }
             }
         };
+        canvas.setLayout(null);
         canvas.setBackground(Color.white);
         canvas.setPreferredSize(new Dimension(width, height));
 
@@ -72,6 +75,7 @@ public class InteractiveWindowGroup extends JFrame implements Group {
         this.pack();
         this.setVisible(true);
         this.makeBuffer(width, height);
+        this.redraw(topGroup);
         this.insets = getInsets();
     }
 
@@ -131,11 +135,8 @@ public class InteractiveWindowGroup extends JFrame implements Group {
 
         // Convert an awt MouseEvent to our BehaviorEvent
         private BehaviorEvent getBehaviorEvent(MouseEvent event, int id) {
-            return new BehaviorEvent(
-                getModifiers(event),
-                getKey(event, id), id,
-                event.getX() - insets.left,
-                event.getY() - insets.top - 1  // at least this works on MacOS
+            return new BehaviorEvent(getModifiers(event), getKey(event, id), id, event.getX() - insets.left,
+                    event.getY() - insets.top - 1 // at least this works on MacOS
             );
         }
 
@@ -182,24 +183,14 @@ public class InteractiveWindowGroup extends JFrame implements Group {
 
         public void keyPressed(KeyEvent event) {
             Point cursor = getCursor();
-            handleBehaviorEvent(new BehaviorEvent(
-                getModifiers(event),
-                event.getKeyCode(),
-                BehaviorEvent.KEY_DOWN_ID,
-                cursor.x - insets.left,
-                cursor.y - insets.top
-            ));
+            handleBehaviorEvent(new BehaviorEvent(getModifiers(event), event.getKeyCode(), BehaviorEvent.KEY_DOWN_ID,
+                    cursor.x - insets.left, cursor.y - insets.top));
         }
 
         public void keyReleased(KeyEvent event) {
             Point cursor = getCursor();
-            handleBehaviorEvent(new BehaviorEvent(
-                getModifiers(event),
-                event.getKeyCode(),
-                BehaviorEvent.KEY_UP_ID,
-                cursor.x - insets.left,
-                cursor.y - insets.top
-            ));
+            handleBehaviorEvent(new BehaviorEvent(getModifiers(event), event.getKeyCode(), BehaviorEvent.KEY_UP_ID,
+                    cursor.x - insets.left, cursor.y - insets.top));
         }
     }
 
@@ -226,6 +217,14 @@ public class InteractiveWindowGroup extends JFrame implements Group {
         object.draw(graphics, r);
         graphics.dispose();
         canvas.repaint();
+    }
+
+    public void redraw() {
+        this.redraw(topGroup);
+    }
+
+    public BufferedImage getBufferedImage() {
+        return buffer;
     }
 
     /**
@@ -362,5 +361,12 @@ public class InteractiveWindowGroup extends JFrame implements Group {
     }
 
     public void setY(Constraint<Integer> constraint) {
+    }
+
+    /**
+     * @return the canvas
+     */
+    public JComponent getCanvas() {
+        return canvas;
     }
 }
