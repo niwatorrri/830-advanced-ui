@@ -12,7 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import javax.sound.sampled.AudioFileFormat;
 
-public class AudioRecorder {
+class AudioRecorder {
     /**
      * AudioRecorder class
      * 

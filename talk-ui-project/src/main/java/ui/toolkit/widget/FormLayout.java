@@ -1,4 +1,3 @@
-
 package ui.toolkit.widget;
 
 import java.awt.*;
@@ -13,14 +12,14 @@ class FormLayout implements LayoutManager {
         right = 0;
         height = 0;
         for (int i = 0; i < components.length; i += 2) {
-            Component cleft = components[i];
-            Component cright = components[i + 1];
+            Component cLeft = components[i];
+            Component cRight = components[i + 1];
 
-            Dimension dleft = cleft.getPreferredSize();
-            Dimension dright = cright.getPreferredSize();
-            left = Math.max(left, dleft.width);
-            right = Math.max(right, dright.width);
-            height = height + Math.max(dleft.height, dright.height);
+            Dimension dLeft = cLeft.getPreferredSize();
+            Dimension dRight = cRight.getPreferredSize();
+            left = Math.max(left, dLeft.width);
+            right = Math.max(right, dRight.width);
+            height = height + Math.max(dLeft.height, dRight.height);
         }
         return new Dimension(left + GAP + right, height);
     }
@@ -35,21 +34,21 @@ class FormLayout implements LayoutManager {
         Component[] components = parent.getComponents();
 
         Insets insets = parent.getInsets();
-        int xcenter = insets.left + left;
+        int xCenter = insets.left + left;
         int y = insets.top;
 
         for (int i = 0; i < components.length; i += 2) {
-            Component cleft = components[i];
-            Component cright = components[i + 1];
+            Component cLeft = components[i];
+            Component cRight = components[i + 1];
 
-            Dimension dleft = cleft.getPreferredSize();
-            Dimension dright = cright.getPreferredSize();
+            Dimension dLeft = cLeft.getPreferredSize();
+            Dimension dRight = cRight.getPreferredSize();
 
-            int height = Math.max(dleft.height, dright.height);
+            int height = Math.max(dLeft.height, dRight.height);
 
-            cleft.setBounds(xcenter - dleft.width, y + (height - dleft.height) / 2, dleft.width, dleft.height);
+            cLeft.setBounds(xCenter - dLeft.width, y + (height - dLeft.height) / 2, dLeft.width, dLeft.height);
 
-            cright.setBounds(xcenter + GAP, y + (height - dright.height) / 2, dright.width, dright.height);
+            cRight.setBounds(xCenter + GAP, y + (height - dRight.height) / 2, dRight.width, dRight.height);
             y += height;
         }
     }

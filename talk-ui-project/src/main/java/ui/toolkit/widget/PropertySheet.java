@@ -5,7 +5,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.beans.*;
 import java.lang.reflect.*;
-import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
@@ -15,6 +14,8 @@ import ui.toolkit.behavior.InteractiveWindowGroup;
  * A component filled with editors for all editable properties of an object.
  */
 public class PropertySheet extends JPanel {
+    private static final long serialVersionUID = 1L;
+
     private static final boolean DEBUG = false;
     private InteractiveWindowGroup parentFrame;
     private Object activeBean;
@@ -73,20 +74,21 @@ public class PropertySheet extends JPanel {
     public PropertyEditor getEditor(final Object bean, PropertyDescriptor descriptor) {
         try {
             Method getter = descriptor.getReadMethod();
-            if (getter == null)
-                return null;
             final Method setter = descriptor.getWriteMethod();
-            if (setter == null)
+            if (getter == null || setter == null) {
                 return null;
+            }
 
             final PropertyEditor editor;
-            Class editorClass = descriptor.getPropertyEditorClass();
-            if (editorClass != null)
+            Class<?> editorClass = descriptor.getPropertyEditorClass();
+            if (editorClass != null) {
                 editor = (PropertyEditor) editorClass.newInstance();
-            else
+            } else {
                 editor = PropertyEditorManager.findEditor(descriptor.getPropertyType());
-            if (editor == null)
+            }
+            if (editor == null) {
                 return null;
+            }
 
             Object value = getter.invoke(bean, new Object[] {});
             editor.setValue(value);
@@ -94,7 +96,7 @@ public class PropertySheet extends JPanel {
                 public void propertyChange(PropertyChangeEvent event) {
                     try {
                         if (DEBUG) {
-                            System.out.println("trying to invoke setter method " + setter.getName() + " ...");
+                            System.out.println("trying to invoke setter method " + setter.getName() + "...");
                         }
 
                         setter.invoke(bean, new Object[] { editor.getValue() });
@@ -153,8 +155,9 @@ public class PropertySheet extends JPanel {
                         g.translate(-x, -y);
                     }
                 });
-            } else
+            } else {
                 button.setText(buttonText(text));
+            }
             // pop up custom editor when button is clicked
             button.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
@@ -168,7 +171,7 @@ public class PropertySheet extends JPanel {
             return button;
         } else if (tags != null) {
             // make a combo box that shows all tags
-            final JComboBox comboBox = new JComboBox(tags);
+            final JComboBox<?> comboBox = new JComboBox<>(tags);
             comboBox.setSelectedItem(text);
             comboBox.addItemListener(new ItemListener() {
                 public void itemStateChanged(ItemEvent event) {
@@ -215,7 +218,6 @@ public class PropertySheet extends JPanel {
         return text;
     }
 
-    private ArrayList changeListeners = new ArrayList();
     private static final int WIDTH = 100;
     private static final int HEIGHT = 25;
     private static final int MAX_TEXT_LENGTH = 15;

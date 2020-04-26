@@ -94,3 +94,4 @@ fabric.properties
 
 credentials/
 recording.wav
+set_credentials.sh

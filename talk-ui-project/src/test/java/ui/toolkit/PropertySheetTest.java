@@ -20,7 +20,6 @@ public class PropertySheetTest extends InteractiveWindowGroup {
 
     public PropertySheetTest() {
         super("Property Sheet Test", 800, 600);
-        Line comp = new Line(100, 0, 100, 300, Color.BLACK, 2);
 
         RadioButtonPanel radioPanel = new RadioButtonPanel(50, 50)
                 .addChildren(new RadioButton(new Line(0, 10, 40, 10, Color.BLACK, 3)),
