@@ -3,8 +3,8 @@ package ui.talk;
 import static com.example.dialogflow.DetectIntentAudio.detectIntentAudio;
 
 import com.google.cloud.dialogflow.v2.QueryResult;
-import com.google.protobuf.Struct;
-import com.google.protobuf.Value;
+import com.speech.microphone.MicrophoneAnalyzer;
+import com.speech.TextToSpeech;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -20,7 +20,6 @@ import ui.toolkit.graphics.group.Group;
 import ui.toolkit.graphics.group.LayoutGroup;
 import ui.toolkit.graphics.group.SimpleGroup;
 import ui.toolkit.graphics.object.BoundaryRectangle;
-import ui.toolkit.graphics.object.FilledRect;
 import ui.toolkit.graphics.object.GraphicalObject;
 import ui.toolkit.graphics.object.Line;
 import ui.toolkit.graphics.object.Text;
@@ -31,7 +30,6 @@ import ui.toolkit.widget.RadioButton;
 import ui.toolkit.widget.RadioButtonPanel;
 import ui.toolkit.widget.Widget;
 
-// TODO: integrate this into the dialogflow branch's ui folder
 public class TalkUI extends InteractiveWindowGroup {
     private static final long serialVersionUID = 1L;
 
@@ -47,11 +45,13 @@ public class TalkUI extends InteractiveWindowGroup {
 
     private Group controlPlane, drawingPanel, voiceControlPlane;
 
-    private static String sessionId;
-    private static String projectId;
+    private String sessionId;
+    private String projectId;
 
     public static void main(String[] args) {
         // parse command line arguments
+        String sessionId = null;
+        String projectId = null;
         String command = args[0];
         if (command.equals("--sessionId")) {
             sessionId = args[1];
@@ -65,58 +65,70 @@ public class TalkUI extends InteractiveWindowGroup {
         new TalkUI(sessionId, projectId);
     }
 
-    public TalkUI() {
-
-    }
-
     public TalkUI(String sessionId, String projectId) {
         super("TalkUI Editor", WINDOW_WIDTH, WINDOW_HEIGHT);
-        makeGUI();
-        startListening();
+        this.sessionId = sessionId;
+        this.projectId = projectId;
+
+        Group drawingPanel = makeGUI();
+        MicrophoneAnalyzer mic = new MicrophoneAnalyzer();
+        TextToSpeech tts = new TextToSpeech();
+        listenForVoiceInput(mic, drawingPanel, tts);
     }
 
-    private void startListening() {
-        // caveat: if your device didn't prompt you to grant permission
-        // of your mic to this application, it's probably not going to work
-        final AudioRecorder recorder = new AudioRecorder();
-        // recorder.record(5);
+    private void listenForVoiceInput(MicrophoneAnalyzer mic, Group panel, TextToSpeech tts) {
+        while (true) {
+            mic.open();
+            final int THRESHOLD = 30;
+            int volume = mic.getAudioVolume();
+            boolean isSpeaking = (volume > THRESHOLD);
+            System.out.println("\tCurrent audio volumes: " + volume);
 
+            int audioLength = 0; // in seconds
+            if (isSpeaking) {
+                try {
+                    System.out.println("RECORDING...");
+                    mic.captureAudio();
+                    while (mic.getAudioVolume() > THRESHOLD) {
+                        System.out.println("\tCurrent audio volume: " + mic.getAudioVolume());
+                        Thread.sleep(1000);
+                        audioLength += 1;
+                    }
+                    System.out.println("Recording Complete!");
+                    System.out.println("Looping back");
+                    if (audioLength > 1) { // to avoid abrupt noise
+                        makeResponse(mic, panel, tts);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    System.out.println("Error Occurred");
+                } finally {
+                    mic.close();
+                }
+            }
+        }
+    }
+
+    private void makeResponse(MicrophoneAnalyzer mic, Group panel, TextToSpeech tts) {
+        String audioFilePath = mic.getAudioFilePath();
+        String languageCode = "en-US";
         QueryResult queryResult = null;
         try {
-            String audioFilePath = recorder.getAudioFilePath();
-            String languageCode = "en-US";
-            queryResult = detectIntentAudio(projectId, audioFilePath, sessionId, languageCode);
+            queryResult = detectIntentAudio(
+                projectId, audioFilePath, sessionId, languageCode,
+                mic.getAudioFormat().getSampleRate()
+            );
         } catch (Exception e) {
             System.err.println("Query failed: " + e);
         }
 
-        String intentName = queryResult.getIntent().getDisplayName();
+        HandleResponse.handle(queryResult, panel);
+        redraw();
 
-        if (intentName.equals(Intent.INITIALIZATION)) {
-            Struct parameters = queryResult.getParameters();
-
-            Value newObject = parameters.getFieldsOrDefault(Intent.InitializationParams.GRAPHICAL_OBJECT, null);
-            if (newObject != null) { // TODO: probably always not null?
-                switch (newObject.getStringValue()) {
-                    case Entity.GraphicalObjectType.FILLED_RECT: {
-                        int width = (int) parameters.getFieldsOrDefault(Intent.InitializationParams.WIDTH, null)
-                                .getNumberValue();
-                        int height = (int) parameters.getFieldsOrDefault(Intent.InitializationParams.HEIGHT, null)
-                                .getNumberValue();
-                        String color = parameters.getFieldsOrDefault(Intent.InitializationParams.COLOR, null)
-                                .getStringValue();
-                        System.out.println(width + " " + height + " " + color);
-                        addChild(new FilledRect(20, 20, width, height, Entity.stringToColor.get(color)));
-                    }
-                }
-            }
-        }
-
-        String detectedText = queryResult.getQueryText();
-        addChild(new Text(detectedText));
+        tts.speak(queryResult.getFulfillmentText());
     }
 
-    private void makeGUI() {
+    private Group makeGUI() {
         // create example widget
         RadioButtonPanel radioPanel = new RadioButtonPanel(50, 50)
                 .addChildren(new RadioButton(new Line(0, 10, 40, 10, Color.BLACK, 3)),
@@ -178,5 +190,6 @@ public class TalkUI extends InteractiveWindowGroup {
         drawingPanel.addChild(radioPanel);
 
         addChildren(controlPlane, separationLine, drawingPanel);
+        return drawingPanel;
     }
 }
