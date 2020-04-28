@@ -165,11 +165,8 @@ public class ChoiceBehavior implements Behavior {
             Point eventInGroup = findCoordinates(group, eventX, eventY);
             Point eventBesideGroup = group.childToParent(eventInGroup);
             if (!group.contains(eventBesideGroup)) {
-                System.out.println("drawing panel, bbox: " + group.getBoundingBox() + group.toString());
-                System.out.println("mouse pos" + eventBesideGroup);
                 return false;
             }
-            System.out.println("inside choice start");
             // find the object on which the event occurs
             this.startInGroup = true;
             List<GraphicalObject> children = group.getChildren();
