@@ -144,6 +144,8 @@ public class TalkUI extends InteractiveWindowGroup {
                     target[0] = getSelection().get(0);
                     System.out.println("found target: " + target[0]);
                 } catch (Exception e) {
+                    target[0] = null;
+                    System.out.println("no target found");
                 }
 
                 return eventConsumed;
