@@ -82,10 +82,7 @@ public class TalkUI extends InteractiveWindowGroup {
         MicrophoneAnalyzer mic = new MicrophoneAnalyzer();
         TextToSpeech tts = new TextToSpeech();
 
-        // start listener
-        listenForBehaviorInput();
-
-        // listenForVoiceInput(mic, drawingPanel, tts);
+        listenForVoiceInput(mic, drawingPanel, tts);
     }
 
     private void listenForVoiceInput(MicrophoneAnalyzer mic, Group panel, TextToSpeech tts) {
@@ -161,6 +158,14 @@ public class TalkUI extends InteractiveWindowGroup {
         try {
             queryResult = detectIntentAudio(projectId, audioFilePath, sessionId, languageCode,
                     mic.getAudioFormat().getSampleRate());
+                    
+            // TODO: should start listening for behavior events if in the interaction's
+            // follow up?
+            // Pair<SelectableGraphicalObject, Pair<BehaviorEvent, BehaviorEvent>> targetAndEvents = listenForBehaviorInput();
+            // SelectableGraphicalObject target = targetAndEvents.getLeft();
+            // BehaviorEvent startEvent = targetAndEvents.getRight().getLeft();
+            // BehaviorEvent stopEvent = targetAndEvents.getRight().getRight();
+
         } catch (Exception e) {
             System.err.println("Query failed: " + e);
         }
