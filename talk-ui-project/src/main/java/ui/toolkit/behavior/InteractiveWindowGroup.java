@@ -91,7 +91,6 @@ public class InteractiveWindowGroup extends JFrame implements Group {
         Behavior lastBehavior = behaviors.get(0);
         boolean eventConsumed = false;
         for (Behavior behavior : behaviors) {
-            System.out.println("behavior: " + behavior);
             if (eventConsumed && behavior.compareTo(lastBehavior) > 0) {
                 break;
             }
