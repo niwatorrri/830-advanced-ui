@@ -148,9 +148,10 @@ public class TalkUI extends InteractiveWindowGroup {
 
         // add a choice behavior to the drawing canvas to locate the target object
         drawingPanel.addBehavior(cBehavior);
+        addBehavior(cBehavior);
 
         // unregister the drawing canvas from
-        drawingPanel.removeBehavior(cBehavior);
+        // removeBehavior(cBehavior);
 
         return Pair.of(target[0], Pair.of(startEvent, stopEvent));
     }
