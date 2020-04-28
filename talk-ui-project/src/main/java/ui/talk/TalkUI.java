@@ -156,8 +156,9 @@ public class TalkUI extends InteractiveWindowGroup {
         drawingPanel.addBehavior(cBehavior);
         addBehavior(cBehavior);
 
-        // unregister the drawing canvas from
-        // removeBehavior(cBehavior);
+        // unregister the behavior from the drawing canvas
+        // TODO: recover this after the bug fixed
+        // drawingPanel.removeBehavior(cBehavior);
 
         return Pair.of(target[0], Pair.of(startEvent, stopEvent));
     }
