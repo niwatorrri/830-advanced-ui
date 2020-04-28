@@ -82,7 +82,10 @@ public class TalkUI extends InteractiveWindowGroup {
         MicrophoneAnalyzer mic = new MicrophoneAnalyzer();
         TextToSpeech tts = new TextToSpeech();
 
-        listenForVoiceInput(mic, drawingPanel, tts);
+        // TODO: testing purpose only, this should not be called here
+        Pair<SelectableGraphicalObject, Pair<BehaviorEvent, BehaviorEvent>> targetAndEvents = listenForBehaviorInput();
+
+        // listenForVoiceInput(mic, drawingPanel, tts);
     }
 
     private void listenForVoiceInput(MicrophoneAnalyzer mic, Group panel, TextToSpeech tts) {
@@ -137,16 +140,25 @@ public class TalkUI extends InteractiveWindowGroup {
             public boolean stop(BehaviorEvent event) {
                 boolean eventConsumed = super.stop(event);
                 // get the selected graphical object
-                target[0] = getSelection().get(0);
+                try {
+                    target[0] = getSelection().get(0);
+                    System.out.println("found target: " + target[0]);
+                } catch (Exception e) {
+                    target[0] = null;
+                    System.out.println("no target found");
+                }
+
                 return eventConsumed;
             }
         };
 
         // add a choice behavior to the drawing canvas to locate the target object
         drawingPanel.addBehavior(cBehavior);
+        addBehavior(cBehavior);
 
-        // unregister the drawing canvas from
-        drawingPanel.removeBehavior(cBehavior);
+        // unregister the behavior from the drawing canvas
+        // TODO: recover this after the bug fixed
+        // drawingPanel.removeBehavior(cBehavior);
 
         return Pair.of(target[0], Pair.of(startEvent, stopEvent));
     }
@@ -158,10 +170,11 @@ public class TalkUI extends InteractiveWindowGroup {
         try {
             queryResult = detectIntentAudio(projectId, audioFilePath, sessionId, languageCode,
                     mic.getAudioFormat().getSampleRate());
-                    
+
             // TODO: should start listening for behavior events if in the interaction's
             // follow up?
-            // Pair<SelectableGraphicalObject, Pair<BehaviorEvent, BehaviorEvent>> targetAndEvents = listenForBehaviorInput();
+            // Pair<SelectableGraphicalObject, Pair<BehaviorEvent, BehaviorEvent>>
+            // targetAndEvents = listenForBehaviorInput();
             // SelectableGraphicalObject target = targetAndEvents.getLeft();
             // BehaviorEvent startEvent = targetAndEvents.getRight().getLeft();
             // BehaviorEvent stopEvent = targetAndEvents.getRight().getRight();
