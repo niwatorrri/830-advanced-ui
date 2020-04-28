@@ -4,6 +4,9 @@ import static com.example.dialogflow.DetectIntentAudio.detectIntentAudio;
 
 import com.google.cloud.dialogflow.v2.QueryResult;
 import com.speech.microphone.MicrophoneAnalyzer;
+
+import org.apache.commons.lang3.tuple.Pair;
+
 import com.speech.TextToSpeech;
 
 import java.awt.Color;
@@ -15,6 +18,8 @@ import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 
+import ui.toolkit.behavior.BehaviorEvent;
+import ui.toolkit.behavior.ChoiceBehavior;
 import ui.toolkit.behavior.InteractiveWindowGroup;
 import ui.toolkit.graphics.group.Group;
 import ui.toolkit.graphics.group.LayoutGroup;
@@ -23,6 +28,7 @@ import ui.toolkit.graphics.object.BoundaryRectangle;
 import ui.toolkit.graphics.object.GraphicalObject;
 import ui.toolkit.graphics.object.Line;
 import ui.toolkit.graphics.object.Text;
+import ui.toolkit.graphics.object.selectable.SelectableFilledRect;
 import ui.toolkit.widget.Button;
 import ui.toolkit.widget.ButtonPanel;
 import ui.toolkit.widget.PropertySheet;
@@ -70,10 +76,15 @@ public class TalkUI extends InteractiveWindowGroup {
         this.sessionId = sessionId;
         this.projectId = projectId;
 
+        // TODO: drawingPanel is already a class attribute, seems no need to recreate it
         Group drawingPanel = makeGUI();
         MicrophoneAnalyzer mic = new MicrophoneAnalyzer();
         TextToSpeech tts = new TextToSpeech();
-        listenForVoiceInput(mic, drawingPanel, tts);
+
+        // start listener
+        listenForBehaviorInput();
+
+        // listenForVoiceInput(mic, drawingPanel, tts);
     }
 
     private void listenForVoiceInput(MicrophoneAnalyzer mic, Group panel, TextToSpeech tts) {
@@ -109,15 +120,30 @@ public class TalkUI extends InteractiveWindowGroup {
         }
     }
 
+    /**
+     * Start event listeners and send the behavior events to the factory object
+     * 
+     * returns the target object and the trigger event
+     */
+    private Pair<GraphicalObject, BehaviorEvent> listenForBehaviorInput() {
+        drawingPanel.addBehavior(new ChoiceBehavior(ChoiceBehavior.SINGLE, false) {
+            @Override
+            public boolean stop(BehaviorEvent event) {
+                boolean eventConsumed = super.stop(event);
+                System.out.println("stopped+1!");
+                return eventConsumed;
+            }
+        });
+        return Pair.of(null, null);
+    }
+
     private void makeResponse(MicrophoneAnalyzer mic, Group panel, TextToSpeech tts) {
         String audioFilePath = mic.getAudioFilePath();
         String languageCode = "en-US";
         QueryResult queryResult = null;
         try {
-            queryResult = detectIntentAudio(
-                projectId, audioFilePath, sessionId, languageCode,
-                mic.getAudioFormat().getSampleRate()
-            );
+            queryResult = detectIntentAudio(projectId, audioFilePath, sessionId, languageCode,
+                    mic.getAudioFormat().getSampleRate());
         } catch (Exception e) {
             System.err.println("Query failed: " + e);
         }
@@ -137,6 +163,8 @@ public class TalkUI extends InteractiveWindowGroup {
                         new RadioButton(new Line(0, 10, 40, 10, Color.CYAN, 3)))
                 .setSelection("one");
 
+        SelectableFilledRect sFilledRect = new SelectableFilledRect(200, 200, 40, 40, Color.PINK);
+
         // setup groups and separation line
         Line separationLine = new Line(SEPARATION_LEFT, 0, SEPARATION_LEFT, WINDOW_HEIGHT, Color.BLACK, 2);
 
@@ -150,8 +178,8 @@ public class TalkUI extends InteractiveWindowGroup {
                             return;
                         BoundaryRectangle drawingBox = drawingPanel.getBoundingBox();
                         // retrieve image
-                        BufferedImage bi = getBufferedImage().getSubimage(drawingBox.x, drawingBox.y,
-                                drawingBox.width, drawingBox.height);
+                        BufferedImage bi = getBufferedImage().getSubimage(drawingBox.x, drawingBox.y, drawingBox.width,
+                                drawingBox.height);
 
                         File outputFile = new File("saved.png");
                         ImageIO.write(bi, "png", outputFile);
@@ -187,7 +215,7 @@ public class TalkUI extends InteractiveWindowGroup {
 
         drawingPanel = new SimpleGroup(SEPARATION_LEFT, 0, SEPARATION_RIGHT, WINDOW_HEIGHT);
 
-        drawingPanel.addChild(radioPanel);
+        drawingPanel.addChildren(radioPanel, sFilledRect);
 
         addChildren(controlPlane, separationLine, drawingPanel);
         return drawingPanel;
