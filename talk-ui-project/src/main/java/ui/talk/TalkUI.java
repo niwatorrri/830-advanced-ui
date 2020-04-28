@@ -3,8 +3,6 @@ package ui.talk;
 import static com.example.dialogflow.DetectIntentAudio.detectIntentAudio;
 
 import com.google.cloud.dialogflow.v2.QueryResult;
-import com.google.protobuf.Struct;
-import com.google.protobuf.Value;
 import com.speech.microphone.MicrophoneAnalyzer;
 import com.speech.TextToSpeech;
 
@@ -22,7 +20,6 @@ import ui.toolkit.graphics.group.Group;
 import ui.toolkit.graphics.group.LayoutGroup;
 import ui.toolkit.graphics.group.SimpleGroup;
 import ui.toolkit.graphics.object.BoundaryRectangle;
-import ui.toolkit.graphics.object.FilledRect;
 import ui.toolkit.graphics.object.GraphicalObject;
 import ui.toolkit.graphics.object.Line;
 import ui.toolkit.graphics.object.Text;
@@ -33,7 +30,6 @@ import ui.toolkit.widget.RadioButton;
 import ui.toolkit.widget.RadioButtonPanel;
 import ui.toolkit.widget.Widget;
 
-// TODO: integrate this into the dialogflow branch's ui folder
 public class TalkUI extends InteractiveWindowGroup {
     private static final long serialVersionUID = 1L;
 
@@ -69,9 +65,6 @@ public class TalkUI extends InteractiveWindowGroup {
         new TalkUI(sessionId, projectId);
     }
 
-    public TalkUI() {
-    }
-
     public TalkUI(String sessionId, String projectId) {
         super("TalkUI Editor", WINDOW_WIDTH, WINDOW_HEIGHT);
         this.sessionId = sessionId;
@@ -80,10 +73,10 @@ public class TalkUI extends InteractiveWindowGroup {
         Group drawingPanel = makeGUI();
         MicrophoneAnalyzer mic = new MicrophoneAnalyzer();
         TextToSpeech tts = new TextToSpeech();
-        listenForInput(mic, drawingPanel, tts);
+        listenForVoiceInput(mic, drawingPanel, tts);
     }
 
-    private void listenForInput(MicrophoneAnalyzer mic, Group panel, TextToSpeech tts) {
+    private void listenForVoiceInput(MicrophoneAnalyzer mic, Group panel, TextToSpeech tts) {
         while (true) {
             mic.open();
             final int THRESHOLD = 30;
@@ -103,7 +96,7 @@ public class TalkUI extends InteractiveWindowGroup {
                     }
                     System.out.println("Recording Complete!");
                     System.out.println("Looping back");
-                    if (audioLength > 1) {
+                    if (audioLength > 1) { // to avoid abrupt noise
                         makeResponse(mic, panel, tts);
                     }
                 } catch (Exception e) {
@@ -129,30 +122,7 @@ public class TalkUI extends InteractiveWindowGroup {
             System.err.println("Query failed: " + e);
         }
 
-        String intentName = queryResult.getIntent().getDisplayName();
-
-        if (intentName.equals(Intent.INITIALIZATION)) {
-            Struct parameters = queryResult.getParameters();
-
-            Value newObject = parameters.getFieldsOrDefault(Intent.InitializationParams.GRAPHICAL_OBJECT, null);
-            if (newObject != null) { // TODO: probably always not null?
-                switch (newObject.getStringValue()) {
-                    case Entity.GraphicalObjectType.FILLED_RECT: {
-                        int width = (int) parameters.getFieldsOrDefault(Intent.InitializationParams.WIDTH, null)
-                                .getNumberValue();
-                        int height = (int) parameters.getFieldsOrDefault(Intent.InitializationParams.HEIGHT, null)
-                                .getNumberValue();
-                        String color = parameters.getFieldsOrDefault(Intent.InitializationParams.COLOR, null)
-                                .getStringValue();
-                        System.out.println(width + " " + height + " " + color);
-                        panel.addChild(new FilledRect(20, 20, width, height, Entity.stringToColor.get(color)));
-                    }
-                }
-            }
-        }
-
-        String detectedText = queryResult.getQueryText();
-        panel.addChild(new Text(detectedText));
+        HandleResponse.handle(queryResult, panel);
         redraw();
 
         tts.speak(queryResult.getFulfillmentText());
