@@ -82,7 +82,10 @@ public class TalkUI extends InteractiveWindowGroup {
         MicrophoneAnalyzer mic = new MicrophoneAnalyzer();
         TextToSpeech tts = new TextToSpeech();
 
-        listenForVoiceInput(mic, drawingPanel, tts);
+        // TODO: testing purpose only, this should not be called here
+        Pair<SelectableGraphicalObject, Pair<BehaviorEvent, BehaviorEvent>> targetAndEvents = listenForBehaviorInput();
+
+        // listenForVoiceInput(mic, drawingPanel, tts);
     }
 
     private void listenForVoiceInput(MicrophoneAnalyzer mic, Group panel, TextToSpeech tts) {
@@ -138,6 +141,7 @@ public class TalkUI extends InteractiveWindowGroup {
                 boolean eventConsumed = super.stop(event);
                 // get the selected graphical object
                 target[0] = getSelection().get(0);
+                System.out.println("found target: " + target[0]);
                 return eventConsumed;
             }
         };
@@ -158,10 +162,11 @@ public class TalkUI extends InteractiveWindowGroup {
         try {
             queryResult = detectIntentAudio(projectId, audioFilePath, sessionId, languageCode,
                     mic.getAudioFormat().getSampleRate());
-                    
+
             // TODO: should start listening for behavior events if in the interaction's
             // follow up?
-            // Pair<SelectableGraphicalObject, Pair<BehaviorEvent, BehaviorEvent>> targetAndEvents = listenForBehaviorInput();
+            // Pair<SelectableGraphicalObject, Pair<BehaviorEvent, BehaviorEvent>>
+            // targetAndEvents = listenForBehaviorInput();
             // SelectableGraphicalObject target = targetAndEvents.getLeft();
             // BehaviorEvent startEvent = targetAndEvents.getRight().getLeft();
             // BehaviorEvent stopEvent = targetAndEvents.getRight().getRight();

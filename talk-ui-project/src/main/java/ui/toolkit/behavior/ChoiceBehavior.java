@@ -165,8 +165,12 @@ public class ChoiceBehavior implements Behavior {
             Point eventInGroup = findCoordinates(group, eventX, eventY);
             Point eventBesideGroup = group.childToParent(eventInGroup);
             if (!group.contains(eventBesideGroup)) {
+                // TODO: delete this
+                System.out.println("in early return");
                 return false;
             }
+            // TODO: delete this
+            System.out.println("out early return");
             // find the object on which the event occurs
             this.startInGroup = true;
             List<GraphicalObject> children = group.getChildren();
