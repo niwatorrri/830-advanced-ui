@@ -29,6 +29,7 @@ import ui.toolkit.graphics.object.GraphicalObject;
 import ui.toolkit.graphics.object.Line;
 import ui.toolkit.graphics.object.Text;
 import ui.toolkit.graphics.object.selectable.SelectableFilledRect;
+import ui.toolkit.graphics.object.selectable.SelectableGraphicalObject;
 import ui.toolkit.widget.Button;
 import ui.toolkit.widget.ButtonPanel;
 import ui.toolkit.widget.PropertySheet;
@@ -123,18 +124,34 @@ public class TalkUI extends InteractiveWindowGroup {
     /**
      * Start event listeners and send the behavior events to the factory object
      * 
-     * returns the target object and the trigger event
+     * returns the target object and the trigger events (start and stop, default is
+     * mouse down and up)
      */
-    private Pair<GraphicalObject, BehaviorEvent> listenForBehaviorInput() {
-        drawingPanel.addBehavior(new ChoiceBehavior(ChoiceBehavior.SINGLE, false) {
+    private Pair<SelectableGraphicalObject, Pair<BehaviorEvent, BehaviorEvent>> listenForBehaviorInput() {
+        // use an array to get around assignment in the enclosing scope
+        SelectableGraphicalObject[] target = new SelectableGraphicalObject[1];
+        target[0] = null;
+        BehaviorEvent startEvent = BehaviorEvent.DEFAULT_START_EVENT;
+        BehaviorEvent stopEvent = BehaviorEvent.DEFAULT_STOP_EVENT;
+
+        // create a temporary choice behavior
+        ChoiceBehavior cBehavior = new ChoiceBehavior(ChoiceBehavior.SINGLE, false) {
             @Override
             public boolean stop(BehaviorEvent event) {
                 boolean eventConsumed = super.stop(event);
-                System.out.println("stopped+1!");
+                // get the selected graphical object
+                target[0] = getSelection().get(0);
                 return eventConsumed;
             }
-        });
-        return Pair.of(null, null);
+        };
+
+        // add a choice behavior to the drawing canvas to locate the target object
+        drawingPanel.addBehavior(cBehavior);
+
+        // unregister the drawing canvas from
+        drawingPanel.removeBehavior(cBehavior);
+
+        return Pair.of(target[0], Pair.of(startEvent, stopEvent));
     }
 
     private void makeResponse(MicrophoneAnalyzer mic, Group panel, TextToSpeech tts) {
