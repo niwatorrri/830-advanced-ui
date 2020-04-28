@@ -50,8 +50,12 @@ public class DetectIntentAudio {
    * @param languageCode Language code of the query.
    */
   public static QueryResult detectIntentAudio(
-      String projectId, String audioFilePath, String sessionId, String languageCode)
-      throws Exception {
+      String projectId,
+      String audioFilePath,
+      String sessionId,
+      String languageCode,
+      float sampleRateHertz
+    ) throws Exception {
     // Instantiates a client
     try (SessionsClient sessionsClient = SessionsClient.create()) {
       // Set the session name using the sessionId (UUID) and projectID (my-project-id)
@@ -61,13 +65,12 @@ public class DetectIntentAudio {
       // Note: hard coding audioEncoding and sampleRateHertz for simplicity.
       // Audio encoding of the audio content sent in the query request.
       AudioEncoding audioEncoding = AudioEncoding.AUDIO_ENCODING_LINEAR_16;
-      int sampleRateHertz = 16000;
 
       // Instructs the speech recognizer how to process the audio content.
       InputAudioConfig inputAudioConfig = InputAudioConfig.newBuilder()
           .setAudioEncoding(audioEncoding) // audioEncoding = AudioEncoding.AUDIO_ENCODING_LINEAR_16
           .setLanguageCode(languageCode) // languageCode = "en-US"
-          .setSampleRateHertz(sampleRateHertz) // sampleRateHertz = 16000
+          .setSampleRateHertz((int) sampleRateHertz) // sampleRateHertz
           .build();
 
       // Build the query with the InputAudioConfig
@@ -139,7 +142,8 @@ public class DetectIntentAudio {
           + "(Defaults to a random UUID.)");
     }
 
-    detectIntentAudio(projectId, audioFilePath, sessionId, languageCode);
+    float sampleRateHertz = 16000.0f;
+    detectIntentAudio(projectId, audioFilePath, sessionId, languageCode, sampleRateHertz);
   }
   // [END run_application]
 }

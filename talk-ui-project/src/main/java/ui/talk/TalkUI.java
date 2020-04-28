@@ -5,6 +5,8 @@ import static com.example.dialogflow.DetectIntentAudio.detectIntentAudio;
 import com.google.cloud.dialogflow.v2.QueryResult;
 import com.google.protobuf.Struct;
 import com.google.protobuf.Value;
+import com.speech.microphone.MicrophoneAnalyzer;
+import com.speech.TextToSpeech;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -47,11 +49,13 @@ public class TalkUI extends InteractiveWindowGroup {
 
     private Group controlPlane, drawingPanel, voiceControlPlane;
 
-    private static String sessionId;
-    private static String projectId;
+    private String sessionId;
+    private String projectId;
 
     public static void main(String[] args) {
         // parse command line arguments
+        String sessionId = null;
+        String projectId = null;
         String command = args[0];
         if (command.equals("--sessionId")) {
             sessionId = args[1];
@@ -66,26 +70,61 @@ public class TalkUI extends InteractiveWindowGroup {
     }
 
     public TalkUI() {
-
     }
 
     public TalkUI(String sessionId, String projectId) {
         super("TalkUI Editor", WINDOW_WIDTH, WINDOW_HEIGHT);
-        makeGUI();
-        startListening();
+        this.sessionId = sessionId;
+        this.projectId = projectId;
+
+        Group drawingPanel = makeGUI();
+        MicrophoneAnalyzer mic = new MicrophoneAnalyzer();
+        TextToSpeech tts = new TextToSpeech();
+        listenForInput(mic, drawingPanel, tts);
     }
 
-    private void startListening() {
-        // caveat: if your device didn't prompt you to grant permission
-        // of your mic to this application, it's probably not going to work
-        final AudioRecorder recorder = new AudioRecorder();
-        // recorder.record(5);
+    private void listenForInput(MicrophoneAnalyzer mic, Group panel, TextToSpeech tts) {
+        while (true) {
+            mic.open();
+            final int THRESHOLD = 30;
+            int volume = mic.getAudioVolume();
+            boolean isSpeaking = (volume > THRESHOLD);
+            System.out.println("\tCurrent audio volumes: " + volume);
 
+            int audioLength = 0; // in seconds
+            if (isSpeaking) {
+                try {
+                    System.out.println("RECORDING...");
+                    mic.captureAudio();
+                    while (mic.getAudioVolume() > THRESHOLD) {
+                        System.out.println("\tCurrent audio volume: " + mic.getAudioVolume());
+                        Thread.sleep(1000);
+                        audioLength += 1;
+                    }
+                    System.out.println("Recording Complete!");
+                    System.out.println("Looping back");
+                    if (audioLength > 1) {
+                        makeResponse(mic, panel, tts);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    System.out.println("Error Occurred");
+                } finally {
+                    mic.close();
+                }
+            }
+        }
+    }
+
+    private void makeResponse(MicrophoneAnalyzer mic, Group panel, TextToSpeech tts) {
+        String audioFilePath = mic.getAudioFilePath();
+        String languageCode = "en-US";
         QueryResult queryResult = null;
         try {
-            String audioFilePath = recorder.getAudioFilePath();
-            String languageCode = "en-US";
-            queryResult = detectIntentAudio(projectId, audioFilePath, sessionId, languageCode);
+            queryResult = detectIntentAudio(
+                projectId, audioFilePath, sessionId, languageCode,
+                mic.getAudioFormat().getSampleRate()
+            );
         } catch (Exception e) {
             System.err.println("Query failed: " + e);
         }
@@ -106,17 +145,20 @@ public class TalkUI extends InteractiveWindowGroup {
                         String color = parameters.getFieldsOrDefault(Intent.InitializationParams.COLOR, null)
                                 .getStringValue();
                         System.out.println(width + " " + height + " " + color);
-                        addChild(new FilledRect(20, 20, width, height, Entity.stringToColor.get(color)));
+                        panel.addChild(new FilledRect(20, 20, width, height, Entity.stringToColor.get(color)));
                     }
                 }
             }
         }
 
         String detectedText = queryResult.getQueryText();
-        addChild(new Text(detectedText));
+        panel.addChild(new Text(detectedText));
+        redraw();
+
+        tts.speak(queryResult.getFulfillmentText());
     }
 
-    private void makeGUI() {
+    private Group makeGUI() {
         // create example widget
         RadioButtonPanel radioPanel = new RadioButtonPanel(50, 50)
                 .addChildren(new RadioButton(new Line(0, 10, 40, 10, Color.BLACK, 3)),
@@ -178,5 +220,6 @@ public class TalkUI extends InteractiveWindowGroup {
         drawingPanel.addChild(radioPanel);
 
         addChildren(controlPlane, separationLine, drawingPanel);
+        return drawingPanel;
     }
 }
