@@ -140,8 +140,12 @@ public class TalkUI extends InteractiveWindowGroup {
             public boolean stop(BehaviorEvent event) {
                 boolean eventConsumed = super.stop(event);
                 // get the selected graphical object
-                target[0] = getSelection().get(0);
-                System.out.println("found target: " + target[0]);
+                try {
+                    target[0] = getSelection().get(0);
+                    System.out.println("found target: " + target[0]);
+                } catch (Exception e) {
+                }
+
                 return eventConsumed;
             }
         };
