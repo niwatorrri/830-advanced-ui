@@ -100,12 +100,13 @@ public class TalkUI extends InteractiveWindowGroup {
     }
 
     private void listenForVoiceInput(MicrophoneAnalyzer mic, TextToSpeech tts) {
+        System.out.println("Waiting for voice input...");
         while (true) {
             mic.open();
             final int THRESHOLD = 30;
             int volume = mic.getAudioVolume();
             boolean isSpeaking = (volume > THRESHOLD);
-            System.out.println("\tCurrent audio volumes: " + volume);
+            // System.out.println("\tCurrent audio volumes: " + volume);
 
             int audioLength = 0; // in seconds
             if (isSpeaking) {
@@ -114,8 +115,8 @@ public class TalkUI extends InteractiveWindowGroup {
                     mic.captureAudio();
                     while (mic.getAudioVolume() > THRESHOLD) {
                         System.out.println("\tCurrent audio volume: " + mic.getAudioVolume());
-                        Thread.sleep(1000);
-                        audioLength += 1;
+                        Thread.sleep(3000);
+                        audioLength += 3;
                     }
                     System.out.println("Recording Complete!");
                     System.out.println("Looping back");
@@ -191,45 +192,55 @@ public class TalkUI extends InteractiveWindowGroup {
             System.err.println("Query failed: " + e);
         }
 
-        GraphicalObject object = handler.handle(queryResult, drawingPanel);
+        if (queryResult != null) {
+            GraphicalObject object = handler.handle(queryResult, drawingPanel);
 
-        Text detectedText = new Text(queryResult.getQueryText());
-        Text responseText = new Text(queryResult.getFulfillmentText());
-        detectedText.setColor(Color.BLUE);
-        responseText.setColor(new Color(192, 0, 255)); // purple?
-        voiceControlPlane.addChildren(detectedText, responseText);
+            Text detectedText = new Text(queryResult.getQueryText());
+            Text responseText = new Text(queryResult.getFulfillmentText());
+            detectedText.setColor(Color.BLUE);
+            responseText.setColor(new Color(192, 0, 255)); // purple?
+            voiceControlPlane.addChildren(detectedText, responseText);
 
-        if (object != null) {
-            drawingPanel.addChild(object);
-            followCursor(object);
+            if (object != null) {
+                drawingPanel.addChild(object);
+                followCursor(object);
+            }
+            redraw();
+
+            tts.speak(responseText.getText());
+            System.out.println(placeX + " " + placeY);
+
+            if (object != null) {
+                while (placeX == null && placeY == null) {
+                    followCursor(object);
+                }
+            }
+
+            placeX = placeY = null;
+        } else {
+            System.out.println("Didn't hear anything or get a response.");
         }
-        redraw();
-
-        tts.speak(responseText.getText());
-        System.out.println(placeX + " " + placeY);
-
-        while (placeX == null && placeY == null) {
-            followCursor(object);
-        }
-        placeX = placeY = null;
     }
 
     private void followCursor(GraphicalObject object) {
         Point cursor = getMousePosition();
-        cursor = drawingPanel.parentToChild(cursor);
-        object.moveTo((int) cursor.getX(), (int) cursor.getY());
+
+        if (cursor != null) {
+            cursor = drawingPanel.parentToChild(cursor);
+            object.moveTo((int) cursor.getX(), (int) cursor.getY());
+        }
+
     }
 
     private void makeGUI() {
         // create example widget
-        RadioButtonPanel radioPanel = new RadioButtonPanel(50, 50)
+        RadioButtonPanel radioPanel = new RadioButtonPanel(600, 600)
                 .addChildren(new RadioButton(new Line(0, 10, 40, 10, Color.BLACK, 3)),
                         new RadioButton(new Line(0, 10, 40, 10, Color.BLUE, 3)),
                         new RadioButton(new Line(0, 10, 40, 10, Color.MAGENTA, 3)),
-                        new RadioButton(new Line(0, 10, 40, 10, Color.CYAN, 3)))
-                .setSelection("one");
+                        new RadioButton(new Line(0, 10, 40, 10, Color.CYAN, 3)));
 
-        SelectableFilledRect sFilledRect = new SelectableFilledRect(200, 200, 40, 40, Color.PINK);
+        // SelectableFilledRect sFilledRect = new SelectableFilledRect(200, 200, 40, 40, Color.PINK);
 
         // setup groups and separation line
         Line separationLine = new Line(SEPARATION_LEFT, 0, SEPARATION_LEFT, WINDOW_HEIGHT, Color.BLACK, 2);
@@ -281,8 +292,10 @@ public class TalkUI extends InteractiveWindowGroup {
 
         drawingPanel = new SimpleGroup(SEPARATION_LEFT, 0, SEPARATION_RIGHT, WINDOW_HEIGHT);
 
-        drawingPanel.addChildren(radioPanel, sFilledRect);
+        // drawingPanel.addChildren(radioPanel, sFilledRect);
 
         addChildren(controlPlane, separationLine, drawingPanel);
+
+        radioPanel.setSelection("one");
     }
 }
