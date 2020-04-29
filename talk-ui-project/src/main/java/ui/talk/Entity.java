@@ -16,6 +16,7 @@ class Entity {
 
     static final class GraphicalObjectType {
         static final String FILLED_RECT = "FilledRect";
+        static final String RADIO_BUTTON_PANEL = "RadioButtonPanel";
     }
 
     static Map<String, Color> stringToColor = new HashMap<>();

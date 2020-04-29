@@ -4,13 +4,15 @@ import com.google.cloud.dialogflow.v2.QueryResult;
 import com.google.protobuf.Struct;
 import com.google.protobuf.Value;
 
+import java.util.List;
+
 import ui.toolkit.graphics.group.Group;
 import ui.toolkit.graphics.object.FilledRect;
-import ui.toolkit.graphics.object.Text;
-
+import ui.toolkit.widget.RadioButton;
+import ui.toolkit.widget.RadioButtonPanel;
 
 class HandleResponse {
-    public static void handle(QueryResult queryResult, Group panel) {
+    public static void handle(QueryResult queryResult, Group drawingPanel) {
         String intentName = queryResult.getIntent().getDisplayName();
 
         if (intentName.equals(Intent.INITIALIZATION)) {
@@ -26,14 +28,21 @@ class HandleResponse {
                                 .getNumberValue();
                         String color = params.getFieldsOrDefault(Intent.InitializationParams.COLOR, null)
                                 .getStringValue();
-                        System.out.println(width + " " + height + " " + color);
-                        panel.addChild(new FilledRect(20, 20, width, height, Entity.stringToColor.get(color)));
+                        System.out.println("Extracted params: " + width + " " + height + " " + color);
+                        drawingPanel.addChild(new FilledRect(20, 20, width, height, Entity.stringToColor.get(color)));
+                    }
+                    case Entity.GraphicalObjectType.RADIO_BUTTON_PANEL: {
+                        List<Value> options = params.getFieldsOrDefault(Intent.InitializationParams.OPTIONS, null)
+                                .getListValue().getValuesList();
+                        RadioButtonPanel panel = new RadioButtonPanel();
+                        for (Value option : options) {
+                            RadioButton rb = new RadioButton(option.getStringValue());
+                            panel.addChild(rb);
+                        }
+                        drawingPanel.addChild(panel);
                     }
                 }
             }
         }
-
-        String detectedText = queryResult.getQueryText();
-        panel.addChild(new Text(detectedText));
     }
 }
