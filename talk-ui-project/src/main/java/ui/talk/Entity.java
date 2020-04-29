@@ -16,11 +16,23 @@ class Entity {
 
     static final class GraphicalObjectType {
         static final String FILLED_RECT = "FilledRect";
+        static final String OUTLINE_RECT = "OutlineRect";
+        static final String FILLED_ELLIPSE = "FilledEllipse";
+        static final String OUTLINE_ELLIPSE = "OutlineEllipse";
+        static final String TEXT = "Text";
+        static final String BUTTON_PANEL = "ButtonPanel";
+        static final String CHECKBOX_PANEL = "CheckboxPanel";
+        static final String RADIOBUTTON_PANEL = "RadioButtonPanel";
+        static final String NUMBER_SLIDER = "NumberSlider";
     }
 
     static Map<String, Color> stringToColor = new HashMap<>();
 
     static {
+        stringToColor.put("red", Color.RED);
+        stringToColor.put("green", Color.GREEN);
         stringToColor.put("blue", Color.BLUE);
+        stringToColor.put("yellow", Color.YELLOW);
+        stringToColor.put("brown", Color.ORANGE);
     }
 }

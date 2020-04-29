@@ -16,8 +16,8 @@ public class ChoiceBehavior implements Behavior {
     private int state = IDLE;
     private int priority = 0;
 
-    private int type;           // control selected in stop
-    private boolean firstOnly;  // control interimSelected in running
+    private int type; // control selected in stop
+    private boolean firstOnly; // control interimSelected in running
     private boolean startInGroup;
     private SelectableGraphicalObject firstObject;
 
@@ -167,7 +167,6 @@ public class ChoiceBehavior implements Behavior {
             if (!group.contains(eventBesideGroup)) {
                 return false;
             }
-
             // find the object on which the event occurs
             this.startInGroup = true;
             List<GraphicalObject> children = group.getChildren();
