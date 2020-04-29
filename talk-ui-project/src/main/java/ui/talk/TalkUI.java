@@ -114,12 +114,12 @@ public class TalkUI extends InteractiveWindowGroup {
                     System.out.println("RECORDING...");
                     mic.captureAudio();
                     while (mic.getAudioVolume() > THRESHOLD) {
-                        System.out.println("\tCurrent audio volume: " + mic.getAudioVolume());
-                        Thread.sleep(3000);
-                        audioLength += 3;
+                        //System.out.println("\tCurrent audio volume: " + mic.getAudioVolume());
+                        Thread.sleep(2000);
+                        audioLength += 2;
                     }
                     System.out.println("Recording Complete!");
-                    System.out.println("Looping back");
+                    // System.out.println("Looping back");
                     if (audioLength > -1) { // TODO: to avoid abrupt noise or not?
                         makeResponse(mic, tts);
                     }
@@ -199,7 +199,9 @@ public class TalkUI extends InteractiveWindowGroup {
             Text responseText = new Text(queryResult.getFulfillmentText());
             detectedText.setColor(Color.BLUE);
             responseText.setColor(new Color(192, 0, 255)); // purple?
-            voiceControlPlane.addChildren(detectedText, responseText);
+            voiceControlPlane.addChildToTop(detectedText);
+            voiceControlPlane.addChildToTop(responseText);
+
 
             if (object != null) {
                 drawingPanel.addChild(object);
@@ -245,7 +247,8 @@ public class TalkUI extends InteractiveWindowGroup {
         // setup groups and separation line
         Line separationLine = new Line(SEPARATION_LEFT, 0, SEPARATION_LEFT, WINDOW_HEIGHT, Color.BLACK, 2);
 
-        voiceControlPlane = new LayoutGroup(0, 0, CONTROL_PLANE_WIDTH, VOICE_PLANE_HEIGHT, LayoutGroup.VERTICAL, 20);
+        LayoutGroup voiceControlPrePlane = new LayoutGroup(0, 0, CONTROL_PLANE_WIDTH, 50, LayoutGroup.VERTICAL, 20);
+        voiceControlPlane = new LayoutGroup(0, 70, CONTROL_PLANE_WIDTH, VOICE_PLANE_HEIGHT, LayoutGroup.VERTICAL, 20);
         // add plane texts
         Text voicePlaneText = new Text("Voice Control Plane");
         Widget<?> exportButton = new ButtonPanel(0, 0, false, ButtonPanel.MULTIPLE).addChild(new Button("Save"))
@@ -266,7 +269,7 @@ public class TalkUI extends InteractiveWindowGroup {
                     }
                 });
 
-        voiceControlPlane.addChildren(voicePlaneText, exportButton);
+        voiceControlPrePlane.addChildren(voicePlaneText, exportButton);
 
         // the (x, y) does not matter since the control plane is a LayoutGroup
         // TODO: should use radioPanel.getValue() to get active value, but somehow the
@@ -288,11 +291,11 @@ public class TalkUI extends InteractiveWindowGroup {
 
         // set the offset to BORDER_GAP
         controlPlane = new LayoutGroup(BORDER_GAP, BORDER_GAP, CONTROL_PLANE_WIDTH, CONTROL_PLANE_HEIGHT,
-                LayoutGroup.VERTICAL, BORDER_GAP).addChildren(voiceControlPlane);
+                LayoutGroup.VERTICAL, BORDER_GAP).addChildren(voiceControlPrePlane, voiceControlPlane);
 
         drawingPanel = new SimpleGroup(SEPARATION_LEFT, 0, SEPARATION_RIGHT, WINDOW_HEIGHT);
 
-        // drawingPanel.addChildren(radioPanel, sFilledRect);
+        drawingPanel.addChildren(radioPanel);
 
         addChildren(controlPlane, separationLine, drawingPanel);
 

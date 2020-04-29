@@ -354,6 +354,11 @@ public class ScaledGroup implements Group {
         return this;
     }
 
+    @Override
+    public Group addChildToTop(GraphicalObject child) throws AlreadyHasGroupRunTimeException {
+        return null;
+    }
+
     public Group addBehavior(Behavior behavior) {
         if (behavior.getGroup() == null) {
             behavior.setGroup(this);

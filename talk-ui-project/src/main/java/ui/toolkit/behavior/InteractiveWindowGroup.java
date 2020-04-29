@@ -268,6 +268,11 @@ public class InteractiveWindowGroup extends JFrame implements Group {
         return this;
     }
 
+    @Override
+    public Group addChildToTop(GraphicalObject child) throws AlreadyHasGroupRunTimeException {
+        return null;
+    }
+
     public List<GraphicalObject> getChildren() {
         return new ArrayList<GraphicalObject>(children);
     }

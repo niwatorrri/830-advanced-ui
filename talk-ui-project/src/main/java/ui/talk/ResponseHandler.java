@@ -46,7 +46,7 @@ class ResponseHandler {
                 int height = (int) params.getFieldsOrDefault(Intent.InitializationParams.HEIGHT, null).getNumberValue();
                 String color = params.getFieldsOrDefault(Intent.InitializationParams.COLOR, null).getStringValue();
                 System.out.println("Drawing FilledRect: " + width + " " + height + " " + color);
-                return new FilledRect(20, 20, width, height, Entity.stringToColor.get(color));
+                return new FilledRect(20, 20, width, height, Color.GREEN);
             }
 
             case Entity.GraphicalObjectType.FILLED_ELLIPSE: {
@@ -61,7 +61,7 @@ class ResponseHandler {
                 String text = params.getFieldsOrDefault(Intent.InitializationParams.TEXT, null).getStringValue();
                 String color = params.getFieldsOrDefault(Intent.InitializationParams.COLOR, null).getStringValue();
                 System.out.println("Drawing Text: " + text + " " + color);
-                return new Text(text, 20, 20, Text.DEFAULT_FONT, Entity.stringToColor.get(color));
+                return new Text(text, 20, 20, Text.DEFAULT_FONT, Color.BLACK);
             }
 
             case Entity.GraphicalObjectType.RADIOBUTTON_PANEL: {
@@ -121,7 +121,12 @@ class ResponseHandler {
 
                         if (bowl == null && go instanceof FilledEllipse) {
                             bowl = (FilledEllipse) go;
-                            System.out.println("Found circle 1: " + bowl.getColor());
+
+                            if (bowl.getHeight() < 100) {
+                                bowl = null;
+                            } else {
+                                System.out.println("Found circle 1: " + bowl.getColor());
+                            }
                         }
                     }
 

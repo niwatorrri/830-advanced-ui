@@ -13,6 +13,8 @@ public interface Group extends GraphicalObject {
     public Group removeChild(GraphicalObject child);
     public Group removeChildren(GraphicalObject... children);
 
+    public Group addChildToTop(GraphicalObject child) throws AlreadyHasGroupRunTimeException;
+
     public Group bringChildToFront(GraphicalObject child);
     public Group resizeToChildren();
     public List<GraphicalObject> getChildren();
