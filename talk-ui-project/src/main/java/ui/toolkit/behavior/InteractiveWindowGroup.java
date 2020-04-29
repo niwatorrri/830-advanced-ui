@@ -273,7 +273,6 @@ public class InteractiveWindowGroup extends JFrame implements Group {
     }
 
     public InteractiveWindowGroup addBehavior(Behavior behavior) {
-        System.out.println("interactive add");
         behaviors.add(behavior);
         behaviorsSorted = false;
         return this;
