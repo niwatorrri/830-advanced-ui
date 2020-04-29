@@ -82,10 +82,7 @@ public class TalkUI extends InteractiveWindowGroup {
         MicrophoneAnalyzer mic = new MicrophoneAnalyzer();
         TextToSpeech tts = new TextToSpeech();
 
-        // TODO: testing purpose only, this should not be called here
-        Pair<SelectableGraphicalObject, Pair<BehaviorEvent, BehaviorEvent>> targetAndEvents = listenForBehaviorInput();
-
-        // listenForVoiceInput(mic, drawingPanel, tts);
+        listenForVoiceInput(mic, drawingPanel, tts);
     }
 
     private void listenForVoiceInput(MicrophoneAnalyzer mic, Group panel, TextToSpeech tts) {
