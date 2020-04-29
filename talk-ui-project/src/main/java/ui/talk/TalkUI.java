@@ -82,10 +82,7 @@ public class TalkUI extends InteractiveWindowGroup {
         MicrophoneAnalyzer mic = new MicrophoneAnalyzer();
         TextToSpeech tts = new TextToSpeech();
 
-        // TODO: testing purpose only, this should not be called here
-        Pair<SelectableGraphicalObject, Pair<BehaviorEvent, BehaviorEvent>> targetAndEvents = listenForBehaviorInput();
-
-        // listenForVoiceInput(mic, drawingPanel, tts);
+        listenForVoiceInput(mic, drawingPanel, tts);
     }
 
     private void listenForVoiceInput(MicrophoneAnalyzer mic, Group panel, TextToSpeech tts) {
@@ -143,6 +140,8 @@ public class TalkUI extends InteractiveWindowGroup {
                 try {
                     target[0] = getSelection().get(0);
                     System.out.println("found target: " + target[0]);
+                    // unregister the behavior from the drawing canvas
+                    // drawingPanel.removeBehavior(this);
                 } catch (Exception e) {
                     target[0] = null;
                     System.out.println("no target found");
@@ -154,11 +153,6 @@ public class TalkUI extends InteractiveWindowGroup {
 
         // add a choice behavior to the drawing canvas to locate the target object
         drawingPanel.addBehavior(cBehavior);
-        addBehavior(cBehavior);
-
-        // unregister the behavior from the drawing canvas
-        // TODO: recover this after the bug fixed
-        // drawingPanel.removeBehavior(cBehavior);
 
         return Pair.of(target[0], Pair.of(startEvent, stopEvent));
     }

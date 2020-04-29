@@ -79,13 +79,12 @@ public class InteractiveWindowGroup extends JFrame implements Group {
     }
 
     private void handleBehaviorEvent(BehaviorEvent behaviorEvent) {
-        List<Behavior> behaviors = topGroup.getBehaviors();
         if (behaviors.isEmpty()) {
             return;
         }
-        if (!topGroup.isBehaviorsSorted()) {
+        if (!behaviorsSorted) {
             Collections.sort(behaviors);
-            topGroup.setBehaviorsSorted(true);
+            behaviorsSorted = true;
         }
 
         Behavior lastBehavior = behaviors.get(0);
@@ -287,7 +286,7 @@ public class InteractiveWindowGroup extends JFrame implements Group {
     }
 
     public InteractiveWindowGroup removeBehavior(Behavior behavior) {
-        topGroup.getBehaviors().remove(behavior);
+        behaviors.remove(behavior);
         return this;
     }
 
@@ -299,7 +298,7 @@ public class InteractiveWindowGroup extends JFrame implements Group {
     }
 
     public List<Behavior> getBehaviors() {
-        return new ArrayList<Behavior>(topGroup.getBehaviors());
+        return new ArrayList<Behavior>(behaviors);
     }
 
     /* The following are useless methods */
