@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ui.toolkit.behavior.Behavior;
-import ui.toolkit.behavior.TopGroup;
 import ui.toolkit.constraint.Constraint;
 import ui.toolkit.constraint.NoConstraint;
 import ui.toolkit.graphics.object.AlreadyHasGroupRunTimeException;
@@ -275,7 +274,6 @@ public class SimpleGroup implements Group {
             behaviors.add(behavior);
         }
         if (group != null) {
-            System.out.println(group);
             group.addBehavior(behavior);
         } else {
             behaviorsToAdd.add(behavior);

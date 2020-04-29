@@ -4,10 +4,9 @@ import static com.example.dialogflow.DetectIntentAudio.detectIntentAudio;
 
 import com.google.cloud.dialogflow.v2.QueryResult;
 import com.speech.microphone.MicrophoneAnalyzer;
+import com.speech.TextToSpeech;
 
 import org.apache.commons.lang3.tuple.Pair;
-
-import com.speech.TextToSpeech;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -51,6 +50,8 @@ public class TalkUI extends InteractiveWindowGroup {
     private static final int PROPERTY_PLANE_HEIGHT = CONTROL_PLANE_HEIGHT - VOICE_PLANE_HEIGHT - BORDER_GAP;
 
     private Group controlPlane, drawingPanel, voiceControlPlane;
+    private MicrophoneAnalyzer mic;
+    private TextToSpeech tts;
 
     private String sessionId;
     private String projectId;
@@ -77,15 +78,14 @@ public class TalkUI extends InteractiveWindowGroup {
         this.sessionId = sessionId;
         this.projectId = projectId;
 
-        // TODO: drawingPanel is already a class attribute, seems no need to recreate it
-        Group drawingPanel = makeGUI();
-        MicrophoneAnalyzer mic = new MicrophoneAnalyzer();
-        TextToSpeech tts = new TextToSpeech();
+        makeGUI();
 
-        listenForVoiceInput(mic, drawingPanel, tts);
+        this.mic = new MicrophoneAnalyzer();
+        this.tts = new TextToSpeech();
+        listenForVoiceInput(mic, tts);
     }
 
-    private void listenForVoiceInput(MicrophoneAnalyzer mic, Group panel, TextToSpeech tts) {
+    private void listenForVoiceInput(MicrophoneAnalyzer mic, TextToSpeech tts) {
         while (true) {
             mic.open();
             final int THRESHOLD = 30;
@@ -106,7 +106,7 @@ public class TalkUI extends InteractiveWindowGroup {
                     System.out.println("Recording Complete!");
                     System.out.println("Looping back");
                     if (audioLength > 1) { // to avoid abrupt noise
-                        makeResponse(mic, panel, tts);
+                        makeResponse(mic, tts);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -157,7 +157,7 @@ public class TalkUI extends InteractiveWindowGroup {
         return Pair.of(target[0], Pair.of(startEvent, stopEvent));
     }
 
-    private void makeResponse(MicrophoneAnalyzer mic, Group panel, TextToSpeech tts) {
+    private void makeResponse(MicrophoneAnalyzer mic, TextToSpeech tts) {
         String audioFilePath = mic.getAudioFilePath();
         String languageCode = "en-US";
         QueryResult queryResult = null;
@@ -177,13 +177,20 @@ public class TalkUI extends InteractiveWindowGroup {
             System.err.println("Query failed: " + e);
         }
 
-        HandleResponse.handle(queryResult, panel);
+        HandleResponse.handle(queryResult, drawingPanel);
+
+        Text detectedText = new Text(queryResult.getQueryText());
+        Text responseText = new Text(queryResult.getFulfillmentText());
+        detectedText.setColor(Color.BLUE);
+        responseText.setColor(new Color(192, 0, 255)); // purple?
+        voiceControlPlane.addChildren(detectedText, responseText);
+
         redraw();
 
-        tts.speak(queryResult.getFulfillmentText());
+        tts.speak(responseText.getText());
     }
 
-    private Group makeGUI() {
+    private void makeGUI() {
         // create example widget
         RadioButtonPanel radioPanel = new RadioButtonPanel(50, 50)
                 .addChildren(new RadioButton(new Line(0, 10, 40, 10, Color.BLACK, 3)),
@@ -247,6 +254,5 @@ public class TalkUI extends InteractiveWindowGroup {
         drawingPanel.addChildren(radioPanel, sFilledRect);
 
         addChildren(controlPlane, separationLine, drawingPanel);
-        return drawingPanel;
     }
 }
