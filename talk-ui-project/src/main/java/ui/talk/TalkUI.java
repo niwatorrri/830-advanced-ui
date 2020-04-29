@@ -9,6 +9,9 @@ import com.speech.TextToSpeech;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.awt.Color;
+import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -52,9 +55,13 @@ public class TalkUI extends InteractiveWindowGroup {
     private Group controlPlane, drawingPanel, voiceControlPlane;
     private MicrophoneAnalyzer mic;
     private TextToSpeech tts;
+    private ResponseHandler handler;
 
     private String sessionId;
     private String projectId;
+
+    Integer placeX = null;
+    Integer placeY = null;
 
     public static void main(String[] args) {
         // parse command line arguments
@@ -79,9 +86,16 @@ public class TalkUI extends InteractiveWindowGroup {
         this.projectId = projectId;
 
         makeGUI();
+        addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent event) {
+                placeX = event.getX();
+                placeY = event.getY();
+            }
+        });
 
         this.mic = new MicrophoneAnalyzer();
         this.tts = new TextToSpeech();
+        this.handler = new ResponseHandler();
         listenForVoiceInput(mic, tts);
     }
 
@@ -105,7 +119,7 @@ public class TalkUI extends InteractiveWindowGroup {
                     }
                     System.out.println("Recording Complete!");
                     System.out.println("Looping back");
-                    if (audioLength > 1) { // to avoid abrupt noise
+                    if (audioLength > -1) { // TODO: to avoid abrupt noise or not?
                         makeResponse(mic, tts);
                     }
                 } catch (Exception e) {
@@ -177,7 +191,7 @@ public class TalkUI extends InteractiveWindowGroup {
             System.err.println("Query failed: " + e);
         }
 
-        HandleResponse.handle(queryResult, drawingPanel);
+        GraphicalObject object = handler.handle(queryResult, drawingPanel);
 
         Text detectedText = new Text(queryResult.getQueryText());
         Text responseText = new Text(queryResult.getFulfillmentText());
@@ -185,9 +199,25 @@ public class TalkUI extends InteractiveWindowGroup {
         responseText.setColor(new Color(192, 0, 255)); // purple?
         voiceControlPlane.addChildren(detectedText, responseText);
 
+        if (object != null) {
+            drawingPanel.addChild(object);
+            followCursor(object);
+        }
         redraw();
 
         tts.speak(responseText.getText());
+        System.out.println(placeX + " " + placeY);
+
+        while (placeX == null && placeY == null) {
+            followCursor(object);
+        }
+        placeX = placeY = null;
+    }
+
+    private void followCursor(GraphicalObject object) {
+        Point cursor = getMousePosition();
+        cursor = drawingPanel.parentToChild(cursor);
+        object.moveTo((int) cursor.getX(), (int) cursor.getY());
     }
 
     private void makeGUI() {
