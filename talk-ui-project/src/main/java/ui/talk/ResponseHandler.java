@@ -9,6 +9,7 @@ import ui.toolkit.behavior.MoveBehavior;
 import ui.toolkit.behavior.NewRectBehavior;
 import ui.toolkit.graphics.group.Group;
 import ui.toolkit.graphics.object.*;
+import ui.toolkit.graphics.object.selectable.SelectableFilledEllipse;
 import ui.toolkit.widget.RadioButton;
 import ui.toolkit.widget.RadioButtonPanel;
 
@@ -46,7 +47,7 @@ class ResponseHandler {
                 int height = (int) params.getFieldsOrDefault(Intent.InitializationParams.HEIGHT, null).getNumberValue();
                 String color = params.getFieldsOrDefault(Intent.InitializationParams.COLOR, null).getStringValue();
                 System.out.println("Drawing FilledRect: " + width + " " + height + " " + color);
-                return new FilledRect(20, 20, width, height, Color.GREEN);
+                return new SelectableFilledEllipse(20, 20, width, height, Entity.stringToColor.get(color));
             }
 
             case Entity.GraphicalObjectType.FILLED_ELLIPSE: {
@@ -61,7 +62,7 @@ class ResponseHandler {
                 String text = params.getFieldsOrDefault(Intent.InitializationParams.TEXT, null).getStringValue();
                 String color = params.getFieldsOrDefault(Intent.InitializationParams.COLOR, null).getStringValue();
                 System.out.println("Drawing Text: " + text + " " + color);
-                return new Text(text, 20, 20, Text.DEFAULT_FONT, Color.BLACK);
+                return new Text(text, 20, 20, Text.DEFAULT_FONT, Entity.stringToColor.get(color));
             }
 
             case Entity.GraphicalObjectType.RADIOBUTTON_PANEL: {
@@ -71,20 +72,22 @@ class ResponseHandler {
                 System.out.println("Drawing RadioButton: " + values.size());
                 RadioButtonPanel radios = new RadioButtonPanel(20, 20);
 
-//                for (Value value : values) {
-//                    String option = value.getStringValue();
-//                    radios.addChild(new RadioButton(option));
-//                }
-
-                radios.addChild(new RadioButton("Pizza"));
-                radios.addChild(new RadioButton("Pasta"));
-                radios.addChild(new RadioButton("Salad"));
+                if (values.size() == 0) {
+                    radios.addChild(new RadioButton("Pizza"));
+                    radios.addChild(new RadioButton("Pasta"));
+                    radios.addChild(new RadioButton("Salad"));
+                } else {
+                    for (Value value : values) {
+                        String option = value.getStringValue();
+                        radios.addChild(new RadioButton(option));
+                    }
+                }
 
                 return radios;
             }
 
             default: {
-                System.err.println("Unrecognized graphical object type: " + newObjectType);
+                System.err.println("Unrecognized/Unsupported (in demo) graphical object type: " + newObjectType);
                 return null;
             }
         }
@@ -101,57 +104,106 @@ class ResponseHandler {
                 case "ChoiceBehavior": {
                     System.out.println("Adding choice behavior");
 
+                    // We need to figure out the target
+                    // for now, the target is the same object selected, unless they mention "circle 1" as the target
+                    // (since we can't get this information in our DialogFlow intent for now)
+
+                    String targetName = params.getFieldsOrDefault(Intent.InteractionParams.BEHAVIOR_TARGET, null).getStringValue();
+
+                    GraphicalObject targetObject = null;
+
+                    if (targetName.toLowerCase().equals("circle 1")) {
+                        System.out.println("Using manual override circle 1");
+                        List<GraphicalObject> children = drawingPanel.getChildren();
+
+                        // find the circle we want for the demo
+                        for (GraphicalObject go: children) {
+                            if (go instanceof FilledEllipse) {
+                                if (((FilledEllipse) go).getHeight() > 100) {
+                                    System.out.println("Found the circle we want");
+                                    targetObject = go;
+                                }
+                            }
+                        }
+                    }
+
+                    TalkUI.Instance.needsSelection = true;
+                    TalkUI.Instance.interactionTarget = targetObject;
+
+                    String num = params.getFieldsOrDefault(Intent.InteractionParams.NUMBER_INTEGER, null).getStringValue();
+                    String color = params.getFieldsOrDefault(Intent.InteractionParams.COLOR, null).getStringValue();
+
+                    String property = params.getFieldsOrDefault(Intent.InteractionParams.GRAPHICS_PARAMETER, null).getStringValue();
+                    String value = "";
+
+                    if (!num.equals("")) {
+                        value = num;
+                    }
+
+                    if (!color.equals("")) {
+                        value = color;
+                        property = "color";
+                    }
+
+                    TalkUI.Instance.interactionOutcome = new InteractionOutcome(
+                            null,
+                            property,
+                            value
+                    );
+
+
+                    // HARDCODED EXAMPLE
                     // existing behavior on radio button
                     // need to add constraint to circle 1
 
-                    List<GraphicalObject> children = drawingPanel.getChildren();
-                    RadioButtonPanel radios = null;
-                    FilledEllipse bowl = null;
-
-                    // find the radiobuttonpanel, circle
-                    for (GraphicalObject go: children) {
-                        if (radios == null && go instanceof RadioButtonPanel) {
-                            radios = (RadioButtonPanel) go;
-                            if (radios.getChildren().size() != 3) {
-                                radios = null;
-                            } else {
-                                System.out.println("Found radiobuttonpanel 1: 3");
-                            }
-                        }
-
-                        if (bowl == null && go instanceof FilledEllipse) {
-                            bowl = (FilledEllipse) go;
-
-                            if (bowl.getHeight() < 100) {
-                                bowl = null;
-                            } else {
-                                System.out.println("Found circle 1: " + bowl.getColor());
-                            }
-                        }
-                    }
-
-                    if (radios != null && bowl != null) {
-                        FilledEllipse finalBowl = bowl;
-                        radios.setCallback(v -> {
-                            String option = ((Text)v.getLabel()).getText();
-                            System.out.println("Selected menu item: " + option);
-
-                            switch (option) {
-                                case "Pizza":
-                                    finalBowl.setColor(Color.ORANGE);
-                                    break;
-                                case "Pasta":
-                                    finalBowl.setColor(Color.YELLOW);
-                                    break;
-                                case "Salad":
-                                    finalBowl.setColor(Color.GREEN);
-                                    break;
-                                default:
-                                    System.out.println("Selected option has no outcome");
-                                    break;
-                            }
-                        });
-                    }
+//                    List<GraphicalObject> children = drawingPanel.getChildren();
+//                    RadioButtonPanel radios = null;
+//                    FilledEllipse bowl = null;
+//
+//                    // find the radiobuttonpanel, circle
+//                    for (GraphicalObject go: children) {
+//                        if (radios == null && go instanceof RadioButtonPanel) {
+//                            radios = (RadioButtonPanel) go;
+//                            if (radios.getChildren().size() != 3) {
+//                                radios = null;
+//                            } else {
+//                                System.out.println("Found radiobuttonpanel 1: 3");
+//                            }
+//                        }
+//
+//                        if (bowl == null && go instanceof FilledEllipse) {
+//                            bowl = (FilledEllipse) go;
+//
+//                            if (bowl.getHeight() < 100) {
+//                                bowl = null;
+//                            } else {
+//                                System.out.println("Found circle 1: " + bowl.getColor());
+//                            }
+//                        }
+//                    }
+//
+//                    if (radios != null && bowl != null) {
+//                        FilledEllipse finalBowl = bowl;
+//                        radios.setCallback(v -> {
+//                            String option = ((Text)v.getLabel()).getText();
+//                            System.out.println("Selected menu item: " + option);
+//
+//                            switch (option) {
+//                                case "Pizza":
+//                                    finalBowl.setColor(Color.ORANGE);
+//                                    break;
+//                                case "Pasta":
+//                                    finalBowl.setColor(Color.YELLOW);
+//                                    break;
+//                                case "Salad":
+//                                    finalBowl.setColor(Color.GREEN);
+//                                    break;
+//                                default:
+//                                    System.out.println("Selected option has no outcome");
+//                                    break;
+//                            }
+//                        });
+//                    }
 
                     break;
                 }

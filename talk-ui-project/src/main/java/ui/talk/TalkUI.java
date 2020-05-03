@@ -8,18 +8,21 @@ import com.speech.TextToSpeech;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.awt.Color;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 
+import ui.toolkit.behavior.Behavior;
 import ui.toolkit.behavior.BehaviorEvent;
 import ui.toolkit.behavior.ChoiceBehavior;
 import ui.toolkit.behavior.InteractiveWindowGroup;
@@ -32,12 +35,8 @@ import ui.toolkit.graphics.object.Line;
 import ui.toolkit.graphics.object.Text;
 import ui.toolkit.graphics.object.selectable.SelectableFilledRect;
 import ui.toolkit.graphics.object.selectable.SelectableGraphicalObject;
+import ui.toolkit.widget.*;
 import ui.toolkit.widget.Button;
-import ui.toolkit.widget.ButtonPanel;
-import ui.toolkit.widget.PropertySheet;
-import ui.toolkit.widget.RadioButton;
-import ui.toolkit.widget.RadioButtonPanel;
-import ui.toolkit.widget.Widget;
 
 public class TalkUI extends InteractiveWindowGroup {
     private static final long serialVersionUID = 1L;
@@ -63,6 +62,12 @@ public class TalkUI extends InteractiveWindowGroup {
     Integer placeX = null;
     Integer placeY = null;
 
+    public static TalkUI Instance;
+    public boolean needsSelection;
+    public GraphicalObject interactionTarget;
+    public InteractionOutcome interactionOutcome;
+    public Map<GraphicalObject, InteractionOutcome> outcomes = new HashMap<>();
+
     public static void main(String[] args) {
         // parse command line arguments
         String sessionId = null;
@@ -82,6 +87,9 @@ public class TalkUI extends InteractiveWindowGroup {
 
     public TalkUI(String sessionId, String projectId) {
         super("TalkUI Editor", WINDOW_WIDTH, WINDOW_HEIGHT);
+
+        Instance = this;
+
         this.sessionId = sessionId;
         this.projectId = projectId;
 
@@ -100,9 +108,10 @@ public class TalkUI extends InteractiveWindowGroup {
     }
 
     private void listenForVoiceInput(MicrophoneAnalyzer mic, TextToSpeech tts) {
-        System.out.println("Waiting for voice input...");
         while (true) {
             mic.open();
+            System.out.println("Waiting for voice input...");
+
             final int THRESHOLD = 30;
             int volume = mic.getAudioVolume();
             boolean isSpeaking = (volume > THRESHOLD);
@@ -202,6 +211,7 @@ public class TalkUI extends InteractiveWindowGroup {
             voiceControlPlane.addChildToTop(detectedText);
             voiceControlPlane.addChildToTop(responseText);
 
+            placeX = placeY = null;
 
             if (object != null) {
                 drawingPanel.addChild(object);
@@ -216,6 +226,54 @@ public class TalkUI extends InteractiveWindowGroup {
                 while (placeX == null && placeY == null) {
                     followCursor(object);
                 }
+            }
+
+            // handle behavior
+            // needs specification
+            if (needsSelection) {
+
+                System.out.println("Needs selection to continue...");
+                while (ChoiceBehavior.lastSelectedGlobalObject == null) {
+
+                    // take the specified interaction outcome
+                    // set it to the global map of object to outcome
+                    System.out.println("Waiting for selection...");
+
+                }
+                System.out.println();
+                System.out.println("Selection made: " + ChoiceBehavior.lastSelectedGlobalObject);
+
+                List<Behavior> behaviors = ChoiceBehavior.lastSelectedGlobalObject.getGroup().getBehaviors();
+                Widget root = null;
+                for (Behavior b: behaviors) {
+                    if (b instanceof ChoiceBehavior) {
+                        root = ((ChoiceBehavior) b).getRoot();
+                    }
+                }
+
+                // reset the parent group's callback to trigger the outcome lookup
+                if (root != null) {
+                    root.setCallback(v -> {
+                        System.out.println(v + " was selected, looking for outcome.");
+
+                        InteractionOutcome outcome = outcomes.get(v);
+                        if (outcome != null) {
+                            outcome.apply();
+                        }
+                    });
+                }
+
+                // add the interaction outcome to the lookup list
+                if (interactionTarget == null) {
+                    interactionTarget = ChoiceBehavior.lastSelectedGlobalObject;
+                }
+                interactionOutcome.target = interactionTarget;
+
+                outcomes.put(ChoiceBehavior.lastSelectedGlobalObject, interactionOutcome);
+
+                needsSelection = false;
+                interactionTarget = null;
+                interactionOutcome = null;
             }
 
             placeX = placeY = null;
