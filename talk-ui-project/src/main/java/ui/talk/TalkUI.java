@@ -8,18 +8,21 @@ import com.speech.TextToSpeech;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.awt.Color;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 
+import ui.toolkit.behavior.Behavior;
 import ui.toolkit.behavior.BehaviorEvent;
 import ui.toolkit.behavior.ChoiceBehavior;
 import ui.toolkit.behavior.InteractiveWindowGroup;
@@ -32,12 +35,8 @@ import ui.toolkit.graphics.object.Line;
 import ui.toolkit.graphics.object.Text;
 import ui.toolkit.graphics.object.selectable.SelectableFilledRect;
 import ui.toolkit.graphics.object.selectable.SelectableGraphicalObject;
+import ui.toolkit.widget.*;
 import ui.toolkit.widget.Button;
-import ui.toolkit.widget.ButtonPanel;
-import ui.toolkit.widget.PropertySheet;
-import ui.toolkit.widget.RadioButton;
-import ui.toolkit.widget.RadioButtonPanel;
-import ui.toolkit.widget.Widget;
 
 public class TalkUI extends InteractiveWindowGroup {
     private static final long serialVersionUID = 1L;
@@ -63,6 +62,14 @@ public class TalkUI extends InteractiveWindowGroup {
     Integer placeX = null;
     Integer placeY = null;
 
+    public PropertySheet propertySheet;
+
+    public static TalkUI Instance;
+    public boolean needsSelection;
+    public GraphicalObject interactionTarget;
+    public InteractionOutcome interactionOutcome;
+    public Map<GraphicalObject, InteractionOutcome> outcomes = new HashMap<>();
+
     public static void main(String[] args) {
         // parse command line arguments
         String sessionId = null;
@@ -82,6 +89,9 @@ public class TalkUI extends InteractiveWindowGroup {
 
     public TalkUI(String sessionId, String projectId) {
         super("TalkUI Editor", WINDOW_WIDTH, WINDOW_HEIGHT);
+
+        Instance = this;
+
         this.sessionId = sessionId;
         this.projectId = projectId;
 
@@ -102,10 +112,12 @@ public class TalkUI extends InteractiveWindowGroup {
     private void listenForVoiceInput(MicrophoneAnalyzer mic, TextToSpeech tts) {
         while (true) {
             mic.open();
+            System.out.println("Waiting for voice input...");
+
             final int THRESHOLD = 30;
             int volume = mic.getAudioVolume();
             boolean isSpeaking = (volume > THRESHOLD);
-            System.out.println("\tCurrent audio volumes: " + volume);
+            // System.out.println("\tCurrent audio volumes: " + volume);
 
             int audioLength = 0; // in seconds
             if (isSpeaking) {
@@ -113,12 +125,12 @@ public class TalkUI extends InteractiveWindowGroup {
                     System.out.println("RECORDING...");
                     mic.captureAudio();
                     while (mic.getAudioVolume() > THRESHOLD) {
-                        System.out.println("\tCurrent audio volume: " + mic.getAudioVolume());
-                        Thread.sleep(1000);
-                        audioLength += 1;
+                        //System.out.println("\tCurrent audio volume: " + mic.getAudioVolume());
+                        Thread.sleep(2000);
+                        audioLength += 2;
                     }
                     System.out.println("Recording Complete!");
-                    System.out.println("Looping back");
+                    // System.out.println("Looping back");
                     if (audioLength > -1) { // TODO: to avoid abrupt noise or not?
                         makeResponse(mic, tts);
                     }
@@ -191,50 +203,112 @@ public class TalkUI extends InteractiveWindowGroup {
             System.err.println("Query failed: " + e);
         }
 
-        GraphicalObject object = handler.handle(queryResult, drawingPanel);
+        if (queryResult != null) {
+            GraphicalObject object = handler.handle(queryResult, drawingPanel);
 
-        Text detectedText = new Text(queryResult.getQueryText());
-        Text responseText = new Text(queryResult.getFulfillmentText());
-        detectedText.setColor(Color.BLUE);
-        responseText.setColor(new Color(192, 0, 255)); // purple?
-        voiceControlPlane.addChildren(detectedText, responseText);
+            Text detectedText = new Text(queryResult.getQueryText());
+            Text responseText = new Text(queryResult.getFulfillmentText());
+            detectedText.setColor(Color.BLUE);
+            responseText.setColor(new Color(192, 0, 255)); // purple?
+            voiceControlPlane.addChildToTop(detectedText);
+            voiceControlPlane.addChildToTop(responseText);
 
-        if (object != null) {
-            drawingPanel.addChild(object);
-            followCursor(object);
+            placeX = placeY = null;
+
+            if (object != null) {
+                drawingPanel.addChild(object);
+                followCursor(object);
+            }
+            redraw();
+
+            tts.speak(responseText.getText());
+            System.out.println(placeX + " " + placeY);
+
+            if (object != null) {
+                while (placeX == null && placeY == null) {
+                    followCursor(object);
+                }
+            }
+
+            // handle behavior
+            // needs specification
+            if (needsSelection) {
+
+                System.out.println("Needs selection to continue...");
+                while (ChoiceBehavior.lastSelectedGlobalObject == null) {
+
+                    // take the specified interaction outcome
+                    // set it to the global map of object to outcome
+                    System.out.println("Waiting for selection...");
+
+                }
+                System.out.println();
+                System.out.println("Selection made: " + ChoiceBehavior.lastSelectedGlobalObject);
+
+                List<Behavior> behaviors = ChoiceBehavior.lastSelectedGlobalObject.getGroup().getBehaviors();
+                Widget root = null;
+                for (Behavior b: behaviors) {
+                    if (b instanceof ChoiceBehavior) {
+                        root = ((ChoiceBehavior) b).getRoot();
+                    }
+                }
+
+                // reset the parent group's callback to trigger the outcome lookup
+                if (root != null) {
+                    root.setCallback(v -> {
+                        System.out.println(v + " was selected, looking for outcome.");
+
+                        InteractionOutcome outcome = outcomes.get(v);
+                        if (outcome != null) {
+                            outcome.apply();
+                        }
+                    });
+                }
+
+                // add the interaction outcome to the lookup list
+                if (interactionTarget == null) {
+                    interactionTarget = ChoiceBehavior.lastSelectedGlobalObject;
+                }
+                interactionOutcome.target = interactionTarget;
+
+                outcomes.put(ChoiceBehavior.lastSelectedGlobalObject, interactionOutcome);
+
+                needsSelection = false;
+                interactionTarget = null;
+                interactionOutcome = null;
+            }
+
+            placeX = placeY = null;
+        } else {
+            System.out.println("Didn't hear anything or get a response.");
         }
-        redraw();
-
-        tts.speak(responseText.getText());
-        System.out.println(placeX + " " + placeY);
-
-        while (placeX == null && placeY == null) {
-            followCursor(object);
-        }
-        placeX = placeY = null;
     }
 
     private void followCursor(GraphicalObject object) {
         Point cursor = getMousePosition();
-        cursor = drawingPanel.parentToChild(cursor);
-        object.moveTo((int) cursor.getX(), (int) cursor.getY());
+
+        if (cursor != null) {
+            cursor = drawingPanel.parentToChild(cursor);
+            object.moveTo((int) cursor.getX(), (int) cursor.getY());
+        }
+
     }
 
     private void makeGUI() {
         // create example widget
-        RadioButtonPanel radioPanel = new RadioButtonPanel(50, 50)
+        RadioButtonPanel radioPanel = new RadioButtonPanel(600, 600)
                 .addChildren(new RadioButton(new Line(0, 10, 40, 10, Color.BLACK, 3)),
                         new RadioButton(new Line(0, 10, 40, 10, Color.BLUE, 3)),
                         new RadioButton(new Line(0, 10, 40, 10, Color.MAGENTA, 3)),
-                        new RadioButton(new Line(0, 10, 40, 10, Color.CYAN, 3)))
-                .setSelection("one");
+                        new RadioButton(new Line(0, 10, 40, 10, Color.CYAN, 3)));
 
-        SelectableFilledRect sFilledRect = new SelectableFilledRect(200, 200, 40, 40, Color.PINK);
+        // SelectableFilledRect sFilledRect = new SelectableFilledRect(200, 200, 40, 40, Color.PINK);
 
         // setup groups and separation line
         Line separationLine = new Line(SEPARATION_LEFT, 0, SEPARATION_LEFT, WINDOW_HEIGHT, Color.BLACK, 2);
 
-        voiceControlPlane = new LayoutGroup(0, 0, CONTROL_PLANE_WIDTH, VOICE_PLANE_HEIGHT, LayoutGroup.VERTICAL, 20);
+        LayoutGroup voiceControlPrePlane = new LayoutGroup(0, 0, CONTROL_PLANE_WIDTH, 50, LayoutGroup.VERTICAL, 20);
+        voiceControlPlane = new LayoutGroup(0, 70, CONTROL_PLANE_WIDTH, VOICE_PLANE_HEIGHT, LayoutGroup.VERTICAL, 20);
         // add plane texts
         Text voicePlaneText = new Text("Voice Control Plane");
         Widget<?> exportButton = new ButtonPanel(0, 0, false, ButtonPanel.MULTIPLE).addChild(new Button("Save"))
@@ -255,20 +329,20 @@ public class TalkUI extends InteractiveWindowGroup {
                     }
                 });
 
-        voiceControlPlane.addChildren(voicePlaneText, exportButton);
+        voiceControlPrePlane.addChildren(voicePlaneText, exportButton);
 
         // the (x, y) does not matter since the control plane is a LayoutGroup
         // TODO: should use radioPanel.getValue() to get active value, but somehow the
         // active value after init is null, though in the UI first radio button selected
-        PropertySheet propertySheet = new PropertySheet(radioPanel.getChildren().get(0), this);
-        radioPanel.setCallback(o -> {
-            for (GraphicalObject child : radioPanel.getChildren()) {
-                if (((RadioButton) child).isSelected()) {
-                    System.out.println("update selection...");
-                    propertySheet.updatePropertySheet(child);
-                }
-            }
-        });
+        propertySheet = new PropertySheet(radioPanel.getChildren().get(0), this);
+//        radioPanel.setCallback(o -> {
+//            for (GraphicalObject child : radioPanel.getChildren()) {
+//                if (((RadioButton) child).isSelected()) {
+//                    System.out.println("update selection...");
+//                    propertySheet.updatePropertySheet(child);
+//                }
+//            }
+//        });
 
         JComponent propertyControlPlane = new JScrollPane(propertySheet);
         propertyControlPlane.setBounds(BORDER_GAP, (CONTROL_PLANE_HEIGHT) / 2 + BORDER_GAP, CONTROL_PLANE_WIDTH,
@@ -277,12 +351,14 @@ public class TalkUI extends InteractiveWindowGroup {
 
         // set the offset to BORDER_GAP
         controlPlane = new LayoutGroup(BORDER_GAP, BORDER_GAP, CONTROL_PLANE_WIDTH, CONTROL_PLANE_HEIGHT,
-                LayoutGroup.VERTICAL, BORDER_GAP).addChildren(voiceControlPlane);
+                LayoutGroup.VERTICAL, BORDER_GAP).addChildren(voiceControlPrePlane, voiceControlPlane);
 
         drawingPanel = new SimpleGroup(SEPARATION_LEFT, 0, SEPARATION_RIGHT, WINDOW_HEIGHT);
 
-        drawingPanel.addChildren(radioPanel, sFilledRect);
+        drawingPanel.addChildren(radioPanel);
 
         addChildren(controlPlane, separationLine, drawingPanel);
+
+        radioPanel.setSelection("one");
     }
 }

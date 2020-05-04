@@ -481,6 +481,24 @@ public class LayoutGroup implements Group {
         return this;
     }
 
+    @Override
+    public Group addChildToTop(GraphicalObject child) throws AlreadyHasGroupRunTimeException {
+        Group childGroup = child.getGroup();
+        if (childGroup != null) {
+            throw new AlreadyHasGroupRunTimeException();
+        } else {
+            children.add(0, child);
+            child.setGroup(this);
+            if (child instanceof Group) {
+                Group groupChild = (Group) child;
+                addBehaviors(groupChild.getBehaviorsToAdd());
+                removeBehaviors(groupChild.getBehaviorsToRemove());
+                groupChild.clearBehaviorsToAdd().clearBehaviorsToRemove();
+            }
+        }
+        return this;
+    }
+
     public Group addBehavior(Behavior behavior) {
         if (behavior.getGroup() == null) {
             behavior.setGroup(this);

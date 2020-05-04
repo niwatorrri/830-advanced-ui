@@ -10,6 +10,7 @@ import ui.toolkit.constraint.Constraint;
 import ui.toolkit.constraint.NoConstraint;
 import ui.toolkit.graphics.group.Group;
 import ui.toolkit.graphics.group.LayoutGroup;
+import ui.toolkit.graphics.object.AlreadyHasGroupRunTimeException;
 import ui.toolkit.graphics.object.BoundaryRectangle;
 import ui.toolkit.graphics.object.GraphicalObject;
 
@@ -94,6 +95,11 @@ public class Widget<T> implements Group {
             this.removeChild(child);
         }
         return this;
+    }
+
+    @Override
+    public Group addChildToTop(GraphicalObject child) throws AlreadyHasGroupRunTimeException {
+        return null;
     }
 
     public Widget<T> addBehavior(Behavior behavior) {

@@ -46,6 +46,8 @@ public class RadioButtonPanel extends Widget<RadioButton> {
                 }
             }
         );
+
+        choiceBehavior.setRoot(this);
     }
 
     public RadioButtonPanel(int x, int y) {

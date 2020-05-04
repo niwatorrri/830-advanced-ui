@@ -1,42 +1,37 @@
 # Final Project: Talk UI
 
-## Update Log
+To run the Talk UI system, execute the following line:
 
-Note that the projectID in pom.xml has been changed! Get the correct service account credentials to work.
+```bash
+export GOOGLE_APPLICATION_CREDENTIALS=talkui-dialogflow-credentials.json; mvn clean package; mvn exec:java
+```
 
-To test dialogflow:
+The DialogFlow credentials `talkui-dialogflow-credentials.json` are only attached for Professor to try out the system and will not be released to anyone outside the project.
 
-1. Download API key
-2. Set `export GOOGLE_APPLICATION_CREDENTIALS=/path/to/your-project-credentials.json`
-3. Run `mvn exec:java`
+After running the command above once, the following invocations will only require `mvn exec:java`.
 
-The audio will be recorded and saved to `resources/recording.wav`, which is then uploaded to detect intent, and the query result returned will then be used to render graphics
+The user audio will be recorded and saved to `resources/recording.wav`, which is then uploaded to detect intent, and the query result returned will then be used to render graphics
 
-Caveat: if you are using VSCode, you might not be prompted to grant mic permission and the recording may not work
+Caveat: if you are not prompted to grant mic permission, it is likely that the recording won't work.
 
 ## General Information
 
 Current code organization in src/main/java:
 ```
-ui
-|__  talk (Talk UI main interface)
-|___ toolkit
-|       |___ behavior
-|       |___ constraint
-|       |___ graphics
-|       |___ widget
-|___ editor (my editor implemented out of the toolkit)
+/
+|___ ui
+|    |___ talk __________________ Talk UI main interface
+|    |___ toolkit _______________ self-implemented UI toolkit
+|    |       |___ behavior
+|    |       |___ constraint
+|    |       |___ graphics
+|    |       |___ widget
+|    |___ editor ________________ node editor in hw5 (ignore this)
+|___ com
+     |___ example/dialogflow ____ example codes to interact with DialogFlow
+     |___ speech ________________ utilities to capture audio and text-to-speech
 ```
 
-Command `mvn exec:java` will start running the main class.
+Change log of the base toolkit:
 
-READMEs for the package:
-
-- Constraint: see hw3
-- Behaviors: see hw4
-- Widgets: see hw5
-
-Implementations are subject to change if more features are needed.
-
-Change log of basic toolkit:
 - Implementation of `behavior.InteractiveWindowGroup` changed completely to solve previous bugs where children's behaviors cannot propagate up to top group

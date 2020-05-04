@@ -34,5 +34,6 @@ class Entity {
         stringToColor.put("blue", Color.BLUE);
         stringToColor.put("yellow", Color.YELLOW);
         stringToColor.put("brown", Color.ORANGE);
+        stringToColor.put("black", Color.BLACK);
     }
 }
