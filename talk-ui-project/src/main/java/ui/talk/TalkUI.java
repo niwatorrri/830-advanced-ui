@@ -62,6 +62,8 @@ public class TalkUI extends InteractiveWindowGroup {
     Integer placeX = null;
     Integer placeY = null;
 
+    public PropertySheet propertySheet;
+
     public static TalkUI Instance;
     public boolean needsSelection;
     public GraphicalObject interactionTarget;
@@ -332,15 +334,15 @@ public class TalkUI extends InteractiveWindowGroup {
         // the (x, y) does not matter since the control plane is a LayoutGroup
         // TODO: should use radioPanel.getValue() to get active value, but somehow the
         // active value after init is null, though in the UI first radio button selected
-        PropertySheet propertySheet = new PropertySheet(radioPanel.getChildren().get(0), this);
-        radioPanel.setCallback(o -> {
-            for (GraphicalObject child : radioPanel.getChildren()) {
-                if (((RadioButton) child).isSelected()) {
-                    System.out.println("update selection...");
-                    propertySheet.updatePropertySheet(child);
-                }
-            }
-        });
+        propertySheet = new PropertySheet(radioPanel.getChildren().get(0), this);
+//        radioPanel.setCallback(o -> {
+//            for (GraphicalObject child : radioPanel.getChildren()) {
+//                if (((RadioButton) child).isSelected()) {
+//                    System.out.println("update selection...");
+//                    propertySheet.updatePropertySheet(child);
+//                }
+//            }
+//        });
 
         JComponent propertyControlPlane = new JScrollPane(propertySheet);
         propertyControlPlane.setBounds(BORDER_GAP, (CONTROL_PLANE_HEIGHT) / 2 + BORDER_GAP, CONTROL_PLANE_WIDTH,

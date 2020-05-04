@@ -77,9 +77,17 @@ class ResponseHandler {
                     radios.addChild(new RadioButton("Pasta"));
                     radios.addChild(new RadioButton("Salad"));
                 } else {
-                    for (Value value : values) {
-                        String option = value.getStringValue();
-                        radios.addChild(new RadioButton(option));
+                    if (values.size() == 1) {
+                        // attempt to split up text
+                        String[] vs = values.get(0).getStringValue().split(" ");
+                        for (String value : vs) {
+                            radios.addChild(new RadioButton(value));
+                        }
+                    } else {
+                        for (Value value : values) {
+                            String option = value.getStringValue();
+                            radios.addChild(new RadioButton(option));
+                        }
                     }
                 }
 

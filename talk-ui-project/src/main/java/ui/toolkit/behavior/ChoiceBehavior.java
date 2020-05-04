@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
+import ui.talk.TalkUI;
 import ui.toolkit.graphics.group.Group;
 import ui.toolkit.graphics.object.GraphicalObject;
 import ui.toolkit.graphics.object.selectable.SelectableGraphicalObject;
@@ -298,10 +299,12 @@ public class ChoiceBehavior implements Behavior {
                     }
                     targetObject.setSelected(true);
                     lastSelectedGlobalObject = targetObject;
+                    TalkUI.Instance.propertySheet.updatePropertySheet(lastSelectedGlobalObject);
                 } else { // if selected for a second time
                     if (this.type == MULTIPLE) {
                         targetObject.setSelected(false);
                         lastSelectedGlobalObject = targetObject;
+                        TalkUI.Instance.propertySheet.updatePropertySheet(lastSelectedGlobalObject);
                     }
                 }
             }
