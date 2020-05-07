@@ -95,7 +95,7 @@ Behavior classes
 - (*) Added constraints on the attributes of NewBehavior subclasses
 
 InteractiveWindowGroup class
-- Since the window can only have one top group, the `topGroup` variable has now been incorporated into the InteractiveWindowGroup class so that subclasses will only need to call `addChild()` instead of `topGroup.addChild()`.
+- Since the window can only have one top group, the `topGroup` variable has now been incorporated into the InteractiveWindowGroup class so that subclasses will only need to call `addChild()` instead of `topGroup.addChild()`. (Some bugs are fixed while we were developing our final project.)
 
 Constraint class
 - Fixed a bug in `Dependency.evaluate()` so that it is okay to evaluate a constraint chain in an out-of-order fashion. This happens when one dependency doesn't get auto-evaluated on redraw, e.g., value in widgets.

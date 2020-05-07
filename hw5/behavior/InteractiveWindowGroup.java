@@ -20,10 +20,11 @@ import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 import constraint.Constraint;
 import graphics.group.Group;
-import graphics.group.SimpleGroup;
+import graphics.object.AlreadyHasGroupRunTimeException;
 import graphics.object.BoundaryRectangle;
 import graphics.object.GraphicalObject;
 
@@ -34,7 +35,7 @@ public class InteractiveWindowGroup extends JFrame implements Group {
     private JComponent canvas;
     private Insets insets;
 
-    private Group topGroup = null;
+    private List<GraphicalObject> children = new ArrayList<>();
     private List<Behavior> behaviors = new ArrayList<>();
     private boolean behaviorsSorted = false;
 
@@ -49,7 +50,6 @@ public class InteractiveWindowGroup extends JFrame implements Group {
     public InteractiveWindowGroup(String title, int width, int height) {
         super(title);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.topGroup = new SimpleGroup(0, 0, width, height);
 
         WindowMouseListener mouseListener = new WindowMouseListener();
         this.addMouseListener(mouseListener);
@@ -57,14 +57,16 @@ public class InteractiveWindowGroup extends JFrame implements Group {
         this.addMouseWheelListener(mouseListener);
         this.addKeyListener(new WindowKeyListener());
 
-        canvas = new JComponent() {
+        canvas = new JPanel() {
             private static final long serialVersionUID = 1L;
+
             public void paintComponent(Graphics graphics) {
                 if (buffer != null) {
                     graphics.drawImage(buffer, 0, 0, null);
                 }
             }
         };
+        canvas.setLayout(null);
         canvas.setBackground(Color.white);
         canvas.setPreferredSize(new Dimension(width, height));
 
@@ -72,6 +74,7 @@ public class InteractiveWindowGroup extends JFrame implements Group {
         this.pack();
         this.setVisible(true);
         this.makeBuffer(width, height);
+        this.redraw();
         this.insets = getInsets();
     }
 
@@ -92,9 +95,7 @@ public class InteractiveWindowGroup extends JFrame implements Group {
             }
             eventConsumed = behavior.check(behaviorEvent) || eventConsumed;
         }
-        if (topGroup != null) {
-            redraw(topGroup);
-        }
+        this.redraw();
     }
 
     // Mouse listener
@@ -135,7 +136,7 @@ public class InteractiveWindowGroup extends JFrame implements Group {
                 getModifiers(event),
                 getKey(event, id), id,
                 event.getX() - insets.left,
-                event.getY() - insets.top - 1  // at least this works on MacOS
+                event.getY() - insets.top - 1 // at least this works on MacOS
             );
         }
 
@@ -218,12 +219,14 @@ public class InteractiveWindowGroup extends JFrame implements Group {
     /**
      * Redraw: automatically called after adding children
      */
-    public void redraw(GraphicalObject object) {
+    public void redraw() {
         Graphics2D graphics = buffer.createGraphics();
         BoundaryRectangle r = new BoundaryRectangle(0, 0, getWidth(), getHeight());
         graphics.setColor(canvas.getBackground());
         graphics.fill(r);
-        object.draw(graphics, r);
+        for (GraphicalObject child : children) {
+            child.draw(graphics, r);
+        }
         graphics.dispose();
         canvas.repaint();
     }
@@ -232,11 +235,20 @@ public class InteractiveWindowGroup extends JFrame implements Group {
      * Methods defined in the Group and GraphicalObject interfaces
      */
     public Group addChild(GraphicalObject child) {
-        topGroup.addChild(child);
-        addBehaviors(topGroup.getBehaviorsToAdd());
-        removeBehaviors(topGroup.getBehaviorsToRemove());
-        topGroup.clearBehaviorsToAdd().clearBehaviorsToRemove();
-        redraw(topGroup);
+        Group childGroup = child.getGroup();
+        if (childGroup != null) {
+            throw new AlreadyHasGroupRunTimeException();
+        } else {
+            children.add(child);
+            child.setGroup(this);
+            if (child instanceof Group) {
+                Group groupChild = (Group) child;
+                addBehaviors(groupChild.getBehaviorsToAdd());
+                removeBehaviors(groupChild.getBehaviorsToRemove());
+                groupChild.clearBehaviorsToAdd().clearBehaviorsToRemove();
+            }
+            this.redraw();
+        }
         return this;
     }
 
@@ -248,13 +260,13 @@ public class InteractiveWindowGroup extends JFrame implements Group {
     }
 
     public Group removeChild(GraphicalObject child) {
-        topGroup.removeChild(child);
+        children.remove(child);
+        child.setGroup(null);
         if (child instanceof Group) {
             for (Behavior behavior : ((Group) child).getBehaviors()) {
                 removeBehavior(behavior);
             }
         }
-        redraw(topGroup);
         return this;
     }
 
@@ -266,13 +278,7 @@ public class InteractiveWindowGroup extends JFrame implements Group {
     }
 
     public List<GraphicalObject> getChildren() {
-        List<GraphicalObject> children = new ArrayList<>();
-        children.add(topGroup);
-        return children;
-    }
-
-    public Group getTopGroup() {
-        return topGroup;
+        return new ArrayList<GraphicalObject>(children);
     }
 
     public InteractiveWindowGroup addBehavior(Behavior behavior) {
@@ -338,6 +344,7 @@ public class InteractiveWindowGroup extends JFrame implements Group {
     }
 
     public void draw(Graphics2D graphics, Shape clipRect) {
+        redraw();
     }
 
     public BoundaryRectangle getBoundingBox() {
