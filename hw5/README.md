@@ -95,7 +95,7 @@ Behavior classes
 - (*) Added constraints on the attributes of NewBehavior subclasses
 
 InteractiveWindowGroup class
-- Since the window can only have one top group, the `topGroup` variable has now been incorporated into the InteractiveWindowGroup class so that subclasses will only need to call `addChild()` instead of `topGroup.addChild()`. (Some bugs are fixed while we were developing our final project.)
+- Since the window can only have one top group, the `topGroup` variable has now been incorporated into the InteractiveWindowGroup class so that subclasses will only need to call `addChild()` instead of `topGroup.addChild()`. (Some bugs were fixed while we were developing our final project.)
 
 Constraint class
 - Fixed a bug in `Dependency.evaluate()` so that it is okay to evaluate a constraint chain in an out-of-order fashion. This happens when one dependency doesn't get auto-evaluated on redraw, e.g., value in widgets.
@@ -104,7 +104,7 @@ Constraint class
 Groups and Graphical objects
 - (*) Groups now have a member named `behaviors` that collect all behaviors that are attached to them. These behaviors will also be automatically added to the top group when the group is added to a parent.
 - On removing a group child, there is one assumption I made when implementing auto-removing its associated behaviors: the whole group hierarchy will be already established at the time of removal.
-- Added FilledEllipse class and SelectableFilledEllipse class and implemented a more precise `contains()` method for ellipses
+- Added FilledEllipse class and SelectableFilledEllipse class and implemented a more precise `contains()` method for ellipses.
 - (*) For Text class, there is no need to pass a Graphics2D object to the constructor any more. Methods in the java.awt.Font class will take care of the string bound computation.
 - Added getters for text-specific attributes, including ascent, descent, leading, text width and text height.
 - Fixed a bug in Text class so that the bounding box will now take into account the newline characters `\n` in the text string.
