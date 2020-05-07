@@ -6,11 +6,11 @@ To run the Talk UI system, execute the following line:
 export GOOGLE_APPLICATION_CREDENTIALS=talkui-dialogflow-credentials.json; mvn clean package; mvn exec:java
 ```
 
-The DialogFlow credentials `talkui-dialogflow-credentials.json` are only attached for Professor to try out the system and will not be released to anyone outside the project.
+The DialogFlow credentials `talkui-dialogflow-credentials.json` will not be released to anyone outside the project.
 
 After running the command above once, the following invocations will only require `mvn exec:java`.
 
-The user audio will be recorded and saved to `resources/recording.wav`, which is then uploaded to detect intent, and the query result returned will then be used to render graphics
+The user audio will be recorded and saved to `resources/recording.wav`, which is then uploaded to detect intent, and the query result returned will then be used to render graphics.
 
 Caveat: if you are not prompted to grant mic permission, it is likely that the recording won't work.
 
