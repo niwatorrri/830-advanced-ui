@@ -33,7 +33,6 @@ import ui.toolkit.graphics.object.BoundaryRectangle;
 import ui.toolkit.graphics.object.GraphicalObject;
 import ui.toolkit.graphics.object.Line;
 import ui.toolkit.graphics.object.Text;
-import ui.toolkit.graphics.object.selectable.SelectableFilledRect;
 import ui.toolkit.graphics.object.selectable.SelectableGraphicalObject;
 import ui.toolkit.widget.*;
 import ui.toolkit.widget.Button;
@@ -117,7 +116,6 @@ public class TalkUI extends InteractiveWindowGroup {
             final int THRESHOLD = 30;
             int volume = mic.getAudioVolume();
             boolean isSpeaking = (volume > THRESHOLD);
-            // System.out.println("\tCurrent audio volumes: " + volume);
 
             int audioLength = 0; // in seconds
             if (isSpeaking) {
@@ -125,12 +123,10 @@ public class TalkUI extends InteractiveWindowGroup {
                     System.out.println("RECORDING...");
                     mic.captureAudio();
                     while (mic.getAudioVolume() > THRESHOLD) {
-                        //System.out.println("\tCurrent audio volume: " + mic.getAudioVolume());
                         Thread.sleep(2000);
                         audioLength += 2;
                     }
                     System.out.println("Recording Complete!");
-                    // System.out.println("Looping back");
                     if (audioLength > -1) { // TODO: to avoid abrupt noise or not?
                         makeResponse(mic, tts);
                     }
@@ -209,7 +205,7 @@ public class TalkUI extends InteractiveWindowGroup {
             Text detectedText = new Text(queryResult.getQueryText());
             Text responseText = new Text(queryResult.getFulfillmentText());
             detectedText.setColor(Color.BLUE);
-            responseText.setColor(new Color(192, 0, 255)); // purple?
+            responseText.setColor(new Color(192, 0, 255)); // purple
             voiceControlPlane.addChildToTop(detectedText);
             voiceControlPlane.addChildToTop(responseText);
 
@@ -236,17 +232,14 @@ public class TalkUI extends InteractiveWindowGroup {
 
                 System.out.println("Needs selection to continue...");
                 while (ChoiceBehavior.lastSelectedGlobalObject == null) {
-
                     // take the specified interaction outcome
                     // set it to the global map of object to outcome
                     System.out.println("Waiting for selection...");
-
                 }
-                System.out.println();
                 System.out.println("Selection made: " + ChoiceBehavior.lastSelectedGlobalObject);
 
                 List<Behavior> behaviors = ChoiceBehavior.lastSelectedGlobalObject.getGroup().getBehaviors();
-                Widget root = null;
+                Widget<?> root = null;
                 for (Behavior b: behaviors) {
                     if (b instanceof ChoiceBehavior) {
                         root = ((ChoiceBehavior) b).getRoot();
@@ -279,6 +272,7 @@ public class TalkUI extends InteractiveWindowGroup {
             }
 
             placeX = placeY = null;
+
         } else {
             System.out.println("Didn't hear anything or get a response.");
         }
@@ -301,8 +295,7 @@ public class TalkUI extends InteractiveWindowGroup {
                         new RadioButton(new Line(0, 10, 40, 10, Color.BLUE, 3)),
                         new RadioButton(new Line(0, 10, 40, 10, Color.MAGENTA, 3)),
                         new RadioButton(new Line(0, 10, 40, 10, Color.CYAN, 3)));
-
-        // SelectableFilledRect sFilledRect = new SelectableFilledRect(200, 200, 40, 40, Color.PINK);
+        radioPanel.setSelection("one");
 
         // setup groups and separation line
         Line separationLine = new Line(SEPARATION_LEFT, 0, SEPARATION_LEFT, WINDOW_HEIGHT, Color.BLACK, 2);
@@ -335,14 +328,14 @@ public class TalkUI extends InteractiveWindowGroup {
         // TODO: should use radioPanel.getValue() to get active value, but somehow the
         // active value after init is null, though in the UI first radio button selected
         propertySheet = new PropertySheet(radioPanel.getChildren().get(0), this);
-//        radioPanel.setCallback(o -> {
-//            for (GraphicalObject child : radioPanel.getChildren()) {
-//                if (((RadioButton) child).isSelected()) {
-//                    System.out.println("update selection...");
-//                    propertySheet.updatePropertySheet(child);
-//                }
-//            }
-//        });
+        // radioPanel.setCallback(o -> {
+        //     for (GraphicalObject child : radioPanel.getChildren()) {
+        //         if (((RadioButton) child).isSelected()) {
+        //             System.out.println("update selection...");
+        //             propertySheet.updatePropertySheet(child);
+        //         }
+        //     }
+        // });
 
         JComponent propertyControlPlane = new JScrollPane(propertySheet);
         propertyControlPlane.setBounds(BORDER_GAP, (CONTROL_PLANE_HEIGHT) / 2 + BORDER_GAP, CONTROL_PLANE_WIDTH,
@@ -358,7 +351,5 @@ public class TalkUI extends InteractiveWindowGroup {
         drawingPanel.addChildren(radioPanel);
 
         addChildren(controlPlane, separationLine, drawingPanel);
-
-        radioPanel.setSelection("one");
     }
 }

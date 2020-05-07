@@ -19,6 +19,7 @@ import java.util.List;
 import static ui.toolkit.behavior.BehaviorEvent.*;
 
 class ResponseHandler {
+
     public GraphicalObject handle(QueryResult queryResult, Group drawingPanel) {
         String intentName = queryResult.getIntent().getDisplayName();
         Struct params = queryResult.getParameters();
@@ -153,65 +154,7 @@ class ResponseHandler {
                         property = "color";
                     }
 
-                    TalkUI.Instance.interactionOutcome = new InteractionOutcome(
-                            null,
-                            property,
-                            value
-                    );
-
-
-                    // HARDCODED EXAMPLE
-                    // existing behavior on radio button
-                    // need to add constraint to circle 1
-
-//                    List<GraphicalObject> children = drawingPanel.getChildren();
-//                    RadioButtonPanel radios = null;
-//                    FilledEllipse bowl = null;
-//
-//                    // find the radiobuttonpanel, circle
-//                    for (GraphicalObject go: children) {
-//                        if (radios == null && go instanceof RadioButtonPanel) {
-//                            radios = (RadioButtonPanel) go;
-//                            if (radios.getChildren().size() != 3) {
-//                                radios = null;
-//                            } else {
-//                                System.out.println("Found radiobuttonpanel 1: 3");
-//                            }
-//                        }
-//
-//                        if (bowl == null && go instanceof FilledEllipse) {
-//                            bowl = (FilledEllipse) go;
-//
-//                            if (bowl.getHeight() < 100) {
-//                                bowl = null;
-//                            } else {
-//                                System.out.println("Found circle 1: " + bowl.getColor());
-//                            }
-//                        }
-//                    }
-//
-//                    if (radios != null && bowl != null) {
-//                        FilledEllipse finalBowl = bowl;
-//                        radios.setCallback(v -> {
-//                            String option = ((Text)v.getLabel()).getText();
-//                            System.out.println("Selected menu item: " + option);
-//
-//                            switch (option) {
-//                                case "Pizza":
-//                                    finalBowl.setColor(Color.ORANGE);
-//                                    break;
-//                                case "Pasta":
-//                                    finalBowl.setColor(Color.YELLOW);
-//                                    break;
-//                                case "Salad":
-//                                    finalBowl.setColor(Color.GREEN);
-//                                    break;
-//                                default:
-//                                    System.out.println("Selected option has no outcome");
-//                                    break;
-//                            }
-//                        });
-//                    }
+                    TalkUI.Instance.interactionOutcome = new InteractionOutcome(null, property, value);
 
                     break;
                 }
@@ -245,11 +188,7 @@ class ResponseHandler {
                     System.err.println("Unrecognized behavior: " + behavior);
                     break;
                 }
-
             }
         }
-
-
     }
-
 }

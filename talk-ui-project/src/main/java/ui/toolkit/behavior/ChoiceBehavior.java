@@ -31,7 +31,7 @@ public class ChoiceBehavior implements Behavior {
     private BehaviorEvent stopEvent = BehaviorEvent.DEFAULT_STOP_EVENT;
     private BehaviorEvent cancelEvent = BehaviorEvent.DEFAULT_CANCEL_EVENT;
 
-    private Widget root;
+    private Widget<?> root;
 
     public static SelectableGraphicalObject lastSelectedGlobalObject = null;
 
@@ -54,11 +54,11 @@ public class ChoiceBehavior implements Behavior {
         this(SINGLE, true);
     }
 
-    public Widget getRoot() {
+    public Widget<?> getRoot() {
         return root;
     }
 
-    public void setRoot(Widget root) {
+    public void setRoot(Widget<?> root) {
         this.root = root;
     }
 

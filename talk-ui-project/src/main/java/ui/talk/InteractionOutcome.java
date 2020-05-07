@@ -20,21 +20,21 @@ public class InteractionOutcome {
     public void apply() {
 
         // apply the outcome for setting the color property for a variety of objects
-        switch(property.toLowerCase()) {
-            case "color":
+        switch (property.toLowerCase()) {
+            case "color": {
                 Color c = Entity.stringToColor.get(value);
-
                 if (c != null) {
                     if (target instanceof Rect) {
-                        ((Rect)target).setColor(c);
+                        ((Rect) target).setColor(c);
                     }
                 }
-
                 break;
-            default:
+            }
+
+            default: {
                 System.out.println("For demo, only color outcomes have been implemented");
                 break;
+            }
         }
-
     }
 }
